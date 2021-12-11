@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"skykeyjoker.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="基于C++11实现线程池0x00 导入前些日子通过阅读几篇博客，大体学习了一下C++的并发编程（主要是多线程、异步部分）。手撸了一个多生产者-多消费者模型之后，最终觉得这也只是小打小闹而已，需要整个硬货。经过一番思考之后，手撸一个线程池貌似是一个非常合适的练习。线程池前前后后一共折腾了四五个小时左右，最令我意外的是——原本以为最难理解的并发部分反而是最简单的部分，线程池实现中大量的CPP11语法糖">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于C++11实现线程池">
+<meta property="og:url" content="https://skykeyjoker.github.io/2021/04/23/cpp11-thread-pool/index.html">
+<meta property="og:site_name" content="Skykey&#39;s Home">
+<meta property="og:description" content="基于C++11实现线程池0x00 导入前些日子通过阅读几篇博客，大体学习了一下C++的并发编程（主要是多线程、异步部分）。手撸了一个多生产者-多消费者模型之后，最终觉得这也只是小打小闹而已，需要整个硬货。经过一番思考之后，手撸一个线程池貌似是一个非常合适的练习。线程池前前后后一共折腾了四五个小时左右，最令我意外的是——原本以为最难理解的并发部分反而是最简单的部分，线程池实现中大量的CPP11语法糖">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-23T11:10:44.000Z">
+<meta property="article:modified_time" content="2021-12-11T12:24:27.363Z">
+<meta property="article:author" content="Skykey">
+<meta property="article:tag" content="C++11">
+<meta property="article:tag" content="C++高并发">
+<meta property="article:tag" content="C++线程池">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://skykeyjoker.github.io/2021/04/23/cpp11-thread-pool/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
+  <title>基于C++11实现线程池 | Skykey's Home</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skykey's Home</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Skykey的私人博客。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skykeyjoker.github.io/2021/04/23/cpp11-thread-pool/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Skykey">
+      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skykey's Home">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于C++11实现线程池
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-23 19:10:44" itemprop="dateCreated datePublished" datetime="2021-04-23T19:10:44+08:00">2021-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-11 20:24:27" itemprop="dateModified" datetime="2021-12-11T20:24:27+08:00">2021-12-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="基于C-11实现线程池"><a href="#基于C-11实现线程池" class="headerlink" title="基于C++11实现线程池"></a>基于C++11实现线程池</h1><h2 id="0x00-导入"><a href="#0x00-导入" class="headerlink" title="0x00 导入"></a>0x00 导入</h2><p>前些日子通过阅读几篇博客，大体学习了一下C++的并发编程（主要是多线程、异步部分）。手撸了一个多生产者-多消费者模型之后，最终觉得这也只是小打小闹而已，需要整个硬货。经过一番思考之后，手撸一个线程池貌似是一个非常合适的练习。线程池前前后后一共折腾了四五个小时左右，最令我意外的是——原本以为最难理解的并发部分反而是最简单的部分，线程池实现中大量的CPP11语法糖才是真正影响我理解的部分。经过三四个小时的阅读博文、查阅资料以及向大佬求教之后，我才真正对线程池实现有了比较深入地理解。“纸上得来终觉浅，绝知此事要躬行。”经历这一番折腾后才清楚地认识到了自己对CPP11理解的薄弱，遂写下这篇博客来总结自己对线程池实现以及所涉及到的CPP11语法糖的理解，方便自己以后再次阅读源码时有所考据。</p>
+<p>文章大量借鉴、节选了众多参考资料，并结合自己的理解进行讲解。参考资料会在最后列出。</p>
+<p>这篇总结会将重心放在C++11的语法糖上，对于C++11的并发编程部分（<code>std::thread</code>, <code>std::future</code>等）将仅进行最简洁最必要的阐述。有关并发编程部分可以移步至几篇大佬总结的比较好的博文中进行补充学习：</p>
+<ol>
+<li>《C++并发编程（从C++11到C++17）》：<a target="_blank" rel="noopener" href="https://paul.pub/cpp-concurrency">https://paul.pub/cpp-concurrency</a></li>
+<li>《从pthread转换到std::thread》：<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002655852">https://segmentfault.com/a/1190000002655852</a></li>
+<li>《货比三家：C++中的task based并发》：<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002706259">https://segmentfault.com/a/1190000002706259</a></li>
+</ol>
+<span id="more"></span>
+
+<h2 id="0x01-逐步实现线程池"><a href="#0x01-逐步实现线程池" class="headerlink" title="0x01 逐步实现线程池"></a>0x01 逐步实现线程池</h2><h3 id="线程池原理"><a href="#线程池原理" class="headerlink" title="线程池原理"></a>线程池原理</h3><p><strong>C++11</strong>加入了线程库，从此告别了标准库不支持并发的历史。然而C++对于多线程的支持还是比较低级，稍微高级一点的用法都需要自己去实现，比如线程池、信号量等。线程池（thread pool）这个东西，一般在面试时的回答都是：“管理一个任务队列，一个线程队列，然后每次去一个任务分配给一个线程去做，循环往复。”这回答貌似没有问题，但是写起程序来的时候就出问题了。</p>
+<p>有什么问题？线程池一般是要复用线程，所以如果是取一个task分配给某一个thread，执行完之后再重新分配，在语言层面这是基本不能实现的：C++的thread都是执行一个固定的task函数，执行完之后线程也就结束了。所以该如何实现task和thread的分配呢？</p>
+<p><strong>让每一个thread创建后，就去执行调度函数：循环获取task，然后执行。</strong></p>
+<p>这个循环该什么时候停止呢？</p>
+<p>很简单，<strong>当线程池停止使用时</strong>，循环停止。</p>
+<p>这样一来，就保证了thread函数的唯一性，而且复用线程执行task。</p>
+<p>总结一下，我们的线程池的主要组成部分有二：</p>
+<ul>
+<li>任务队列（Task Queue）</li>
+<li>线程池（Thread Pool）</li>
+</ul>
+<p>线程池与任务队列之间的匹配操作，是典型的<em>生产者-消费者</em>模型，本模型使用了两个工具：一个==mutex== + 一个==条件变量==。mutex就是锁，保证任务的添加和移除（获取）的互斥性；一个条件变量保证多个线程获取task的同步性：当任务队列为空时，线程应该等待（阻塞）。</p>
+<p>接下来我们就可以逐渐将一块块积木拼成一个完整的简易线程池。</p>
+<h3 id="积木1：任务队列（Task-Queue）"><a href="#积木1：任务队列（Task-Queue）" class="headerlink" title="积木1：任务队列（Task Queue）"></a>积木1：任务队列（Task Queue）</h3><p>我们会理所当然地希望任务以发送它相同的顺序来逐个执行，因此队列是最适合的数据结构。</p>
+<p>这里我们把任务队列单拿出来，独自为类，方便以后进行各种骚操作。</p>
+<p>将任务队列单拿出来之后，我们应考虑一个问题：正如上一节提到的线程池task与thread的分配方法所示，线程池中的线程会持续查询任务队列是否有可用工作。当两个甚至多个线程试图同时执行查询工作时，这会引起难以估计的灾难。因而我们需要对C++的<code>std::queue</code>进行包装，实现一个<strong>线程安全</strong>的<em>SafeQueue</em>。</p>
+<p>实现一个线程安全的<em>SafeQueue</em>原理很简单，利用<strong>mutex</strong>来限制并发访问即可。我们可以在<em>SafeQueue</em>类中定义一个<code>std::mutex</code>类型的成员变量，并在相应的操作接口（如入队接口<code>enqueue()</code>）中利用互斥体包装器来管理这个mutex，确保没有其他人正在访问该资源。</p>
+<p>下面给出完整的<em>SafeQueue</em>代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SafeQueue</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::queue&lt;T&gt; m_queue; <span class="comment">//利用模板函数构造队列</span></span><br><span class="line"></span><br><span class="line">    std::mutex m_mutex; <span class="comment">// 访问互斥信号量</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">SafeQueue</span>() &#123;&#125;</span><br><span class="line">    <span class="built_in">SafeQueue</span>(SafeQueue &amp;&amp;other) &#123;&#125;</span><br><span class="line">    ~<span class="built_in">SafeQueue</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">empty</span><span class="params">()</span> <span class="comment">// 返回队列是否为空</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m_mutex)</span></span>; <span class="comment">// 互斥信号变量加锁，防止m_queue被改变</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> m_queue.<span class="built_in">empty</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m_mutex)</span></span>; <span class="comment">// 互斥信号变量加锁，防止m_queue被改变</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> m_queue.<span class="built_in">size</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 队列添加元素</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">enqueue</span><span class="params">(T &amp;t)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m_mutex)</span></span>;</span><br><span class="line">        m_queue.<span class="built_in">emplace</span>(t);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 队列取出元素</span></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">dequeue</span><span class="params">(T &amp;t)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m_mutex)</span></span>; <span class="comment">// 队列加锁</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (m_queue.<span class="built_in">empty</span>())</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        t = std::<span class="built_in">move</span>(m_queue.<span class="built_in">front</span>()); <span class="comment">// 取出队首元素，返回队首元素值，并进行右值引用</span></span><br><span class="line"></span><br><span class="line">        m_queue.<span class="built_in">pop</span>(); <span class="comment">// 弹出入队的第一个元素</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="积木2：线程池（Thread-Pool）"><a href="#积木2：线程池（Thread-Pool）" class="headerlink" title="积木2：线程池（Thread Pool）"></a>积木2：线程池（Thread Pool）</h3><p>线程池是线程池模型的主体，我们将它拆成更小的部分来逐步分析，方便理解。</p>
+<h4 id="2-1-提交函数"><a href="#2-1-提交函数" class="headerlink" title="2-1 提交函数"></a>2-1 提交函数</h4><p>线程池最重要的方法就是负责向任务队列添加任务。我们的提交函数应该做到以下两点：</p>
+<ul>
+<li>接收任何参数的任何函数。（普通函数，==Lambda==，==成员函数==……）</li>
+<li>立即返回“东西”，避免阻塞主线程。这里返回的“东西”或者说“对象”应该包含任务结束的结果。</li>
+</ul>
+<p>完整的提交函数如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Submit a function to be executed asynchronously by the pool</span></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line">    <span class="function"><span class="keyword">auto</span> <span class="title">submit</span><span class="params">(F &amp;&amp;f, Args &amp;&amp;...args)</span> -&gt; std::future&lt;<span class="title">decltype</span><span class="params">(f(args...))</span>&gt; ①</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// Create a function with bounded parameter ready to execute</span></span><br><span class="line">        std::function&lt;<span class="keyword">decltype</span>(<span class="built_in">f</span>(args...))()&gt; func = std::<span class="built_in">bind</span>(std::forward&lt;F&gt;(f), std::forward&lt;Args&gt;(args)...); ②<span class="comment">// 连接函数和参数定义，特殊函数类型，避免左右值错误</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Encapsulate it into a shared pointer in order to be able to copy construct</span></span><br><span class="line">        <span class="keyword">auto</span> task_ptr = std::make_shared&lt;std::packaged_task&lt;<span class="keyword">decltype</span>(<span class="built_in">f</span>(args...))()&gt;&gt;(func);  ③</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Warp packaged task into void function</span></span><br><span class="line">        std::function&lt;<span class="built_in"><span class="keyword">void</span></span>()&gt; warpper_func = [task_ptr]()</span><br><span class="line">        &#123;</span><br><span class="line">            (*task_ptr)();</span><br><span class="line">        &#125;;  ④</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 队列通用安全封包函数，并压入安全队列</span></span><br><span class="line">        m_queue.<span class="built_in">enqueue</span>(warpper_func);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 唤醒一个等待中的线程</span></span><br><span class="line">        m_conditional_lock.<span class="built_in">notify_one</span>();  ⑤</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 返回先前注册的任务指针</span></span><br><span class="line">        <span class="keyword">return</span> task_ptr-&gt;<span class="built_in">get_future</span>();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>C++11众多的语法糖正式来袭。下面讲一下需要注意的地方：</p>
+<ol>
+<li><p><code>submit()</code>是一个模板函数，这很明显。<code>template&lt;typename F, typename... Args&gt;</code>中的<code>typename... Args</code>是C++11引入的<strong>可变模版参数</strong>（variadic templates），很容易理解。</p>
+<p>首先来看长得奇奇怪怪的函数头部分，<code>auto submit(F &amp;&amp;f, Args &amp;&amp;...args) -&gt; std::future&lt;decltype(f(args...))&gt;</code>，这里函数类型的定义用到了叫做<strong>“尾返回类型推导”</strong>的技巧。</p>
+<p>按照标准，<code>auto</code>关键字不能用于函数形参的类型推导，==在C++14以前==，也不能直接用<code>auto func()</code>的形式来推导函数的返回类型。</p>
+<p>因此传统C++中我们必须这么写：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> R, <span class="keyword">typename</span> T, <span class="keyword">typename</span> U&gt;</span></span><br><span class="line"><span class="function">R <span class="title">add</span><span class="params">(T x, U y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x+y;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样存在很明显的缺陷：事实上很多时候我们并不知道<code>add()</code>这个函数会进行什么操作，获取什么样的返回类型。</p>
+<p>最终在C++11中这个问题得到了解决。C++11关键字<code>decltype</code>解决了<code>auto</code>关键字只能对变量类型进行类型推导的缺陷。它的用法也很简单，应该也是看过C++11标准就能记住的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">decltype</span>(表达式)</span><br></pre></td></tr></table></figure>
+
+<p>但是为了利用<code>decltype</code>来推导函数的返回类型，我们并不能直接写出这种形式的代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">decltype</span>(x+y) <span class="built_in">add</span>(T x, U y)</span><br></pre></td></tr></table></figure>
+
+<p>因为编译器在读到<code>decltype(x+y)</code>时，<code>x</code>和<code>y</code>尚未定义。而这个问题的解决方案，正是<strong>尾返回类型推导</strong>。C++11引入了一个<strong>尾返回类型</strong>（trailing return type），利用<code>auto</code>关键字将返回类型后置：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> U&gt;</span></span><br><span class="line"><span class="function"><span class="keyword">auto</span> <span class="title">add2</span><span class="params">(T x, U y)</span> -&gt; <span class="title">decltype</span><span class="params">(x+y)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x + y;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>至此，看起来奇奇怪怪的函数头中关于函数的返回类型的定义已经清楚明了：该函数的返回值将从<code>std::future&lt;decltype(f(args...))&gt;</code>中自动推导得出。</p>
+<p>接着谈函数头。这里我们谈一下<code>std::future</code>，它提供了一个==访问异步操作结果==的途径。我们可以使用<code>std::future</code>的<code>wait()</code>方法来设置屏障，阻塞线程，实现线程同步。并最终使用<code>std::future</code>的<code>get()</code>方法来获得执行结果。</p>
+<p>对于<code>std::future</code>，可以在这篇文献中找到更详细的讲解：</p>
+<p><a target="_blank" rel="noopener" href="https://changkun.de/modern-cpp/zh-cn/07-thread/index.html#7-3-%E6%9C%9F%E7%89%A9">https://changkun.de/modern-cpp/zh-cn/07-thread/index.html#7-3-%E6%9C%9F%E7%89%A9</a></p>
+<p>总的来说，在我们的程序中，最后将会获得返回类型为 实例化为<code>f(args...)</code>的<code>std::future&lt;&gt;</code> 的<code>submit</code>函数。</p>
+<p>如果我们阅读其他一些博文或者Github上著名的99行C++11实现线程池，我们可能会看到以下形式的添加任务方法的定义：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">auto</span> <span class="title">ThreadPool::enqueue</span><span class="params">(F&amp;&amp; f, Args&amp;&amp;... args)</span> -&gt; std::future&lt;<span class="keyword">typename</span> std::result_of&lt;<span class="title">F</span><span class="params">(Args...)</span>&gt;::type&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>为什么我们这里不采用<code>std::result_of&lt;&gt;::type</code>的方法而是使用<code>decltype(f(args...))</code>方法，这个要结合下一点来理解。</p>
+</li>
+<li><p>这里我们使用了<code>std::function</code>进行包装从而产生了一个特殊函数，这个特殊函数使用<code>std::bind</code>将函数<code>f</code>和参数<code>args</code>绑定起来。</p>
+<p>简单来说，<code>std::function</code>可以对多个相似的函数进行包装（即通用的描述方法）。<code>std::function</code>可以hold住任何可以通过“()”来调用的对象，包括：</p>
+<ul>
+<li>普通函数</li>
+<li>成员函数</li>
+<li>lambda</li>
+<li><code>std::bind</code></li>
+</ul>
+<p>而<code>std::bind</code>可以<strong>将调用函数时的部分参数先制定好，留下一部分在真正调用时确定</strong>。（当然，你也可以直接指定全部参数，在调用时不再指定。）</p>
+<p>对于<code>std::function</code>和<code>std::bind</code>，我们可以移步这篇博客获得更详细的讲解：</p>
+<p><a target="_blank" rel="noopener" href="https://paul.pub/cpp-lambda-function-bind/">https://paul.pub/cpp-lambda-function-bind/</a></p>
+<p>这里我们会注意到，<code>std::bind</code>中，出现了一个<code>std::forward()</code>的特殊方法。<code>std::forward()</code>又被称作<strong>完美转发</strong>。简单来说，<code>std::forward()</code>将会完整保留参数的引用类型进行转发。如果参数是左值引用（<em>lvalue</em>），该方法会将参数保留左值引用的形式进行转发，如果参数是右值引用（<em>rvalue</em>），该方法会将参数保留右值引用的形式进行转发。而我们这里为什么要使用这个方法呢？</p>
+<p>我们会对为什么使用<code>std::forward()</code>方法产生疑惑，可能是因为我们看到了函数头中的<code>F&amp;&amp; f</code>和<code>Args&amp;&amp;... args</code>，这难道不已经指明这个函数接收的参数类型应为右值引用吗？<strong>其实不然。</strong>这里的<code>F&amp;&amp; f</code>和<code>Args&amp;&amp;... args</code>中的<code>&amp;&amp;</code>并非是右值引用意思，而是一种特殊现象，这个现象被称作<strong>万能引用</strong>（universal reference）。</p>
+<p><strong>万能引用</strong>可以简单理解为，当<code>T</code>是模板参数时，<code>T&amp;&amp;</code>的作用主要是保持值类别进行转发。然而，<strong>一个绑定到universial reference上的对象可能具有lvaluesness或者rvalueness，正是因为有这种二义性</strong>，所以产生了<code>std::forward</code>。</p>
+<p>有关于万能引用、完美转发以及背后所隐藏的引用折叠，可以在这篇知乎回答中找到更详细的介绍：</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/99524127">https://zhuanlan.zhihu.com/p/99524127</a></p>
+<p>总的来说，②会产生一个以 函数<code>f(arg...)</code>返回类型 为返回类型、不含参数的特殊函数包装<code>func</code>。</p>
+<p>这里我们也不难注意到，在网上其他的示例中，这里使用了如下方法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> return_type = <span class="keyword">typename</span> std::result_of&lt;<span class="built_in">F</span>(Args...)&gt;::type;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，这里再次像这些示例在函数头中一样，使用了<code>std::result_of</code>方法，而结合上文，我们也不难理解为什么本文会使用<code>std::function</code>方法，即更方便地增加对将成员函数和lambda表达式作为参数的支持。</p>
+</li>
+<li><p>这里我们使用<code>std::make_shared&lt;&gt;()</code>方法，声明了一个<code>std::packaged_task&lt;decltype(f(args...))()&gt;</code>类型的智能指针，并将前面<code>std::function</code>方法声明的特殊函数包装<code>func</code>传入作为<code>std::packaged_task</code>的实例化参数。智能指针将更方便我们对该<code>std::packaged_task</code>对象进行管理。</p>
+<p><code>std::packaged_task</code>可以用来封装任何可以调用的目标，从而用于实现异步的调用。</p>
+</li>
+<li><p>这里我们再次利用<code>std::function</code>，将<em>task_ptr</em>指向的<strong>std::packaged_task</strong>对象取出并包装为void函数。这样我们的代码将更加美观优雅。</p>
+<p>当然，我们也可以像其他示例一样，将这一步和下一步任务进入队列操作简化为一步：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">m_queue.<span class="built_in">enqueue</span>([task_ptr]()&#123;</span><br><span class="line">    (*task_ptr)();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></li>
+<li><p>这里条件变量会通知一个处于<em>wait</em>状态的线程，该线程将会从任务队列中取得任务并执行。</p>
+<p>这里简要介绍一下条件变量（<code>std::condition_variable</code>）：</p>
+<p>条件变量 <code>std::condition_variable</code> 是为了解决死锁而生，当互斥操作不够用而引入的。比如，线程可能需要等待某个条件为真才能继续执行，而一个忙等待循环中可能会导致所有其他线程都无法进入临界区使得条件为真时，就会发生死锁。所以，<code>condition_variable</code>实例被创建出现主要就是用于唤醒等待线程从而避免死锁。<code>std::condition_variable</code>的<code>notify_one()</code>用于唤醒一个线程；<code>notify_all()</code>则是通知所有线程。</p>
+</li>
+</ol>
+<p>提交函数到此结束。</p>
+<hr>
+<h4 id="2-2-内置工作线程类"><a href="#2-2-内置工作线程类" class="headerlink" title="2-2 内置工作线程类"></a>2-2 内置工作线程类</h4><p>本文在线程池中设立私有成员类<em>ThreadWoker</em>作为内置线程工作类，执行真正的工作。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThreadWorker</span> // 内置线程工作类</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> m_id; <span class="comment">// 工作id</span></span><br><span class="line"></span><br><span class="line">    ThreadPool *m_pool; <span class="comment">// 所属线程池</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 构造函数</span></span><br><span class="line">    <span class="built_in">ThreadWorker</span>(ThreadPool *pool, <span class="keyword">const</span> <span class="keyword">int</span> id) : <span class="built_in">m_pool</span>(pool), <span class="built_in">m_id</span>(id)</span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 重载()操作</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        std::function&lt;<span class="built_in"><span class="keyword">void</span></span>()&gt; func; <span class="comment">// 定义基础函数类func</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">bool</span> dequeued; <span class="comment">// 是否正在取出队列中元素</span></span><br><span class="line">		</span><br><span class="line">        <span class="comment">// 判断线程池是否关闭，没有关闭则从任务队列中循环提取任务</span></span><br><span class="line">        <span class="keyword">while</span> (!m_pool-&gt;m_shutdown)</span><br><span class="line">        &#123;</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 为线程环境加锁，互访问工作线程的休眠和唤醒</span></span><br><span class="line">                <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m_pool-&gt;m_conditional_mutex)</span></span>;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 如果任务队列为空，阻塞当前线程</span></span><br><span class="line">                <span class="keyword">if</span> (m_pool-&gt;m_queue.<span class="built_in">empty</span>())</span><br><span class="line">                &#123;</span><br><span class="line">                    m_pool-&gt;m_conditional_lock.<span class="built_in">wait</span>(lock); <span class="comment">// 等待条件变量通知，开启线程</span></span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 取出任务队列中的元素</span></span><br><span class="line">                dequeued = m_pool-&gt;m_queue.<span class="built_in">dequeue</span>(func);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 如果成功取出，执行工作函数</span></span><br><span class="line">            <span class="keyword">if</span> (dequeued)</span><br><span class="line">                <span class="built_in">func</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这里应该重点关注重载()操作的<code>void operator()()</code>，这里面进行了任务的取出与执行。</p>
+<p>参照注释和上文，我们使用了一个while循环，在线程池处于工作时循环从任务队列中提取任务。并利用条件变量，在任务队列为空时阻塞当前线程，等待上文中的提交函数添加任务后发出的通知。在任务队列不为空时，我们将任务队列中的任务取出，并放在事先声明的基础函数类<em>func</em>中。成功取出后便立即执行该任务。</p>
+<h4 id="线程池完整代码"><a href="#线程池完整代码" class="headerlink" title="线程池完整代码"></a>线程池完整代码</h4><p>下面给出线程池的完整代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThreadPool</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ThreadWorker</span> // 内置线程工作类</span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        <span class="keyword">int</span> m_id; <span class="comment">// 工作id</span></span><br><span class="line"></span><br><span class="line">        ThreadPool *m_pool; <span class="comment">// 所属线程池</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="comment">// 构造函数</span></span><br><span class="line">        <span class="built_in">ThreadWorker</span>(ThreadPool *pool, <span class="keyword">const</span> <span class="keyword">int</span> id) : <span class="built_in">m_pool</span>(pool), <span class="built_in">m_id</span>(id)</span><br><span class="line">        &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 重载()操作</span></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">()</span></span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            std::function&lt;<span class="built_in"><span class="keyword">void</span></span>()&gt; func; <span class="comment">// 定义基础函数类func</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">bool</span> dequeued; <span class="comment">// 是否正在取出队列中元素</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span> (!m_pool-&gt;m_shutdown)</span><br><span class="line">            &#123;</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">// 为线程环境加锁，互访问工作线程的休眠和唤醒</span></span><br><span class="line">                    <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m_pool-&gt;m_conditional_mutex)</span></span>;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// 如果任务队列为空，阻塞当前线程</span></span><br><span class="line">                    <span class="keyword">if</span> (m_pool-&gt;m_queue.<span class="built_in">empty</span>())</span><br><span class="line">                    &#123;</span><br><span class="line">                        m_pool-&gt;m_conditional_lock.<span class="built_in">wait</span>(lock); <span class="comment">// 等待条件变量通知，开启线程</span></span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// 取出任务队列中的元素</span></span><br><span class="line">                    dequeued = m_pool-&gt;m_queue.<span class="built_in">dequeue</span>(func);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 如果成功取出，执行工作函数</span></span><br><span class="line">                <span class="keyword">if</span> (dequeued)</span><br><span class="line">                    <span class="built_in">func</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">bool</span> m_shutdown; <span class="comment">// 线程池是否关闭</span></span><br><span class="line"></span><br><span class="line">    SafeQueue&lt;std::function&lt;<span class="built_in"><span class="keyword">void</span></span>()&gt;&gt; m_queue; <span class="comment">// 执行函数安全队列，即任务队列</span></span><br><span class="line"></span><br><span class="line">    std::vector&lt;std::thread&gt; m_threads; <span class="comment">// 工作线程队列</span></span><br><span class="line"></span><br><span class="line">    std::mutex m_conditional_mutex; <span class="comment">// 线程休眠锁互斥变量</span></span><br><span class="line"></span><br><span class="line">    std::condition_variable m_conditional_lock; <span class="comment">// 线程环境锁，可以让线程处于休眠或者唤醒状态</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 线程池构造函数</span></span><br><span class="line">    <span class="built_in">ThreadPool</span>(<span class="keyword">const</span> <span class="keyword">int</span> n_threads = <span class="number">4</span>)</span><br><span class="line">        : <span class="built_in">m_threads</span>(std::vector&lt;std::thread&gt;(n_threads)), <span class="built_in">m_shutdown</span>(<span class="literal">false</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">ThreadPool</span>(<span class="keyword">const</span> ThreadPool &amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">ThreadPool</span>(ThreadPool &amp;&amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">    ThreadPool &amp;<span class="keyword">operator</span>=(<span class="keyword">const</span> ThreadPool &amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">    ThreadPool &amp;<span class="keyword">operator</span>=(ThreadPool &amp;&amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Inits thread pool</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m_threads.<span class="built_in">size</span>(); ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            m_threads.<span class="built_in">at</span>(i) = std::<span class="built_in">thread</span>(<span class="built_in">ThreadWorker</span>(<span class="keyword">this</span>, i)); <span class="comment">// 分配工作线程</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Waits until threads finish their current task and shutdowns the pool</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">shutdown</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        m_shutdown = <span class="literal">true</span>;</span><br><span class="line">        m_conditional_lock.<span class="built_in">notify_all</span>(); <span class="comment">// 通知，唤醒所有工作线程</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m_threads.<span class="built_in">size</span>(); ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_threads.<span class="built_in">at</span>(i).<span class="built_in">joinable</span>()) <span class="comment">// 判断线程是否在等待</span></span><br><span class="line">            &#123;</span><br><span class="line">                m_threads.<span class="built_in">at</span>(i).<span class="built_in">join</span>(); <span class="comment">// 将线程加入到等待队列</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Submit a function to be executed asynchronously by the pool</span></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line">    <span class="function"><span class="keyword">auto</span> <span class="title">submit</span><span class="params">(F &amp;&amp;f, Args &amp;&amp;...args)</span> -&gt; std::future&lt;<span class="title">decltype</span><span class="params">(f(args...))</span>&gt;</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// Create a function with bounded parameter ready to execute</span></span><br><span class="line">        std::function&lt;<span class="keyword">decltype</span>(<span class="built_in">f</span>(args...))()&gt; func = std::<span class="built_in">bind</span>(std::forward&lt;F&gt;(f), std::forward&lt;Args&gt;(args)...); <span class="comment">// 连接函数和参数定义，特殊函数类型，避免左右值错误</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Encapsulate it into a shared pointer in order to be able to copy construct</span></span><br><span class="line">        <span class="keyword">auto</span> task_ptr = std::make_shared&lt;std::packaged_task&lt;<span class="keyword">decltype</span>(<span class="built_in">f</span>(args...))()&gt;&gt;(func);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Warp packaged task into void function</span></span><br><span class="line">        std::function&lt;<span class="built_in"><span class="keyword">void</span></span>()&gt; warpper_func = [task_ptr]()</span><br><span class="line">        &#123;</span><br><span class="line">            (*task_ptr)();</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 队列通用安全封包函数，并压入安全队列</span></span><br><span class="line">        m_queue.<span class="built_in">enqueue</span>(warpper_func);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 唤醒一个等待中的线程</span></span><br><span class="line">        m_conditional_lock.<span class="built_in">notify_one</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 返回先前注册的任务指针</span></span><br><span class="line">        <span class="keyword">return</span> task_ptr-&gt;<span class="built_in">get_future</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>结合注释应该能很轻松的理解线程池剩余的代码。</p>
+<p>注意一下<code>init()</code>函数和<code>shutdown()</code>函数：</p>
+<ul>
+<li>在线程池初始化函数<code>init()</code>中，我们声明并分配工作线程，将工作线程放入工作线程队列<em>m_threads</em>中。</li>
+<li>在线程池关闭函数<code>shutdown()</code>中，我们唤醒所有工作线程，并等待期完成所有工作后关闭线程池。</li>
+</ul>
+<p>这里我们也可以改进一下代码，将<code>shutdown()</code>函数中的工作转移到<em>ThreadPool</em>的析构函数中，从而更便利日后的使用。</p>
+<p>至此，线程池全文讲解结束，后附完整项目代码及参考资料。</p>
+<h2 id="0x02-项目完整代码"><a href="#0x02-项目完整代码" class="headerlink" title="0x02 项目完整代码"></a>0x02 项目完整代码</h2><h3 id="线程池代码"><a href="#线程池代码" class="headerlink" title="线程池代码"></a>线程池代码</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//thread_pool.h</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> THREAD_POOL_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> THREAD_POOL_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;mutex&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;queue&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;functional&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;future&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;utility&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Thread safe implementation of a Queue using a std::queue</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SafeQueue</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    std::queue&lt;T&gt; m_queue; <span class="comment">//利用模板函数构造队列</span></span><br><span class="line"></span><br><span class="line">    std::mutex m_mutex; <span class="comment">// 访问互斥信号量</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">SafeQueue</span>() &#123;&#125;</span><br><span class="line">    <span class="built_in">SafeQueue</span>(SafeQueue &amp;&amp;other) &#123;&#125;</span><br><span class="line">    ~<span class="built_in">SafeQueue</span>() &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">empty</span><span class="params">()</span> <span class="comment">// 返回队列是否为空</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m_mutex)</span></span>; <span class="comment">// 互斥信号变量加锁，防止m_queue被改变</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> m_queue.<span class="built_in">empty</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">size</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m_mutex)</span></span>; <span class="comment">// 互斥信号变量加锁，防止m_queue被改变</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> m_queue.<span class="built_in">size</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 队列添加元素</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">enqueue</span><span class="params">(T &amp;t)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m_mutex)</span></span>;</span><br><span class="line">        m_queue.<span class="built_in">emplace</span>(t);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 队列取出元素</span></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">dequeue</span><span class="params">(T &amp;t)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m_mutex)</span></span>; <span class="comment">// 队列加锁</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (m_queue.<span class="built_in">empty</span>())</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        t = std::<span class="built_in">move</span>(m_queue.<span class="built_in">front</span>()); <span class="comment">// 取出队首元素，返回队首元素值，并进行右值引用</span></span><br><span class="line"></span><br><span class="line">        m_queue.<span class="built_in">pop</span>(); <span class="comment">// 弹出入队的第一个元素</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ThreadPool</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ThreadWorker</span> // 内置线程工作类</span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        <span class="keyword">int</span> m_id; <span class="comment">// 工作id</span></span><br><span class="line"></span><br><span class="line">        ThreadPool *m_pool; <span class="comment">// 所属线程池</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="comment">// 构造函数</span></span><br><span class="line">        <span class="built_in">ThreadWorker</span>(ThreadPool *pool, <span class="keyword">const</span> <span class="keyword">int</span> id) : <span class="built_in">m_pool</span>(pool), <span class="built_in">m_id</span>(id)</span><br><span class="line">        &#123;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 重载()操作</span></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">()</span></span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            std::function&lt;<span class="built_in"><span class="keyword">void</span></span>()&gt; func; <span class="comment">// 定义基础函数类func</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">bool</span> dequeued; <span class="comment">// 是否正在取出队列中元素</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">while</span> (!m_pool-&gt;m_shutdown)</span><br><span class="line">            &#123;</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">// 为线程环境加锁，互访问工作线程的休眠和唤醒</span></span><br><span class="line">                    <span class="function">std::unique_lock&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(m_pool-&gt;m_conditional_mutex)</span></span>;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// 如果任务队列为空，阻塞当前线程</span></span><br><span class="line">                    <span class="keyword">if</span> (m_pool-&gt;m_queue.<span class="built_in">empty</span>())</span><br><span class="line">                    &#123;</span><br><span class="line">                        m_pool-&gt;m_conditional_lock.<span class="built_in">wait</span>(lock); <span class="comment">// 等待条件变量通知，开启线程</span></span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// 取出任务队列中的元素</span></span><br><span class="line">                    dequeued = m_pool-&gt;m_queue.<span class="built_in">dequeue</span>(func);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 如果成功取出，执行工作函数</span></span><br><span class="line">                <span class="keyword">if</span> (dequeued)</span><br><span class="line">                    <span class="built_in">func</span>();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">bool</span> m_shutdown; <span class="comment">// 线程池是否关闭</span></span><br><span class="line"></span><br><span class="line">    SafeQueue&lt;std::function&lt;<span class="built_in"><span class="keyword">void</span></span>()&gt;&gt; m_queue; <span class="comment">// 执行函数安全队列，即任务队列</span></span><br><span class="line"></span><br><span class="line">    std::vector&lt;std::thread&gt; m_threads; <span class="comment">// 工作线程队列</span></span><br><span class="line"></span><br><span class="line">    std::mutex m_conditional_mutex; <span class="comment">// 线程休眠锁互斥变量</span></span><br><span class="line"></span><br><span class="line">    std::condition_variable m_conditional_lock; <span class="comment">// 线程环境锁，可以让线程处于休眠或者唤醒状态</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 线程池构造函数</span></span><br><span class="line">    <span class="built_in">ThreadPool</span>(<span class="keyword">const</span> <span class="keyword">int</span> n_threads = <span class="number">4</span>)</span><br><span class="line">        : <span class="built_in">m_threads</span>(std::vector&lt;std::thread&gt;(n_threads)), <span class="built_in">m_shutdown</span>(<span class="literal">false</span>)</span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">ThreadPool</span>(<span class="keyword">const</span> ThreadPool &amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">ThreadPool</span>(ThreadPool &amp;&amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">    ThreadPool &amp;<span class="keyword">operator</span>=(<span class="keyword">const</span> ThreadPool &amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">    ThreadPool &amp;<span class="keyword">operator</span>=(ThreadPool &amp;&amp;) = <span class="keyword">delete</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Inits thread pool</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m_threads.<span class="built_in">size</span>(); ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            m_threads.<span class="built_in">at</span>(i) = std::<span class="built_in">thread</span>(<span class="built_in">ThreadWorker</span>(<span class="keyword">this</span>, i)); <span class="comment">// 分配工作线程</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Waits until threads finish their current task and shutdowns the pool</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">shutdown</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        m_shutdown = <span class="literal">true</span>;</span><br><span class="line">        m_conditional_lock.<span class="built_in">notify_all</span>(); <span class="comment">// 通知，唤醒所有工作线程</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m_threads.<span class="built_in">size</span>(); ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_threads.<span class="built_in">at</span>(i).<span class="built_in">joinable</span>()) <span class="comment">// 判断线程是否在等待</span></span><br><span class="line">            &#123;</span><br><span class="line">                m_threads.<span class="built_in">at</span>(i).<span class="built_in">join</span>(); <span class="comment">// 将线程加入到等待队列</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Submit a function to be executed asynchronously by the pool</span></span><br><span class="line">    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line">    <span class="function"><span class="keyword">auto</span> <span class="title">submit</span><span class="params">(F &amp;&amp;f, Args &amp;&amp;...args)</span> -&gt; std::future&lt;<span class="title">decltype</span><span class="params">(f(args...))</span>&gt;</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// Create a function with bounded parameter ready to execute</span></span><br><span class="line">        std::function&lt;<span class="keyword">decltype</span>(<span class="built_in">f</span>(args...))()&gt; func = std::<span class="built_in">bind</span>(std::forward&lt;F&gt;(f), std::forward&lt;Args&gt;(args)...); <span class="comment">// 连接函数和参数定义，特殊函数类型，避免左右值错误</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// Encapsulate it into a shared pointer in order to be able to copy construct</span></span><br><span class="line">        <span class="keyword">auto</span> task_ptr = std::make_shared&lt;std::packaged_task&lt;<span class="keyword">decltype</span>(<span class="built_in">f</span>(args...))()&gt;&gt;(func);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Warp packaged task into void function</span></span><br><span class="line">        std::function&lt;<span class="built_in"><span class="keyword">void</span></span>()&gt; warpper_func = [task_ptr]()</span><br><span class="line">        &#123;</span><br><span class="line">            (*task_ptr)();</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 队列通用安全封包函数，并压入安全队列</span></span><br><span class="line">        m_queue.<span class="built_in">enqueue</span>(warpper_func);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 唤醒一个等待中的线程</span></span><br><span class="line">        m_conditional_lock.<span class="built_in">notify_one</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 返回先前注册的任务指针</span></span><br><span class="line">        <span class="keyword">return</span> task_ptr-&gt;<span class="built_in">get_future</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="测试样例代码"><a href="#测试样例代码" class="headerlink" title="测试样例代码"></a>测试样例代码</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// test.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;random&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;thread_pool.h&quot;</span></span></span><br><span class="line">std::random_device rd; <span class="comment">// 真实随机数产生器</span></span><br><span class="line"></span><br><span class="line"><span class="function">std::mt19937 <span class="title">mt</span><span class="params">(rd())</span></span>; <span class="comment">//生成计算随机数mt</span></span><br><span class="line"></span><br><span class="line"><span class="function">std::uniform_int_distribution&lt;<span class="keyword">int</span>&gt; <span class="title">dist</span><span class="params">(<span class="number">-1000</span>, <span class="number">1000</span>)</span></span>; <span class="comment">//生成-1000到1000之间的离散均匀分布数</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> rnd = std::<span class="built_in">bind</span>(dist, mt);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置线程睡眠时间</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">simulate_hard_computation</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::this_thread::<span class="built_in">sleep_for</span>(std::chrono::<span class="built_in">milliseconds</span>(<span class="number">2000</span> + <span class="built_in">rnd</span>()));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加两个数字的简单函数并打印结果</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">multiply</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> a, <span class="keyword">const</span> <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">simulate_hard_computation</span>();</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> res = a * b;</span><br><span class="line">    std::cout &lt;&lt; a &lt;&lt; <span class="string">&quot; * &quot;</span> &lt;&lt; b &lt;&lt; <span class="string">&quot; = &quot;</span> &lt;&lt; res &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加并输出结果</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">multiply_output</span><span class="params">(<span class="keyword">int</span> &amp;out, <span class="keyword">const</span> <span class="keyword">int</span> a, <span class="keyword">const</span> <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">simulate_hard_computation</span>();</span><br><span class="line">    out = a * b;</span><br><span class="line">    std::cout &lt;&lt; a &lt;&lt; <span class="string">&quot; * &quot;</span> &lt;&lt; b &lt;&lt; <span class="string">&quot; = &quot;</span> &lt;&lt; out &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 结果返回</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">multiply_return</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> a, <span class="keyword">const</span> <span class="keyword">int</span> b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">simulate_hard_computation</span>();</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">int</span> res = a * b;</span><br><span class="line">    std::cout &lt;&lt; a &lt;&lt; <span class="string">&quot; * &quot;</span> &lt;&lt; b &lt;&lt; <span class="string">&quot; = &quot;</span> &lt;&lt; res &lt;&lt; std::endl;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">example</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 创建3个线程的线程池</span></span><br><span class="line">    <span class="function">ThreadPool <span class="title">pool</span><span class="params">(<span class="number">3</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 初始化线程池</span></span><br><span class="line">    pool.<span class="built_in">init</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 提交乘法操作，总共30个</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">3</span>; ++i)</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">1</span>; j &lt;= <span class="number">10</span>; ++j)</span><br><span class="line">        &#123;</span><br><span class="line">            pool.<span class="built_in">submit</span>(multiply, i, j);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用ref传递的输出参数提交函数</span></span><br><span class="line">    <span class="keyword">int</span> output_ref;</span><br><span class="line">    <span class="keyword">auto</span> future1 = pool.<span class="built_in">submit</span>(multiply_output, std::<span class="built_in">ref</span>(output_ref), <span class="number">5</span>, <span class="number">6</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 等待乘法输出完成</span></span><br><span class="line">    future1.<span class="built_in">get</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Last operation result is equals to &quot;</span> &lt;&lt; output_ref &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用return参数提交函数</span></span><br><span class="line">    <span class="keyword">auto</span> future2 = pool.<span class="built_in">submit</span>(multiply_return, <span class="number">5</span>, <span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 等待乘法输出完成</span></span><br><span class="line">    <span class="keyword">int</span> res = future2.<span class="built_in">get</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Last operation result is equals to &quot;</span> &lt;&lt; res &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 关闭线程池</span></span><br><span class="line">    pool.<span class="built_in">shutdown</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">example</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="0x03-参考资料"><a href="#0x03-参考资料" class="headerlink" title="0x03 参考资料"></a>0x03 参考资料</h2><ol>
+<li>《C++后端线程池》：<a target="_blank" rel="noopener" href="https://wangpengcheng.github.io/2019/05/17/cplusplus_theadpool/">https://wangpengcheng.github.io/2019/05/17/cplusplus_theadpool/</a></li>
+<li>《基于C++11的线程池（threadpool），简介且可以带任意多的参数》：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/lzpong/p/6397997.html">https://www.cnblogs.com/lzpong/p/6397997.html</a></li>
+<li>《C++并发编程（从C++11到C++17）》：<a target="_blank" rel="noopener" href="https://paul.pub/cpp-concurrency">https://paul.pub/cpp-concurrency</a></li>
+<li>《从pthread转换到std::thread》：<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002655852">https://segmentfault.com/a/1190000002655852</a></li>
+<li>《货比三家：C++中的task based并发》：<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002706259">https://segmentfault.com/a/1190000002706259</a></li>
+<li>Github-99行线程池实现：<a target="_blank" rel="noopener" href="https://github.com/progschj/ThreadPool">https://github.com/progschj/ThreadPool</a></li>
+<li>《现代C++之万能引用、完美转发、引用折叠》：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/99524127">https://zhuanlan.zhihu.com/p/99524127</a></li>
+<li>《C++11中的lambda，std::function以及std:bind》：<a target="_blank" rel="noopener" href="https://paul.pub/cpp-lambda-function-bind/">https://paul.pub/cpp-lambda-function-bind/</a></li>
+<li>《现代C++教程——告诉上手C++11/14/17/20》：<a target="_blank" rel="noopener" href="https://changkun.de/modern-cpp/">https://changkun.de/modern-cpp/</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C-11/" rel="tag"># C++11</a>
+              <a href="/tags/C-%E9%AB%98%E5%B9%B6%E5%8F%91/" rel="tag"># C++高并发</a>
+              <a href="/tags/C-%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="tag"># C++线程池</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/24/mysqlonqt3/" rel="prev" title="MySQL on Qt (3):SQL的MVC结构基础知识总结">
+      <i class="fa fa-chevron-left"></i> MySQL on Qt (3):SQL的MVC结构基础知识总结
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8EC-11%E5%AE%9E%E7%8E%B0%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-number">1.</span> <span class="nav-text">基于C++11实现线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-%E5%AF%BC%E5%85%A5"><span class="nav-number">1.1.</span> <span class="nav-text">0x00 导入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E9%80%90%E6%AD%A5%E5%AE%9E%E7%8E%B0%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-number">1.2.</span> <span class="nav-text">0x01 逐步实现线程池</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8E%9F%E7%90%86"><span class="nav-number">1.2.1.</span> <span class="nav-text">线程池原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%AF%E6%9C%A81%EF%BC%9A%E4%BB%BB%E5%8A%A1%E9%98%9F%E5%88%97%EF%BC%88Task-Queue%EF%BC%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">积木1：任务队列（Task Queue）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%AF%E6%9C%A82%EF%BC%9A%E7%BA%BF%E7%A8%8B%E6%B1%A0%EF%BC%88Thread-Pool%EF%BC%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">积木2：线程池（Thread Pool）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E6%8F%90%E4%BA%A4%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">2-1 提交函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-%E5%86%85%E7%BD%AE%E5%B7%A5%E4%BD%9C%E7%BA%BF%E7%A8%8B%E7%B1%BB"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">2-2 内置工作线程类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">线程池完整代码</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E9%A1%B9%E7%9B%AE%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">1.3.</span> <span class="nav-text">0x02 项目完整代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E4%BB%A3%E7%A0%81"><span class="nav-number">1.3.1.</span> <span class="nav-text">线程池代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E6%A0%B7%E4%BE%8B%E4%BB%A3%E7%A0%81"><span class="nav-number">1.3.2.</span> <span class="nav-text">测试样例代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">1.4.</span> <span class="nav-text">0x03 参考资料</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skykey"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Skykey</p>
+  <div class="site-description" itemprop="description">这里是Skykey的私人博客，有各种垃圾内容=。=</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skykeyjoker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zcxzxlc@163.com" title="E-Mail → mailto:zcxzxlc@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/skykeyjoker" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://t.me/Skykeyjoker" title="Telegram → https:&#x2F;&#x2F;t.me&#x2F;Skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-telegram fa-fw"></i>Telegram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skykey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div class="moon-menu">
+  <div class="moon-menu-items">
+    
+    <div id="moon-menu-item-back2bottom" class="moon-menu-item">
+      <i class='fas fa-chevron-down'></i>    </div>
+    
+    <div id="moon-menu-item-back2top" class="moon-menu-item">
+      <i class='fas fa-chevron-up'></i>    </div>
+    
+  </div>
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"></circle>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"></circle>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon"><i class='fas fa-ellipsis-v'></i></div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div><script src="/js/injector.js"></script>
+</body>
+</html>

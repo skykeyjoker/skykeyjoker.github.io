@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"skykeyjoker.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Linux下CMake使用方法在 linux 平台下使用 CMake 生成 Makefile 并编译的流程如下：  编写 CMake 配置文件 CMakeLists.txt 。 执行命令 cmake PATH 或者 ccmake PATH 生成 Makefile 1 1ccmake 和 cmake 的区别在于前者提供了一个交互式的界面。。其中， PATH 是 CMakeLists.txt 所在的目">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux下CMake使用">
+<meta property="og:url" content="https://skykeyjoker.github.io/2020/07/21/cmake/index.html">
+<meta property="og:site_name" content="Skykey&#39;s Home">
+<meta property="og:description" content="Linux下CMake使用方法在 linux 平台下使用 CMake 生成 Makefile 并编译的流程如下：  编写 CMake 配置文件 CMakeLists.txt 。 执行命令 cmake PATH 或者 ccmake PATH 生成 Makefile 1 1ccmake 和 cmake 的区别在于前者提供了一个交互式的界面。。其中， PATH 是 CMakeLists.txt 所在的目">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdn.net/20180827221422465?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3doYWh1MTk4OQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190718210743197.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190811114036435.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3doYWh1MTk4OQ==,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2020-07-21T03:44:17.000Z">
+<meta property="article:modified_time" content="2021-12-11T12:24:18.678Z">
+<meta property="article:author" content="Skykey">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="cmake">
+<meta property="article:tag" content="转载">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdn.net/20180827221422465?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3doYWh1MTk4OQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70">
+
+<link rel="canonical" href="https://skykeyjoker.github.io/2020/07/21/cmake/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
+  <title>Linux下CMake使用 | Skykey's Home</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skykey's Home</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Skykey的私人博客。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skykeyjoker.github.io/2020/07/21/cmake/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Skykey">
+      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skykey's Home">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux下CMake使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-21 11:44:17" itemprop="dateCreated datePublished" datetime="2020-07-21T11:44:17+08:00">2020-07-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-11 20:24:18" itemprop="dateModified" datetime="2021-12-11T20:24:18+08:00">2021-12-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Linux下CMake使用方法"><a href="#Linux下CMake使用方法" class="headerlink" title="Linux下CMake使用方法"></a>Linux下CMake使用方法</h1><p>在 linux 平台下使用 CMake 生成 Makefile 并编译的流程如下：</p>
+<ol>
+<li>编写 CMake 配置文件 CMakeLists.txt 。</li>
+<li>执行命令 <code>cmake PATH</code> 或者 <code>ccmake PATH</code> 生成 Makefile 1 1<code>ccmake</code> 和 <code>cmake</code> 的区别在于前者提供了一个交互式的界面。。其中， <code>PATH</code> 是 CMakeLists.txt 所在的目录。</li>
+<li>使用 <code>make</code> 命令进行编译。</li>
+</ol>
+<p>本文将从实例入手，一步步讲解 CMake 的常见用法，文中所有的实例代码可以在<a target="_blank" rel="noopener" href="https://github.com/wzpan/cmake-demo">这里</a>找到。如果你读完仍觉得意犹未尽，可以继续学习我在文章末尾提供的其他资源。</p>
+<span id="more"></span>
+
+<h2 id="1-单个源文件"><a href="#1-单个源文件" class="headerlink" title="1.单个源文件"></a>1.单个源文件</h2><p>对于简单的项目，只需要写几行代码就可以了。例如，假设现在我们的项目中只有一个源文件 <a target="_blank" rel="noopener" href="http://main.cc/">main.c</a> ，首先编写 CMakeLists.txt 文件，并保存在与 <a target="_blank" rel="noopener" href="http://main.cc/">main.c</a> 源文件同个目录下：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># CMake 最低版本号要求</span></span><br><span class="line"><span class="keyword">cmake_minimum_required</span> (VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="comment"># 项目信息</span></span><br><span class="line"><span class="keyword">project</span> (Demo1)</span><br><span class="line"><span class="comment"># 指定生成目标</span></span><br><span class="line"><span class="keyword">add_executable</span>(Demo1 main.cc)</span><br></pre></td></tr></table></figure>
+
+<p>CMakeLists.txt 的语法比较简单，由命令、注释和空格组成，其中命令是不区分大小写的。符号 <code>#</code> 后面的内容被认为是注释。命令由命令名称、小括号和参数组成，参数之间使用空格进行间隔。</p>
+<p>对于上面的 ==CMakeLists.txt== 文件，依次出现了几个命令：</p>
+<ol>
+<li><code>cmake_minimum_required</code>：指定运行此配置文件所需的 CMake 的最低版本；</li>
+<li><code>project</code>：参数值是 <code>Demo1</code>，该命令表示项目的名称是 <code>Demo1</code> 。</li>
+<li><code>add_executable</code>： 将名为 <a target="_blank" rel="noopener" href="http://main.cc/">main.c</a> 的源文件编译成一个名称为 Demo 的可执行文件。</li>
+</ol>
+<p>之后，在当前目录执行 <strong><code>cmake .</code></strong> ，得到 Makefile 后再使用 <strong><code>make</code></strong> 命令编译得到 Demo1 可执行文件。</p>
+<h2 id="2-多个源文件"><a href="#2-多个源文件" class="headerlink" title="2.多个源文件"></a>2.多个源文件</h2><h3 id="1-同一目录，多个源文件"><a href="#1-同一目录，多个源文件" class="headerlink" title="1) 同一目录，多个源文件"></a>1) 同一目录，多个源文件</h3><p>上面的例子只有单个源文件。现在假如把 <code>power</code> 函数单独写进一个名为 <code>MathFunctions.c</code> 的源文件里，使得这个工程变成如下的形式：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">./Demo2</span><br><span class="line">    |</span><br><span class="line">    +--- main.cc</span><br><span class="line">    |</span><br><span class="line">    +--- MathFunctions.cc</span><br><span class="line">    |</span><br><span class="line">    +--- MathFunctions.h</span><br></pre></td></tr></table></figure>
+
+<p>这个时候，CMakeLists.txt 可以改成如下的形式：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># CMake 最低版本号要求</span></span><br><span class="line"><span class="keyword">cmake_minimum_required</span> (VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="comment"># 项目信息</span></span><br><span class="line"><span class="keyword">project</span> (Demo2)</span><br><span class="line"><span class="comment"># 指定生成目标</span></span><br><span class="line"><span class="keyword">add_executable</span>(Demo main.cc MathFunctions.cc)</span><br></pre></td></tr></table></figure>
+
+<p>唯一的改动只是在 <strong><code>add_executable</code></strong> 命令中增加了一个 <strong><code>MathFunctions.cc</code></strong> 源文件。这样写当然没什么问题，但是如果源文件很多，把所有源文件的名字都加进去将是一件烦人的工作。更省事的方法是使用 <strong><code>aux_source_directory</code></strong> 命令，该命令会查找指定目录下的所有源文件，然后将结果存进指定变量名。其语法如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aux_source_directory(&lt;dir&gt; &lt;variable&gt;)</span><br></pre></td></tr></table></figure>
+
+<p>因此，可以修改 CMakeLists.txt 如下：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># CMake 最低版本号要求</span></span><br><span class="line"><span class="keyword">cmake_minimum_required</span> (VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="comment"># 项目信息</span></span><br><span class="line"><span class="keyword">project</span> (Demo2)</span><br><span class="line"><span class="comment"># 查找当前目录下的所有源文件</span></span><br><span class="line"><span class="comment"># 并将名称保存到 DIR_SRCS 变量</span></span><br><span class="line"><span class="keyword">aux_source_directory</span>(. DIR_SRCS)</span><br><span class="line"><span class="comment"># 指定生成目标</span></span><br><span class="line"><span class="keyword">add_executable</span>(Demo <span class="variable">$&#123;DIR_SRCS&#125;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这样，CMake 会将当前目录所有源文件的文件名赋值给变量 <code>DIR_SRCS</code> ，再指示变量 <code>DIR_SRCS</code> 中的源文件需要编译成一个名称为 Demo 的可执行文件。</p>
+<h3 id="2-多个目录，多个源文件"><a href="#2-多个目录，多个源文件" class="headerlink" title="2) 多个目录，多个源文件"></a>2) 多个目录，多个源文件</h3><p>现在进一步将 MathFunctions.h 和 <a target="_blank" rel="noopener" href="http://mathfunctions.cc/">MathFunctions.cc</a> 文件移动到 math 目录下。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">./Demo3</span><br><span class="line">    |</span><br><span class="line">    +--- main.cc</span><br><span class="line">    |</span><br><span class="line">    +--- math/</span><br><span class="line">          |</span><br><span class="line">          +--- MathFunctions.cc</span><br><span class="line">          |</span><br><span class="line">          +--- MathFunctions.h</span><br></pre></td></tr></table></figure>
+
+<p>于这种情况，需要分别在项目根目录 Demo3 和 math 目录里各编写一个 CMakeLists.txt 文件。为了方便，我们可以先将 math 目录里的文件编译成静态库再由 main 函数调用。</p>
+<p>根目录中的 CMakeLists.txt ：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># CMake 最低版本号要求</span></span><br><span class="line"><span class="keyword">cmake_minimum_required</span> (VERSION <span class="number">2.8</span>)</span><br><span class="line"><span class="comment"># 项目信息</span></span><br><span class="line"><span class="keyword">project</span> (Demo3)</span><br><span class="line"><span class="comment"># 查找当前目录下的所有源文件</span></span><br><span class="line"><span class="comment"># 并将名称保存到 DIR_SRCS 变量</span></span><br><span class="line"><span class="keyword">aux_source_directory</span>(. DIR_SRCS)</span><br><span class="line"><span class="comment"># 添加 math 子目录</span></span><br><span class="line"><span class="keyword">add_subdirectory</span>(<span class="keyword">math</span>)</span><br><span class="line"><span class="comment"># 指定生成目标 </span></span><br><span class="line"><span class="keyword">add_executable</span>(Demo main.cc)</span><br><span class="line"><span class="comment"># 添加链接库</span></span><br><span class="line"><span class="keyword">target_link_libraries</span>(Demo MathFunctions)</span><br></pre></td></tr></table></figure>
+
+<p>该文件添加了下面的内容: 第3行，使用命令 <strong><code>add_subdirectory</code></strong> 指明本项目包含一个子目录 math，这样 <strong>math 目录下的 CMakeLists.txt 文件和源代码也会被处理</strong> 。第6行，使用命令 <strong><code>target_link_libraries</code></strong> 指明可执行文件 main 需要连接一个名为 MathFunctions 的链接库 。</p>
+<p>==子目录中的 CMakeLists.txt==：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查找当前目录下的所有源文件</span></span><br><span class="line"><span class="comment"># 并将名称保存到 DIR_LIB_SRCS 变量</span></span><br><span class="line"><span class="keyword">aux_source_directory</span>(. DIR_LIB_SRCS)</span><br><span class="line"><span class="comment"># 生成链接库</span></span><br><span class="line"><span class="keyword">add_library</span> (MathFunctions <span class="variable">$&#123;DIR_LIB_SRCS&#125;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>在该文件中使用命令 <code>add_library</code> 将 src 目录中的源文件编译为静态链接库。</p>
+<h2 id="3-正规一点的组织结构"><a href="#3-正规一点的组织结构" class="headerlink" title="3.正规一点的组织结构"></a>3.正规一点的组织结构</h2><p>正规一点来说，一般会把源文件放到<strong>src</strong>目录下，把头文件放入到<strong>include</strong>文件下，生成的对象文件放入到<strong>build</strong>目录下，最终输出的elf文件会放到<strong>bin</strong>目录下，这样整个结构更加清晰。让我们把前面的文件再次重新组织下，</p>
+<p>我们在最外层目录下新建一个CMakeLists.txt，内容如下，</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span> (VERSION <span class="number">2.8</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span> (demo)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_subdirectory</span> (src)</span><br></pre></td></tr></table></figure>
+
+<p>这里出现一个新的命令<code>add_subdirectory()</code>，这个命令==可以向当前工程添加存放源文件的子目录，并可以指定中间二进制和目标二进制的存放位置==，具体用法可以百度。<br>这里指定src目录下存放了源文件，当执行cmake时，就会进入src目录下去找src目录下的CMakeLists.txt，所以在<strong>src目录</strong>下也建立一个<strong>CMakeLists.txt</strong>，内容如下，</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">aux_source_directory</span> (. SRC_LIST)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include_directories</span> (../<span class="keyword">include</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span> (main <span class="variable">$&#123;SRC_LIST&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> (EXECUTABLE_OUTPUT_PATH <span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/bin)</span><br></pre></td></tr></table></figure>
+
+
+<p>这里又出现一个新的命令<code>set</code>，是用于定义变量的，<code>EXECUTABLE_OUT_PATH</code>和<code>PROJECT_SOURCE_DIR</code>是CMake自带的预定义变量，其意义如下，</p>
+<blockquote>
+<p><strong>EXECUTABLE_OUTPUT_PATH</strong> ：目标二进制可执行文件的存放位置<br><strong>PROJECT_SOURCE_DIR</strong>：工程的根目录</p>
+</blockquote>
+<p>所以，这里set的意思是把存放elf文件的位置设置为工程根目录下的bin目录。</p>
+<p>添加好以上这2个CMakeLists.txt后，整体文件结构如下，</p>
+<p>下面来运行cmake，不过这次先让我们切到build目录下，然后输入以下命令，<br><code>cmake ..</code><br>Makefile会在build目录下生成，然后在build目录下运行make，</p>
+<p>运行ok，我们再切到bin目录下，发现main已经生成，并运行测试，</p>
+<p>测试OK！</p>
+<blockquote>
+<p>这里解释一下为什么在build目录下运行cmake？从前面几个case中可以看到，如果不这样做，cmake运行时生成的附带文件就会跟源码文件混在一起，这样会对程序的目录结构造成污染，而在build目录下运行cmake，生成的附带文件就只会待在build目录下，如果我们不想要这些文件了就可以直接清空build目录，非常方便。</p>
+</blockquote>
+<p>另外一种写法：<br>前面的工程使用了2个CMakeLists.txt，这种写法是为了处理需要生成多个elf文件的情况，最外层的CMakeLists.txt用于掌控全局，使用<code>add_subdirectory</code>来添加要生成elf文件的源码目录。</p>
+<p>如果只生成一个elf文件，那么上面的例子可以只使用一个CMakeLists.txt，可以把最外层的CMakeLists.txt内容改成如下，</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span> (VERSION <span class="number">2.8</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span> (demo)</span><br><span class="line"></span><br><span class="line"><span class="keyword">aux_source_directory</span> (src SRC_LIST)</span><br><span class="line"></span><br><span class="line"><span class="keyword">include_directories</span> (<span class="keyword">include</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span> (main <span class="variable">$&#123;SRC_LIST&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> (EXECUTABLE_OUTPUT_PATH <span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/bin)</span><br></pre></td></tr></table></figure>
+
+<p>==同时，还要把src目录下的CMakeLists.txt删除。==</p>
+<h2 id="4-动态库和静态库的编译控制"><a href="#4-动态库和静态库的编译控制" class="headerlink" title="4.动态库和静态库的编译控制"></a>4.动态库和静态库的编译控制</h2><p>有时我们只需要编译出动态库，静态库，然后等着让其它程序去使用。让我们看下这种情况该如何使用cmake。首先按照如下重新组织文件，只留下testFunc.h和TestFunc.c，</p>
+<p>我们会在build目录下运行cmake，并把生成的库文件存放到lib目录下。<br><strong>最外层</strong>的CMakeLists.txt内容如下，</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span> (VERSION <span class="number">2.8</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span> (demo)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_subdirectory</span> (lib_testFunc)</span><br></pre></td></tr></table></figure>
+
+<p><strong>lib_testFunc</strong>目录下的CMakeLists.txt如下，</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">aux_source_directory</span> (. SRC_LIST)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_library</span> (testFunc_shared SHARED <span class="variable">$&#123;SRC_LIST&#125;</span>)</span><br><span class="line"><span class="keyword">add_library</span> (testFunc_static STATIC <span class="variable">$&#123;SRC_LIST&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set_target_properties</span> (testFunc_shared PROPERTIES OUTPUT_NAME <span class="string">&quot;testFunc&quot;</span>)</span><br><span class="line"><span class="keyword">set_target_properties</span> (testFunc_static PROPERTIES OUTPUT_NAME <span class="string">&quot;testFunc&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> (LIBRARY_OUTPUT_PATH <span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/lib)</span><br></pre></td></tr></table></figure>
+
+<p>这里又出现了新的命令和预定义变量，</p>
+<blockquote>
+<p><strong>add_library</strong>: 生成动态库或静态库(第1个参数指定库的名字；第2个参数决定是动态还是静态，如果没有就默认静态；第3个参数指定生成库的源文件)<br><strong>set_target_properties</strong>: 设置输出的名称，还有其它功能，如设置库的版本号等等<br>LIBRARY_OUTPUT_PATH: 库文件的默认输出路径，这里设置为工程目录下的lib目录<br>好了，让我们进入build目录下运行cmake ..，成功后再运行make，</p>
+</blockquote>
+<p>cd到lib目录下进行查看，发现已经成功生成了动态库和静态库，</p>
+<blockquote>
+<p>ps：可以看出前面使用<code>set_target_properties</code>重新定义了库的输出名字，如果不用<code>set_target_properties</code>也可以，那么库的名字就是<strong>add_library</strong>里定义的名字，只是我们连续2次使用add_library指定库名字时，这个名字不能相同，而<code>set_target_properties</code>可以把名字设置为相同，只是最终生成的库文件后缀不同，这样相对来说会好看点。</p>
+</blockquote>
+<h2 id="5-对库进行链接"><a href="#5-对库进行链接" class="headerlink" title="5.对库进行链接"></a>5.对库进行链接</h2><p>既然我们已经生成了库，那么就进行链接测试下。把build里的文件都删除，然后在在工程目录下新建src目录和bin目录，在src目录下添加一个main.c和一个CMakeLists.txt，整体结构如下，</p>
+<p><img src="https://img-blog.csdn.net/20180827221422465?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3doYWh1MTk4OQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70" alt="这里写图片描述"></p>
+<p><strong>main.c</strong>内容如下，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;testFunc.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    func(<span class="number">100</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>修改工程目录下的CMakeLists.txt</strong>，如下，</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span> (VERSION <span class="number">2.8</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span> (demo)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_subdirectory</span> (lib_testFunc)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_subdirectory</span> (src)</span><br></pre></td></tr></table></figure>
+
+<p>只是使用<code>add_subdirectory</code>把<strong>src</strong>目录添加进来。<br><strong>src</strong>目录下的CMakeLists.txt如下，</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">aux_source_directory</span> (. SRC_LIST)</span><br><span class="line"><span class="comment"># find testFunc.h</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include_directories</span> (../lib_testFunc)</span><br><span class="line"></span><br><span class="line"><span class="keyword">link_directories</span> (<span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/lib)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span> (main <span class="variable">$&#123;SRC_LIST&#125;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">target_link_libraries</span> (main testFunc)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> (EXECUTABLE_OUTPUT_PATH <span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/bin)</span><br></pre></td></tr></table></figure>
+
+
+<p>这里出现2个新的命令，</p>
+<blockquote>
+<p><code>link_directories</code>: 添加非标准的共享库搜索路径<br><code>target_link_libraries</code>: 把目标文件与库文件进行链接</p>
+</blockquote>
+<p>make成功，进入到bin目录下查看，发现main已经生成，并运行，</p>
+<p>运行成功！</p>
+<blockquote>
+<p>ps：在lib目录下有testFunc的静态库和动态库，<code>target_link_libraries (main testFunc)</code>默认是使用动态库，如果lib目录下只有静态库，那么这种写法就会去链接静态库。也可以直接指定使用动态库还是静态库，写法是：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">target_link_libraries</span> (main libtestFunc.so)</span><br><span class="line"><span class="comment">#或</span></span><br><span class="line"><span class="keyword">target_link_libraries</span> (main libtestFunc.a)</span><br></pre></td></tr></table></figure>
+</blockquote>
+<blockquote>
+<p>ps： 查看elf文件使用了哪些库，可以使用<code>readelf -d ./xx</code>来查看</p>
+</blockquote>
+<h2 id="6-添加编译选项"><a href="#6-添加编译选项" class="headerlink" title="6.添加编译选项"></a>6.添加编译选项</h2><p>有时编译程序时想添加一些编译选项，如<code>-Wall</code>，<code>-std=c++11</code>等，就可以使用<code>add_compile_options</code>来进行操作。<br>这里以一个简单程序来做演示，main.cpp如下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> data = <span class="number">100</span>;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;data: &quot;</span> &lt;&lt; data &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>CMakeLists.txt内容如下，</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span> (VERSION <span class="number">2.8</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span> (demo)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> (EXECUTABLE_OUTPUT_PATH <span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/bin)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_compile_options</span>(-std=c++<span class="number">11</span> -Wall) </span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span>(main main.cpp)</span><br></pre></td></tr></table></figure>
+
+
+<p>整体目录结构如下，</p>
+<p><img src="https://img-blog.csdnimg.cn/20190718210743197.png" alt="在这里插入图片描述"></p>
+<p>然后cd到build目录下，执行<code>cmake .. &amp;&amp; make</code>命令，就可以在bin目录下得到main的elf文件</p>
+<h2 id="7-添加控制选项"><a href="#7-添加控制选项" class="headerlink" title="7. 添加控制选项"></a>7. 添加控制选项</h2><p>有时希望在<strong>编译代码时只编译一些指定的源码</strong>，例如本来要编译生成多个bin或库文件，现在<strong>只想生成某些指定的bin或库文件</strong>，这时可以使用cmake的<strong>option</strong>命令。</p>
+<p>这里仍然使用例子来解释，假设我们现在的工程会生成2个bin文件，main1和main2，现在整体结构体如下，</p>
+<p><img src="https://img-blog.csdnimg.cn/20190811114036435.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3doYWh1MTk4OQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>外层的CMakeLists.txt内容如下，</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">2.8</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span>(demo)</span><br><span class="line"></span><br><span class="line"><span class="keyword">option</span>(MYDEBUG <span class="string">&quot;enable debug compilation&quot;</span> <span class="keyword">OFF</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span> (EXECUTABLE_OUTPUT_PATH <span class="variable">$&#123;PROJECT_SOURCE_DIR&#125;</span>/bin)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_subdirectory</span>(src)</span><br></pre></td></tr></table></figure>
+
+
+<p>这里使用了<code>option</code>命令，其第一个参数是这个option的名字，第二个参数是字符串，用来描述这个option是来干嘛的，第三个是option的值，ON或OFF，也可以不写，不写就是默认OFF。</p>
+<p>然后编写src目录下的CMakeLists.txt，如下</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span> (VERSION <span class="number">2.8</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span>(main1 main1.c)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (MYDEBUG)</span><br><span class="line">    <span class="keyword">add_executable</span>(main2 main2.c)</span><br><span class="line"><span class="keyword">else</span>()</span><br><span class="line">    <span class="keyword">message</span>(STATUS <span class="string">&quot;Currently is not in debug mode&quot;</span>)    </span><br><span class="line"><span class="keyword">endif</span>()</span><br></pre></td></tr></table></figure>
+
+<p>注意，这里使用了<code>if-else</code>来根据option来决定是否编译main2.c<br>其中main1.c和main2.c的内容如下，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main1.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello, this main1\n&quot;</span>);</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main2.c</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello, this main2\n&quot;</span>);</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>然后cd到build目录下输入<code>cmake .. &amp;&amp; make</code>就可以只编译出main1，如果想编译出main2，就把<code>MYDEBUG</code>设置为<strong>ON</strong>，再次输入<code>cmake .. &amp;&amp; make</code>重新编译。</p>
+<p>每次想改变MYDEBUG时都需要去修改CMakeLists.txt，有点麻烦，其实可以通过cmake的命令行去操作，例如我们想把MYDEBUG设置为OFF，先cd到build目录，然后输入<code>cmake .. -DMYDEBUG=ON</code>，这样就可以编译出main1和main2 （在bin目录下）</p>
+<blockquote>
+<p>来源：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_28114615/article/details/90406140">https://blog.csdn.net/qq_28114615/article/details/90406140</a></p>
+</blockquote>
+<p><em>2020.3.29 19:01</em></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/cmake/" rel="tag"># cmake</a>
+              <a href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag"># 转载</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/21/%E4%BA%8C%E5%85%83%E8%BF%90%E7%AE%97%E7%AC%A6%E9%87%8D%E8%BD%BD/" rel="prev" title="二元运算符重载">
+      <i class="fa fa-chevron-left"></i> 二元运算符重载
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/21/about/" rel="next" title="About Me">
+      About Me <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E4%B8%8BCMake%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">Linux下CMake使用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%8D%95%E4%B8%AA%E6%BA%90%E6%96%87%E4%BB%B6"><span class="nav-number">1.1.</span> <span class="nav-text">1.单个源文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%A4%9A%E4%B8%AA%E6%BA%90%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">2.多个源文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%90%8C%E4%B8%80%E7%9B%AE%E5%BD%95%EF%BC%8C%E5%A4%9A%E4%B8%AA%E6%BA%90%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.1.</span> <span class="nav-text">1) 同一目录，多个源文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%A4%9A%E4%B8%AA%E7%9B%AE%E5%BD%95%EF%BC%8C%E5%A4%9A%E4%B8%AA%E6%BA%90%E6%96%87%E4%BB%B6"><span class="nav-number">1.2.2.</span> <span class="nav-text">2) 多个目录，多个源文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%AD%A3%E8%A7%84%E4%B8%80%E7%82%B9%E7%9A%84%E7%BB%84%E7%BB%87%E7%BB%93%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text">3.正规一点的组织结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%8A%A8%E6%80%81%E5%BA%93%E5%92%8C%E9%9D%99%E6%80%81%E5%BA%93%E7%9A%84%E7%BC%96%E8%AF%91%E6%8E%A7%E5%88%B6"><span class="nav-number">1.4.</span> <span class="nav-text">4.动态库和静态库的编译控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%AF%B9%E5%BA%93%E8%BF%9B%E8%A1%8C%E9%93%BE%E6%8E%A5"><span class="nav-number">1.5.</span> <span class="nav-text">5.对库进行链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%B7%BB%E5%8A%A0%E7%BC%96%E8%AF%91%E9%80%89%E9%A1%B9"><span class="nav-number">1.6.</span> <span class="nav-text">6.添加编译选项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E6%B7%BB%E5%8A%A0%E6%8E%A7%E5%88%B6%E9%80%89%E9%A1%B9"><span class="nav-number">1.7.</span> <span class="nav-text">7. 添加控制选项</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skykey"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Skykey</p>
+  <div class="site-description" itemprop="description">这里是Skykey的私人博客，有各种垃圾内容=。=</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skykeyjoker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zcxzxlc@163.com" title="E-Mail → mailto:zcxzxlc@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/skykeyjoker" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://t.me/Skykeyjoker" title="Telegram → https:&#x2F;&#x2F;t.me&#x2F;Skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-telegram fa-fw"></i>Telegram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skykey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div class="moon-menu">
+  <div class="moon-menu-items">
+    
+    <div id="moon-menu-item-back2bottom" class="moon-menu-item">
+      <i class='fas fa-chevron-down'></i>    </div>
+    
+    <div id="moon-menu-item-back2top" class="moon-menu-item">
+      <i class='fas fa-chevron-up'></i>    </div>
+    
+  </div>
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"></circle>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"></circle>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon"><i class='fas fa-ellipsis-v'></i></div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div><script src="/js/injector.js"></script>
+</body>
+</html>

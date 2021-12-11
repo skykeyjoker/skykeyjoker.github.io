@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"skykeyjoker.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Qt Model&#x2F;View（模型&#x2F;视图）结构（无师自通） 本文转载自： http:&#x2F;&#x2F;c.biancheng.net&#x2F;view&#x2F;1864.html  Model&#x2F;View（模型&#x2F;视图）结构是 Qt 中用界面组件显示与编辑数据的一种结构，视图（View）是显示和编辑数据的界面组件，模型（Model）是视图与原始数据之间的接口。 GUI 应用程序的一个很重要的功能是由用户在界面上编辑和修改数据，典型的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Qt Model&#x2F;View（模型&#x2F;视图）结构（无师自通）">
+<meta property="og:url" content="https://skykeyjoker.github.io/2020/07/23/model-view/index.html">
+<meta property="og:site_name" content="Skykey&#39;s Home">
+<meta property="og:description" content="Qt Model&#x2F;View（模型&#x2F;视图）结构（无师自通） 本文转载自： http:&#x2F;&#x2F;c.biancheng.net&#x2F;view&#x2F;1864.html  Model&#x2F;View（模型&#x2F;视图）结构是 Qt 中用界面组件显示与编辑数据的一种结构，视图（View）是显示和编辑数据的界面组件，模型（Model）是视图与原始数据之间的接口。 GUI 应用程序的一个很重要的功能是由用户在界面上编辑和修改数据，典型的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://c.biancheng.net/uploads/allimg/190103/2-1Z10316062G22.gif">
+<meta property="og:image" content="http://c.biancheng.net/uploads/allimg/190103/2-1Z103160KBJ.gif">
+<meta property="og:image" content="http://c.biancheng.net/uploads/allimg/190103/2-1Z103160934132.gif">
+<meta property="og:image" content="http://c.biancheng.net/uploads/allimg/190103/2-1Z1031610455L.gif">
+<meta property="og:image" content="http://c.biancheng.net/uploads/allimg/190103/2-1Z103161340927.gif">
+<meta property="article:published_time" content="2020-07-23T08:26:13.000Z">
+<meta property="article:modified_time" content="2021-12-11T12:25:14.494Z">
+<meta property="article:author" content="Skykey">
+<meta property="article:tag" content="转载">
+<meta property="article:tag" content="Qt">
+<meta property="article:tag" content="Model&#x2F;View">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://c.biancheng.net/uploads/allimg/190103/2-1Z10316062G22.gif">
+
+<link rel="canonical" href="https://skykeyjoker.github.io/2020/07/23/model-view/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
+  <title>Qt Model/View（模型/视图）结构（无师自通） | Skykey's Home</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skykey's Home</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Skykey的私人博客。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skykeyjoker.github.io/2020/07/23/model-view/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Skykey">
+      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skykey's Home">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Qt Model/View（模型/视图）结构（无师自通）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-23 16:26:13" itemprop="dateCreated datePublished" datetime="2020-07-23T16:26:13+08:00">2020-07-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-11 20:25:14" itemprop="dateModified" datetime="2021-12-11T20:25:14+08:00">2021-12-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Qt/" itemprop="url" rel="index"><span itemprop="name">Qt</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Qt-Model-View（模型-视图）结构（无师自通）"><a href="#Qt-Model-View（模型-视图）结构（无师自通）" class="headerlink" title="Qt Model/View（模型/视图）结构（无师自通）"></a>Qt Model/View（模型/视图）结构（无师自通）</h1><blockquote>
+<p>本文转载自：</p>
+<p><a target="_blank" rel="noopener" href="http://c.biancheng.net/view/1864.html">http://c.biancheng.net/view/1864.html</a></p>
+</blockquote>
+<p>Model/View（模型/视图）结构是 <a target="_blank" rel="noopener" href="http://c.biancheng.net/qt/">Qt</a> 中用界面组件显示与编辑数据的一种结构，视图（View）是显示和编辑数据的界面组件，模型（Model）是视图与原始数据之间的接口。</p>
+<p>GUI 应用程序的一个很重要的功能是由用户在界面上编辑和修改数据，典型的如数据库应用程序。数据库应用程序中，用户在界面上执行各种操作，实际上是修改了界面组件所关联的数据库内的数据。</p>
+<p>将界面组件与所编辑的数据分离开来，又通过数据源的方式连接起来，是处理界面与数据的一种较好的方式。Qt 使用 Model/View 结构来处理这种关系，Model/View 的基本结构如图 1 所示。</p>
+<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z10316062G22.gif" alt="Model/View基本结构"></p>
+<span id="more"></span>
+
+<p>其中各部分的功能如下：</p>
+<ul>
+<li>数据（Data）是实际的数据，如数据库的一个数据表或SQL查询结果，内存中的一个 StringList，或磁盘文件结构等。</li>
+<li>视图或视图组件（View）是屏幕上的界面组件，视图从数据模型获得每个数据项的模型索引（model index），通过模型索引获取数据，然后为界面组件提供显示数据。Qt 提供一些现成的数据视图组件，如 QListView、QTreeView 和 QTableView 等。</li>
+<li>模型或数据模型（Model）与实际数据通信，并为视图组件提供数据接口。它从原始数据提取需要的内容，用于视图组件进行显示和编辑。Qt 中有一些预定义的数据模型，如 QStringListModel 可作为 StringList 的数据模型，QSqlTableModel 可以作为数据库中一个数据表的数据模型。</li>
+</ul>
+<p>由于数据源与显示界面通过 Model/View 结构分离开来，因此可以将一个数据模型在不同的视图中显示，也可以在不修改数据模型的情况下，设计特殊的视图组件。</p>
+<p>在 Model/View 结构中，还提供了代理（Delegate）功能，代理功能可以让用户定制数据的界面显示和编辑方式。在标准的视图组件中，代理功能显示一个数据，当数据被编辑时，代理通过模型索引与数据模型通信，并为编辑数据提供一个编辑器，一般是一个 QLineEdit 组件。</p>
+<p>模型、视图和代理之间使用信号和槽通信。当源数据发生变化时，数据模型发射信号通知视图组件；当用户在界面上操作数据时，视图组件发射信号表示这些操作信息；当编辑数据时，代理发射信号告知数据模型和视图组件编辑器的状态。</p>
+<h2 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h2><p>所有的基于项数据的数据模型（Model）都是基于 QAbstractltemModel 类的，这个类定义了视图组件和代理存取数据的接口。数据无需存储在数据模型里，数据可以是其他类、文件、数据库或任何数据源。</p>
+<p>Qt 中与数据模型相关的几个主要的类的层次结构如图 2 所示：</p>
+<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z103160KBJ.gif" alt="Qt中模型类的层次结构"></p>
+<p>图 2 中的抽象类是不能直接使用的，需要由子类继承来实现一些纯虚函数。Qt 提供了一些模型类用于项数据处理，常见的几个见表 3。</p>
+<table>
+<thead>
+<tr>
+<th>Model 类</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>QStringListModel</td>
+<td>用于处理字符串列表数据的数据模型类</td>
+</tr>
+<tr>
+<td>QStandardltemModel</td>
+<td>标准的基于项数据的数据模型类，每个项数据可以是任何数据类型</td>
+</tr>
+<tr>
+<td>QFileSy stemModel</td>
+<td>计算机上文件系统的数据模型类</td>
+</tr>
+<tr>
+<td>QSortFilterProxyModel</td>
+<td>与其他数据模型结合，提供排序和过滤功能的数据模型类</td>
+</tr>
+<tr>
+<td>QSqlQueryModel</td>
+<td>用于数据库SQL查询结果的数据模型类</td>
+</tr>
+<tr>
+<td>QSqlTableModel</td>
+<td>用于数据库的一个数据表的数据模型类</td>
+</tr>
+<tr>
+<td>QSqlRelationalTableModel</td>
+<td>用于关系型数据表的数据模型类</td>
+</tr>
+</tbody></table>
+<p>数据库相关的 3 个模型类将在介绍数据库编程时专门说明。如果这些现有的模型类无法满足需求，用户可以从 QAbstractltemModel、QAbstractListModel 或 QAbstractTableModel 继承，生成自己定制的数据模型类。</p>
+<h2 id="视图组件"><a href="#视图组件" class="headerlink" title="视图组件"></a>视图组件</h2><p>视图组件（View）就是显示数据模型的数据的界面组件，Qt 提供的视图组件如下：</p>
+<ul>
+<li>QListView：用于显示单列的列表数据，适用于一维数据的操作。</li>
+<li>QTreeView：用于显示树状结构数据，适用于树状结构数据的操作。</li>
+<li>QTableView：用于显示表格状数据，适用于二维表格型数据的操作。</li>
+<li>QColumnView：用多个QListView显示树状层次结构，树状结构的一层用一个QListView显示。</li>
+<li>QHeaderView：提供行表头或列表头的视图组件，如QTableView的行表头和列表头。</li>
+</ul>
+<p>视图组件在显示数据时，只需调用视图类的 setModel() 函数，为视图组件设置一个数据模型就可以实现视图组件与数据模型之间的关联，在视图组件上的修改将自动保存到关联的数据模型里，一个数据模型可以同时在多个视图组件里显示数据。</p>
+<p>前面介绍了 QListWidget、QTreeWidget 和 QtableWidget 3个可用于数据编辑的组件。这 3 个类称为便利类（convenience classes），它们分别是 3 个视图类的子类，其层次关系如图 4 所示。</p>
+<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z103160934132.gif" alt="视图相关类的层次结构图"></p>
+<p>用于 Model/View 结构的几个视图类直接从 QAbstract ItemView 继承而来，而便利类则从相应的视图类继承而来。</p>
+<p>视图组件类的数据采用单独的数据模型，视图组件不存储数据。便利类则为组件的每个节点或单元格创建一个项（item），用项存储数据、格式设置等。所以，便利类没有数据模型，它实际上是用项的方式集成了数据模型的功能，这样就将界面与数据绑定了。</p>
+<p>所以，便利类缺乏对大型数据源进行灵活处理的能力，适用于小型数据的显示和编辑。</p>
+<h2 id="代理（Delegate）"><a href="#代理（Delegate）" class="headerlink" title="代理（Delegate）"></a>代理（Delegate）</h2><p>代理就是在视图组件上为编辑数据提供编辑器，如在表格组件中编辑一个单元格的数据时，缺省是使用一个 QLineEdit 编辑框。代理负责从数据模型获取相应的数据，然后显示在编辑器里，修改数据后，又将其保存到数据模型中。</p>
+<p>QAbstractltemDelegate 是所有代理类的基类，作为抽象类，它不能直接使用。它的一个子类 QStyledltemDelegate，是 Qt 的视图组件缺省使用的代理类。</p>
+<p>对于一些特殊的数据编辑需求，例如只允许输入整型数，使用一个 QSpinBox 作为代理组件更恰当，从列表中选择数据时使用一个 QComboBox 作为代理组件更好。这时，就可以从 QStyledltemDelegate 继承创建自定义代理类。</p>
+<h2 id="Model-View结构的一些概念"><a href="#Model-View结构的一些概念" class="headerlink" title="Model/View结构的一些概念"></a>Model/View结构的一些概念</h2><p>在 Model/View 结构中，数据模型为视图组件和代理提供存取数据的标准接口。在 Qt 中，所有的数据模型类都从 QAbstractltemModel 继承而来，不管底层的<a target="_blank" rel="noopener" href="http://c.biancheng.net/data_structure/">数据结构</a>是如何组织数据的，QAbstractltemModel 的子类都以表格的层次结构表示数据，视图组件通过这种规则来存取模型中的数据，但是表现给用户的形式不一样。</p>
+<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z1031610455L.gif" alt="数据模型的几种表现形式"></p>
+<p>图 5 是数据模型的 3 种常见表现形式。不管数据模型的表现形式是怎么样的，数据模型中存储数据的基本单元都是项（item），每个项有一个行号、一个列号，还有一个父项。在列表和表格模式下，所有的项都有一个相同的顶层项；在树状结构中，行号、列号、父项稍微复杂一点，但是由这 3 个参数完全可以定义一个项的位置，从而存取项的数据。</p>
+<h4 id="模型索引（model-index）"><a href="#模型索引（model-index）" class="headerlink" title="模型索引（model index）"></a>模型索引（model index）</h4><p>为了保证数据的表示与数据存取方式隔离，数据模型中引入了模型索引的概念。通过数据模型存取的每个数据都有一个模型索引，视图组件和代理都通过模型索引来获取数据。</p>
+<p>QModelIndex 表示模型索引的类。模型索引提供数据存取的一个临时指针，用于通过数据模型提取或修改数据。因为模型内部组织数据的结构随时可能改变，所以模型索引是临时的。如果需要使用持久性的模型索引，则要使用 QPersistentModelIndex 类。</p>
+<h4 id="行号和列号"><a href="#行号和列号" class="headerlink" title="行号和列号"></a>行号和列号</h4><p>数据模型的基本形式是用行和列定义的表格数据，但这并不意味着底层的数据是用二维数组存储的，使用行和列只是为了组件之间交互方便的一种规定。通过模型索引的行号和列号就可以存取数据。</p>
+<p>要获得一个模型索引，必须提供 3 个参数：行号、列号、父项的模型索引。例如，对于如图 5 中的表格数据模型中的 3 个数据项 A、B、C，获取其模型索引的代码是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">QModelIndex indexA = model-&gt;<span class="built_in">index</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="built_in">QModelIndex</span>());</span><br><span class="line">QModelIndex indexB = model-&gt;<span class="built_in">index</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="built_in">QModelIndex</span>());</span><br><span class="line">QModelIndex indexC = model-&gt;<span class="built_in">index</span>(<span class="number">2</span>, <span class="number">1</span>, <span class="built_in">QModelIndex</span>());</span><br></pre></td></tr></table></figure>
+
+<p>在创建模型索引的函数中需要传递行号、列号和父项的模型索引。对于列表和表格模式的数据模型，顶层节点总是用 QModelIndex() 表示。</p>
+<h4 id="父项"><a href="#父项" class="headerlink" title="父项"></a>父项</h4><p>当数据模型是列表或表格时，使用行号、列号存储数据比较直观，所有数据项的父项就是顶层项；当数据模型是树状结构时，情况比较复杂（树状结构中，项一般习惯于称为节点），一个节点可以有父节点，也可以是其他节点的父节点，在构造数据项的模型索引时，必须指定正确的行号、列号和父节点。</p>
+<p>对于图 5 中的树状数据模型，节点 A 和节点 C 的父节点是顶层节点，获取模型索引的代码是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">QModelIndex indexA = model-&gt;<span class="built_in">index</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="built_in">QModelIndex</span>());</span><br><span class="line">QModelIndex indexC = model-&gt;<span class="built_in">index</span>(<span class="number">2</span>, <span class="number">1</span>, <span class="built_in">QModelIndex</span>());</span><br></pre></td></tr></table></figure>
+
+<p>但是，节点 B 的父节点是节点 A，节点 B 的模型索引由下面的代码生成：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">QModelIndex indexB = model-&gt;<span class="built_in">index</span>(<span class="number">1</span>, <span class="number">0</span>, indexA);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="项的角色"><a href="#项的角色" class="headerlink" title="项的角色"></a>项的角色</h4><p>在为数据模型的一个项设置数据时，可以赋予其不同项的角色的数据。例如，数据模型类 QStandardItemModel 的项数据类是 QStandardItem，其设置数据的函数是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QStandardItem::setData</span><span class="params">(<span class="keyword">const</span> QVariant &amp;value, <span class="keyword">int</span> role= Qt::UserRole + <span class="number">1</span>)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>其中，value 是需要设置的数据，role 是设置数据的角色。一个项可以有不同角色的数据，用于不同的场合。</p>
+<p>role 是 <code>Qt::ItemDataRole</code> 枚举类型，有多种取值，如 <code>Qt::DisplayRole</code> 角色是在视图组件中显示的字符串，<code>Qt::ToolTipRole</code> 是鼠标提示消息，<code>Qt::UserRole</code> 可以自定义数据。项的标准角色是 <code>Qt::DisplayRole</code>。</p>
+<p>在获取一个项的数据时也需要指定角色，以获取不同角色的数据：</p>
+<p><code>QVariant QStandardItem::data(int role = Qt::UserRole + 1) const</code></p>
+<p>为一个项的不同角色定义数据，可以告知视图组件和代理组件如何显示数据。例如，在图 6 中，项的 DisplayRole 数据是显示的字符串，DecorationRole 是用于装饰显示的属性，ToolTipRole 定义了鼠标提示信息。不同的视图组件对各种角色数据的解释和显示可能不一样，也可能忽略某些角色的数据。</p>
+<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z103161340927.gif" alt="不同角色数据的表现形式"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%BD%AC%E8%BD%BD/" rel="tag"># 转载</a>
+              <a href="/tags/Qt/" rel="tag"># Qt</a>
+              <a href="/tags/Model-View/" rel="tag"># Model/View</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/23/mysqlonqt2/" rel="prev" title="MySQL on Qt (2):SQL的连接、断开与增删查改基本操作">
+      <i class="fa fa-chevron-left"></i> MySQL on Qt (2):SQL的连接、断开与增删查改基本操作
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/24/mysqlonqt3/" rel="next" title="MySQL on Qt (3):SQL的MVC结构基础知识总结">
+      MySQL on Qt (3):SQL的MVC结构基础知识总结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Qt-Model-View%EF%BC%88%E6%A8%A1%E5%9E%8B-%E8%A7%86%E5%9B%BE%EF%BC%89%E7%BB%93%E6%9E%84%EF%BC%88%E6%97%A0%E5%B8%88%E8%87%AA%E9%80%9A%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">Qt Model&#x2F;View（模型&#x2F;视图）结构（无师自通）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">数据模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%86%E5%9B%BE%E7%BB%84%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">视图组件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%90%86%EF%BC%88Delegate%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">代理（Delegate）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Model-View%E7%BB%93%E6%9E%84%E7%9A%84%E4%B8%80%E4%BA%9B%E6%A6%82%E5%BF%B5"><span class="nav-number">1.4.</span> <span class="nav-text">Model&#x2F;View结构的一些概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E7%B4%A2%E5%BC%95%EF%BC%88model-index%EF%BC%89"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">模型索引（model index）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%8C%E5%8F%B7%E5%92%8C%E5%88%97%E5%8F%B7"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">行号和列号</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%88%B6%E9%A1%B9"><span class="nav-number">1.4.0.3.</span> <span class="nav-text">父项</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A1%B9%E7%9A%84%E8%A7%92%E8%89%B2"><span class="nav-number">1.4.0.4.</span> <span class="nav-text">项的角色</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skykey"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Skykey</p>
+  <div class="site-description" itemprop="description">这里是Skykey的私人博客，有各种垃圾内容=。=</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skykeyjoker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zcxzxlc@163.com" title="E-Mail → mailto:zcxzxlc@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/skykeyjoker" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://t.me/Skykeyjoker" title="Telegram → https:&#x2F;&#x2F;t.me&#x2F;Skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-telegram fa-fw"></i>Telegram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skykey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div class="moon-menu">
+  <div class="moon-menu-items">
+    
+    <div id="moon-menu-item-back2bottom" class="moon-menu-item">
+      <i class='fas fa-chevron-down'></i>    </div>
+    
+    <div id="moon-menu-item-back2top" class="moon-menu-item">
+      <i class='fas fa-chevron-up'></i>    </div>
+    
+  </div>
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"></circle>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"></circle>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon"><i class='fas fa-ellipsis-v'></i></div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div><script src="/js/injector.js"></script>
+</body>
+</html>

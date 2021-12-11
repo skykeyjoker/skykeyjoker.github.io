@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"skykeyjoker.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="MySQL on Qt (2): SQL的连接、断开与增删查改基本操作 写在前面：  大一下学期的 CPP 大作业“自主订餐系统”可真是颇费了一些力气，每天晚睡早起撸代码，课都没听，很多知识都是现学现用。 为了避免当时学到的东西给全部忘光光（&#96;_&gt;&#96;，我这脑子啊。。。），所以我把当时大作业的一些核心部分（一些零碎的小细节，能记就记）给记录一下，一方面是复习，一方面也方便以后用到的时候查阅。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL on Qt (2):SQL的连接、断开与增删查改基本操作">
+<meta property="og:url" content="https://skykeyjoker.github.io/2020/07/23/mysqlonqt2/index.html">
+<meta property="og:site_name" content="Skykey&#39;s Home">
+<meta property="og:description" content="MySQL on Qt (2): SQL的连接、断开与增删查改基本操作 写在前面：  大一下学期的 CPP 大作业“自主订餐系统”可真是颇费了一些力气，每天晚睡早起撸代码，课都没听，很多知识都是现学现用。 为了避免当时学到的东西给全部忘光光（&#96;_&gt;&#96;，我这脑子啊。。。），所以我把当时大作业的一些核心部分（一些零碎的小细节，能记就记）给记录一下，一方面是复习，一方面也方便以后用到的时候查阅。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gitee.com/skykeyjoker/PicCloud/raw/master/img/sqlmoudles.png">
+<meta property="og:image" content="https://gitee.com/skykeyjoker/PicCloud/raw/master/img/demo.png">
+<meta property="article:published_time" content="2020-07-23T02:18:56.000Z">
+<meta property="article:modified_time" content="2021-12-11T12:26:16.335Z">
+<meta property="article:author" content="Skykey">
+<meta property="article:tag" content="Qt">
+<meta property="article:tag" content="Sql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gitee.com/skykeyjoker/PicCloud/raw/master/img/sqlmoudles.png">
+
+<link rel="canonical" href="https://skykeyjoker.github.io/2020/07/23/mysqlonqt2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
+  <title>MySQL on Qt (2):SQL的连接、断开与增删查改基本操作 | Skykey's Home</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skykey's Home</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Skykey的私人博客。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skykeyjoker.github.io/2020/07/23/mysqlonqt2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Skykey">
+      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skykey's Home">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL on Qt (2):SQL的连接、断开与增删查改基本操作
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-23 10:18:56" itemprop="dateCreated datePublished" datetime="2020-07-23T10:18:56+08:00">2020-07-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-11 20:26:16" itemprop="dateModified" datetime="2021-12-11T20:26:16+08:00">2021-12-11</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Qt/" itemprop="url" rel="index"><span itemprop="name">Qt</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="MySQL-on-Qt-2-SQL的连接、断开与增删查改基本操作"><a href="#MySQL-on-Qt-2-SQL的连接、断开与增删查改基本操作" class="headerlink" title="MySQL on Qt (2): SQL的连接、断开与增删查改基本操作"></a>MySQL on Qt (2): SQL的连接、断开与增删查改基本操作</h1><blockquote>
+<p>写在前面： </p>
+<p>大一下学期的 CPP 大作业“自主订餐系统”可真是颇费了一些力气，每天晚睡早起撸代码，课都没听，很多知识都是现学现用。</p>
+<p>为了避免当时学到的东西给全部忘光光（`_&gt;`，我这脑子啊。。。），所以我把当时大作业的一些核心部分（一些零碎的小细节，能记就记）给记录一下，一方面是复习，一方面也方便以后用到的时候查阅。</p>
+</blockquote>
+<p>这篇文章是大作业 MySQL + SQLite 操作相关部分的第二章，主要讲一下 Qt 中 MySQL 和 SQLite 连接、断开与增删查改的基本操作。</p>
+<span id="more"></span>
+
+<h2 id="Qt-SQL-类"><a href="#Qt-SQL-类" class="headerlink" title="Qt SQL 类"></a>Qt SQL 类</h2><p><img src="https://gitee.com/skykeyjoker/PicCloud/raw/master/img/sqlmoudles.png" alt="Qt 中 SQl 相关类"></p>
+<ul>
+<li>用户接口层：实现将数据库中的数据链接到窗口部件上</li>
+<li>SQL接口层：提供对数据库的访问</li>
+<li>驱动层：为具体的数据库和SQL接口层之间提供了底层的桥梁</li>
+</ul>
+<p>要使用Qt SQL的类，需要在项目文件（.pro文件）中添加：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">QT += sql</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Qt-SQL-的连接、断开与增删查改操作"><a href="#Qt-SQL-的连接、断开与增删查改操作" class="headerlink" title="Qt SQL 的连接、断开与增删查改操作"></a>Qt SQL 的连接、断开与增删查改操作</h2><p>下面用一个 demo 来演示 Qt 中 SQL 的连接、断开与增删查改操作。</p>
+<img src="https://gitee.com/skykeyjoker/PicCloud/raw/master/img/demo.png" alt="demo" style="zoom:80%;" />
+
+
+
+<hr>
+<p>先来讲数据库的连接与断开。</p>
+<h3 id="连接数据库"><a href="#连接数据库" class="headerlink" title="连接数据库"></a>连接数据库</h3><p>上一章已经讲过如何连接 SQL 数据库，这里就简简单单放一下代码。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Connect to db</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">Widget::connectToDb</span><span class="params">(<span class="keyword">const</span> QString &amp; hostName, <span class="keyword">const</span> <span class="keyword">int</span> &amp; port, <span class="keyword">const</span> QString &amp; databaseName, <span class="keyword">const</span> QString &amp; username, <span class="keyword">const</span> QString &amp; password)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;hostName;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;port;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;databaseName;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;username;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;password;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Set info</span></span><br><span class="line">    _db.<span class="built_in">setHostName</span>(hostName);</span><br><span class="line">    _db.<span class="built_in">setPort</span>(port);</span><br><span class="line">    _db.<span class="built_in">setDatabaseName</span>(databaseName);</span><br><span class="line">    _db.<span class="built_in">setUserName</span>(username);</span><br><span class="line">    _db.<span class="built_in">setPassword</span>(password);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Open Db</span></span><br><span class="line">    <span class="keyword">bool</span> ret = _db.<span class="built_in">open</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里要注意下打印出错信息的技巧，这样可以方便查错。</p>
+<h3 id="断开数据库"><a href="#断开数据库" class="headerlink" title="断开数据库"></a>断开数据库</h3><p>啊这，更简单：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Close Db</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::closeDb</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    _db.<span class="built_in">close</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>接下来讲数据库的增删查改操作。这些操作主要是对 Query 语句的简单利用。</p>
+<p><strong>注意：</strong> MySQL 与 SQLite 的 SQL 语法存在一定区别，要注意区分使用。</p>
+<h3 id="创建数据表"><a href="#创建数据表" class="headerlink" title="创建数据表"></a>创建数据表</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create Table</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::createTable</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Create table</span></span><br><span class="line">    query.<span class="built_in">exec</span>(<span class="string">&quot;CREATE TABLE `runoob_tbl` \</span></span><br><span class="line"><span class="string">                   (`runoob_id` INT UNSIGNED AUTO_INCREMENT, \</span></span><br><span class="line"><span class="string">                   `runoob_title` VARCHAR(100) NOT NULL,\</span></span><br><span class="line"><span class="string">                   `runoob_author` VARCHAR(40) NOT NULL,\</span></span><br><span class="line"><span class="string">                   `submission_date` DATE,\</span></span><br><span class="line"><span class="string">                   PRIMARY KEY ( `runoob_id`)) &quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="增加字段"><a href="#增加字段" class="headerlink" title="增加字段"></a>增加字段</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Add new column</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::addNewcolumn</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Add column</span></span><br><span class="line">    query.<span class="built_in">exec</span>(<span class="string">&quot;ALTER TABLE runoob_tbl ADD COLUMN new1 VARCHAR(20) DEFAULT NULL;&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="检验表是否存在"><a href="#检验表是否存在" class="headerlink" title="检验表是否存在"></a>检验表是否存在</h3><p>检验数据库中是否存在某表，可以利用 QSqlDatabase 提供的 <code>QSqlDatabase::tables()</code>函数。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Is Table Exists</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">Widget::isTableExists</span><span class="params">(<span class="keyword">const</span> QString &amp;)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(_db.<span class="built_in">tables</span>().<span class="built_in">contains</span>(<span class="string">&quot;user&quot;</span>))</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Table exists&quot;</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Table not exists&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> _db.<span class="built_in">tables</span>().<span class="built_in">contains</span>(<span class="string">&quot;user&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>QSqlDatabase::tables()</code>函数返回一个 <em>QStringList</em> 类型的数据，里面储存着所有表名，所以我们可以很方便的调用 <code>QStringList::contains()</code> 函数了来检验表是否存在。</p>
+<h3 id="查询、遍历数据表"><a href="#查询、遍历数据表" class="headerlink" title="查询、遍历数据表"></a>查询、遍历数据表</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Query Table</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::queryTable</span><span class="params">(<span class="keyword">const</span> QString &amp;)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Query the database</span></span><br><span class="line">    query.<span class="built_in">exec</span>(<span class="string">&quot;SELECT * FROM user WHERE 1&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get record</span></span><br><span class="line">    <span class="keyword">while</span>(query.<span class="built_in">next</span>())</span><br><span class="line">    &#123;</span><br><span class="line">        QSqlRecord record = query.<span class="built_in">record</span>();</span><br><span class="line"></span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;record.<span class="built_in">value</span>(<span class="number">0</span>)&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;record.<span class="built_in">value</span>(<span class="number">1</span>)&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;record.<span class="built_in">value</span>(<span class="number">2</span>)&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;record.<span class="built_in">value</span>(<span class="number">3</span>)&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;record.<span class="built_in">value</span>(<span class="number">4</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>数据表的遍历技巧要记住。</p>
+<h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Insert Data</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::insertData</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Prepare</span></span><br><span class="line">    query.<span class="built_in">prepare</span>(<span class="string">&quot;INSERT INTO user VALUES (:ID, :Name, :Age, :Type, :Gender)&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Bind value</span></span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:ID&quot;</span>,<span class="number">0</span>);</span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:Name&quot;</span>,<span class="string">&quot;test&quot;</span>);</span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:Age&quot;</span>,<span class="number">22</span>);</span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:Type&quot;</span>,<span class="string">&quot;testType&quot;</span>);</span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:Gender&quot;</span>,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Exec inserting</span></span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;query.<span class="built_in">exec</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>插入数据时使用了<code>QSqlDatabase::prepare()</code> 与 <code>QSqlDatabase::bindValue()</code>方法，当然我们也可以直接调用 <code>QSqlDatabase::exec()</code>，使用<code>tr(&quot;%1&quot;).arg(arg1)</code>方法来指定参数。</p>
+<h3 id="更新数据"><a href="#更新数据" class="headerlink" title="更新数据"></a>更新数据</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Update Data</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::updateData</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Update</span></span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;query.<span class="built_in">exec</span>(<span class="string">&quot;UPDATE user SET Age=233 WHERE Name=&#x27;Joker&#x27;&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="删除数据"><a href="#删除数据" class="headerlink" title="删除数据"></a>删除数据</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Delete Data</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::deleteData</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Delete</span></span><br><span class="line">    query.<span class="built_in">exec</span>(<span class="string">&quot;DELETE FROM user WHERE Name=&#x27;test&#x27;&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>至此本章的内容基本结束。下一章将讲解 Qt SQL 操作中最为精彩的部分：Model/View 模式。</p>
+<blockquote>
+<p>简单的 MySQL 和 SQLite 教程：</p>
+<p>MySQL: <a target="_blank" rel="noopener" href="https://www.runoob.com/mysql/mysql-tutorial.html">https://www.runoob.com/mysql/mysql-tutorial.html</a></p>
+<p>SQLite: <a target="_blank" rel="noopener" href="https://www.runoob.com/sqlite/sqlite-tutorial.html">https://www.runoob.com/sqlite/sqlite-tutorial.html</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Qt/" rel="tag"># Qt</a>
+              <a href="/tags/Sql/" rel="tag"># Sql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/22/mysqlonqt1/" rel="prev" title="MySQL on Qt (1):安装 MySQL 驱动以及连接 MySQL 与 SQLite">
+      <i class="fa fa-chevron-left"></i> MySQL on Qt (1):安装 MySQL 驱动以及连接 MySQL 与 SQLite
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/23/model-view/" rel="next" title="Qt Model/View（模型/视图）结构（无师自通）">
+      Qt Model/View（模型/视图）结构（无师自通） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL-on-Qt-2-SQL%E7%9A%84%E8%BF%9E%E6%8E%A5%E3%80%81%E6%96%AD%E5%BC%80%E4%B8%8E%E5%A2%9E%E5%88%A0%E6%9F%A5%E6%94%B9%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">MySQL on Qt (2): SQL的连接、断开与增删查改基本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Qt-SQL-%E7%B1%BB"><span class="nav-number">1.1.</span> <span class="nav-text">Qt SQL 类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Qt-SQL-%E7%9A%84%E8%BF%9E%E6%8E%A5%E3%80%81%E6%96%AD%E5%BC%80%E4%B8%8E%E5%A2%9E%E5%88%A0%E6%9F%A5%E6%94%B9%E6%93%8D%E4%BD%9C"><span class="nav-number">1.2.</span> <span class="nav-text">Qt SQL 的连接、断开与增删查改操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">1.2.1.</span> <span class="nav-text">连接数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%AD%E5%BC%80%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">1.2.2.</span> <span class="nav-text">断开数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E8%A1%A8"><span class="nav-number">1.2.3.</span> <span class="nav-text">创建数据表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E5%8A%A0%E5%AD%97%E6%AE%B5"><span class="nav-number">1.2.4.</span> <span class="nav-text">增加字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E9%AA%8C%E8%A1%A8%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="nav-number">1.2.5.</span> <span class="nav-text">检验表是否存在</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E3%80%81%E9%81%8D%E5%8E%86%E6%95%B0%E6%8D%AE%E8%A1%A8"><span class="nav-number">1.2.6.</span> <span class="nav-text">查询、遍历数据表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">1.2.7.</span> <span class="nav-text">插入数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%95%B0%E6%8D%AE"><span class="nav-number">1.2.8.</span> <span class="nav-text">更新数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%95%B0%E6%8D%AE"><span class="nav-number">1.2.9.</span> <span class="nav-text">删除数据</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skykey"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Skykey</p>
+  <div class="site-description" itemprop="description">这里是Skykey的私人博客，有各种垃圾内容=。=</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skykeyjoker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zcxzxlc@163.com" title="E-Mail → mailto:zcxzxlc@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/skykeyjoker" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://t.me/Skykeyjoker" title="Telegram → https:&#x2F;&#x2F;t.me&#x2F;Skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-telegram fa-fw"></i>Telegram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skykey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div class="moon-menu">
+  <div class="moon-menu-items">
+    
+    <div id="moon-menu-item-back2bottom" class="moon-menu-item">
+      <i class='fas fa-chevron-down'></i>    </div>
+    
+    <div id="moon-menu-item-back2top" class="moon-menu-item">
+      <i class='fas fa-chevron-up'></i>    </div>
+    
+  </div>
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"></circle>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"></circle>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon"><i class='fas fa-ellipsis-v'></i></div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div><script src="/js/injector.js"></script>
+</body>
+</html>
