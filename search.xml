@@ -1,6 +1,235 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>欧拉筛法</title>
+    <url>/2020/07/21/euler-prime/</url>
+    <content><![CDATA[<h1 id="欧拉筛法"><a href="#欧拉筛法" class="headerlink" title="欧拉筛法"></a>欧拉筛法</h1><blockquote>
+<p>原创程画 最后发布于2018-05-15 18:24:08 阅读数 4146  收藏</p>
+</blockquote>
+<p>想看欧拉筛法的可直接拉到最后。</p>
+<p>相信各位对素数并不陌生，素数就是指不能被除了1和自身以外的别的数整除的数，比如2,3,5，而且根据欧几里得的证明来看，素数是无限的，普通的筛选素数的方法可能对较小的数据能在较短时间内完成筛选，但对于很大的数据（比如1e9）就会花费很长的时间。</p>
+<span id="more"></span>
+
+<h2 id="1-普通的求素数方法"><a href="#1-普通的求素数方法" class="headerlink" title="1.普通的求素数方法"></a>1.普通的求素数方法</h2><p>例如，普通的求素数方法时这样的：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> pri[MAXN];</span><br><span class="line"><span class="keyword">int</span> cnt=<span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">prime</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	cnt=<span class="number">0</span>;</span><br><span class="line">	pri[cnt++]=<span class="number">2</span>;</span><br><span class="line">	<span class="keyword">int</span> i,j;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">3</span>;i&lt;=n;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span>(j=<span class="number">2</span>;j&lt;i;++j)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(i%j!=<span class="number">0</span>)</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(j&gt;=i)</span><br><span class="line">			pri[cnt++]=i;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>根据素数的定义所写的代码很容易理解，但是运行的效率是不太优秀的，所以我们要改进，当然在学习的过程中相信大家也或多或少的学了些改进方法，一个简单的改进方法就是将第二个循环的结束条件改为j&lt;sqrt(i)，相应地再更改判断条件，这样当然可以减少我们运行所需要的时间，但是任然不够好，下面我们就来介绍一下埃式筛法和今天的真正目标——欧拉筛法。</p>
+<h2 id="2-埃式筛法"><a href="#2-埃式筛法" class="headerlink" title="2.埃式筛法"></a>2.埃式筛法</h2><p>先来介绍埃式筛法，埃式筛法的基本思想就是，当我们遍历到一个素数时，把所有该素数的倍数（自然是合数）都筛选出来，我们来看看代码：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> prime[MAXN];</span><br><span class="line"><span class="keyword">bool</span> vis[MAXN];</span><br><span class="line"><span class="keyword">int</span> cnt=<span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Era_prime</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">2</span>;i&lt;=n;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(!vis[i])</span><br><span class="line">			prime[cnt++]=i;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> j=i;j&lt;=n;j+=i)</span><br><span class="line">		&#123;</span><br><span class="line">			vis[j]=<span class="literal">true</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们有没被选过的素数时，加入素数数组prime并且将它的所有n以内的倍数给筛选出来（vis[j]=true），埃式筛法很容易理解，并且在效率上也比较优秀，时间复杂度为O(nlglgn)，但是在处理1e8以上的数据时，还是稍稍力不从心，所以接下来我们着重介绍下线性时间筛法——欧拉筛法，我们还是先来看下代码：</p>
+<h2 id="3-欧拉筛法"><a href="#3-欧拉筛法" class="headerlink" title="3.欧拉筛法"></a>3.欧拉筛法</h2><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> prime[MAXN];</span><br><span class="line"><span class="keyword">bool</span> vis[MAXN];</span><br><span class="line"><span class="keyword">int</span> cnt=<span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Euler_prime</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">2</span>;i&lt;=n;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(!vis[i])</span><br><span class="line">		&#123;prime[cnt++]=i;vis[i]=<span class="literal">true</span>;&#125;<span class="comment">//vis[i]置为true或不置true都可以</span></span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;cnt;++j)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(i*prime[j]&gt;n)<span class="comment">//判断是否越界</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			vis[i*prime[j]]=<span class="literal">true</span>;<span class="comment">//筛数</span></span><br><span class="line">			<span class="keyword">if</span>(i%prime[j]==<span class="number">0</span>)<span class="comment">//时间复杂度为O(n)的关键！</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>我们注意到，在用埃式筛法的同时，同一个数字也许会被筛选多次，比如6先被2筛选一次，再被3筛选一次，这样就浪费了很多不必要的时间，而欧拉筛法通过<code>if(i%prime[j]==0)break;</code>这一步就避免了重复筛选的发生，我们举个例子，比如，2先筛选了4，然后进行下一个循环，3筛选6和9，当我们执行到4的时候，可以发现，当<code>i==4</code>时，第一次运行到<code>if(i%prime[j]==0)</code>这一步的时候就直接<code>break;</code>掉了，这也就是说，当我们的合数进入循环时，其实它已经被之前的数筛选过了，所以当合数进入内层循环时，内层循环只执行了一次，从而减少了时间复杂度。</p>
+<p>结束</p>
+<blockquote>
+<p>————————————————<br>版权声明：本文为CSDN博主「程画」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/chczy1/java/article/details/80327323">https://blog.csdn.net/chczy1/java/article/details/80327323</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>C++</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>转载</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Qt Model/View（模型/视图）结构（无师自通）</title>
+    <url>/2020/07/23/model-view/</url>
+    <content><![CDATA[<h1 id="Qt-Model-View（模型-视图）结构（无师自通）"><a href="#Qt-Model-View（模型-视图）结构（无师自通）" class="headerlink" title="Qt Model/View（模型/视图）结构（无师自通）"></a>Qt Model/View（模型/视图）结构（无师自通）</h1><blockquote>
+<p>本文转载自：</p>
+<p><a href="http://c.biancheng.net/view/1864.html">http://c.biancheng.net/view/1864.html</a></p>
+</blockquote>
+<p>Model/View（模型/视图）结构是 <a href="http://c.biancheng.net/qt/">Qt</a> 中用界面组件显示与编辑数据的一种结构，视图（View）是显示和编辑数据的界面组件，模型（Model）是视图与原始数据之间的接口。</p>
+<p>GUI 应用程序的一个很重要的功能是由用户在界面上编辑和修改数据，典型的如数据库应用程序。数据库应用程序中，用户在界面上执行各种操作，实际上是修改了界面组件所关联的数据库内的数据。</p>
+<p>将界面组件与所编辑的数据分离开来，又通过数据源的方式连接起来，是处理界面与数据的一种较好的方式。Qt 使用 Model/View 结构来处理这种关系，Model/View 的基本结构如图 1 所示。</p>
+<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z10316062G22.gif" alt="Model/View基本结构"></p>
+<span id="more"></span>
+
+<p>其中各部分的功能如下：</p>
+<ul>
+<li>数据（Data）是实际的数据，如数据库的一个数据表或SQL查询结果，内存中的一个 StringList，或磁盘文件结构等。</li>
+<li>视图或视图组件（View）是屏幕上的界面组件，视图从数据模型获得每个数据项的模型索引（model index），通过模型索引获取数据，然后为界面组件提供显示数据。Qt 提供一些现成的数据视图组件，如 QListView、QTreeView 和 QTableView 等。</li>
+<li>模型或数据模型（Model）与实际数据通信，并为视图组件提供数据接口。它从原始数据提取需要的内容，用于视图组件进行显示和编辑。Qt 中有一些预定义的数据模型，如 QStringListModel 可作为 StringList 的数据模型，QSqlTableModel 可以作为数据库中一个数据表的数据模型。</li>
+</ul>
+<p>由于数据源与显示界面通过 Model/View 结构分离开来，因此可以将一个数据模型在不同的视图中显示，也可以在不修改数据模型的情况下，设计特殊的视图组件。</p>
+<p>在 Model/View 结构中，还提供了代理（Delegate）功能，代理功能可以让用户定制数据的界面显示和编辑方式。在标准的视图组件中，代理功能显示一个数据，当数据被编辑时，代理通过模型索引与数据模型通信，并为编辑数据提供一个编辑器，一般是一个 QLineEdit 组件。</p>
+<p>模型、视图和代理之间使用信号和槽通信。当源数据发生变化时，数据模型发射信号通知视图组件；当用户在界面上操作数据时，视图组件发射信号表示这些操作信息；当编辑数据时，代理发射信号告知数据模型和视图组件编辑器的状态。</p>
+<h2 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h2><p>所有的基于项数据的数据模型（Model）都是基于 QAbstractltemModel 类的，这个类定义了视图组件和代理存取数据的接口。数据无需存储在数据模型里，数据可以是其他类、文件、数据库或任何数据源。</p>
+<p>Qt 中与数据模型相关的几个主要的类的层次结构如图 2 所示：</p>
+<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z103160KBJ.gif" alt="Qt中模型类的层次结构"></p>
+<p>图 2 中的抽象类是不能直接使用的，需要由子类继承来实现一些纯虚函数。Qt 提供了一些模型类用于项数据处理，常见的几个见表 3。</p>
+<table>
+<thead>
+<tr>
+<th>Model 类</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>QStringListModel</td>
+<td>用于处理字符串列表数据的数据模型类</td>
+</tr>
+<tr>
+<td>QStandardltemModel</td>
+<td>标准的基于项数据的数据模型类，每个项数据可以是任何数据类型</td>
+</tr>
+<tr>
+<td>QFileSy stemModel</td>
+<td>计算机上文件系统的数据模型类</td>
+</tr>
+<tr>
+<td>QSortFilterProxyModel</td>
+<td>与其他数据模型结合，提供排序和过滤功能的数据模型类</td>
+</tr>
+<tr>
+<td>QSqlQueryModel</td>
+<td>用于数据库SQL查询结果的数据模型类</td>
+</tr>
+<tr>
+<td>QSqlTableModel</td>
+<td>用于数据库的一个数据表的数据模型类</td>
+</tr>
+<tr>
+<td>QSqlRelationalTableModel</td>
+<td>用于关系型数据表的数据模型类</td>
+</tr>
+</tbody></table>
+<p>数据库相关的 3 个模型类将在介绍数据库编程时专门说明。如果这些现有的模型类无法满足需求，用户可以从 QAbstractltemModel、QAbstractListModel 或 QAbstractTableModel 继承，生成自己定制的数据模型类。</p>
+<h2 id="视图组件"><a href="#视图组件" class="headerlink" title="视图组件"></a>视图组件</h2><p>视图组件（View）就是显示数据模型的数据的界面组件，Qt 提供的视图组件如下：</p>
+<ul>
+<li>QListView：用于显示单列的列表数据，适用于一维数据的操作。</li>
+<li>QTreeView：用于显示树状结构数据，适用于树状结构数据的操作。</li>
+<li>QTableView：用于显示表格状数据，适用于二维表格型数据的操作。</li>
+<li>QColumnView：用多个QListView显示树状层次结构，树状结构的一层用一个QListView显示。</li>
+<li>QHeaderView：提供行表头或列表头的视图组件，如QTableView的行表头和列表头。</li>
+</ul>
+<p>视图组件在显示数据时，只需调用视图类的 setModel() 函数，为视图组件设置一个数据模型就可以实现视图组件与数据模型之间的关联，在视图组件上的修改将自动保存到关联的数据模型里，一个数据模型可以同时在多个视图组件里显示数据。</p>
+<p>前面介绍了 QListWidget、QTreeWidget 和 QtableWidget 3个可用于数据编辑的组件。这 3 个类称为便利类（convenience classes），它们分别是 3 个视图类的子类，其层次关系如图 4 所示。</p>
+<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z103160934132.gif" alt="视图相关类的层次结构图"></p>
+<p>用于 Model/View 结构的几个视图类直接从 QAbstract ItemView 继承而来，而便利类则从相应的视图类继承而来。</p>
+<p>视图组件类的数据采用单独的数据模型，视图组件不存储数据。便利类则为组件的每个节点或单元格创建一个项（item），用项存储数据、格式设置等。所以，便利类没有数据模型，它实际上是用项的方式集成了数据模型的功能，这样就将界面与数据绑定了。</p>
+<p>所以，便利类缺乏对大型数据源进行灵活处理的能力，适用于小型数据的显示和编辑。</p>
+<h2 id="代理（Delegate）"><a href="#代理（Delegate）" class="headerlink" title="代理（Delegate）"></a>代理（Delegate）</h2><p>代理就是在视图组件上为编辑数据提供编辑器，如在表格组件中编辑一个单元格的数据时，缺省是使用一个 QLineEdit 编辑框。代理负责从数据模型获取相应的数据，然后显示在编辑器里，修改数据后，又将其保存到数据模型中。</p>
+<p>QAbstractltemDelegate 是所有代理类的基类，作为抽象类，它不能直接使用。它的一个子类 QStyledltemDelegate，是 Qt 的视图组件缺省使用的代理类。</p>
+<p>对于一些特殊的数据编辑需求，例如只允许输入整型数，使用一个 QSpinBox 作为代理组件更恰当，从列表中选择数据时使用一个 QComboBox 作为代理组件更好。这时，就可以从 QStyledltemDelegate 继承创建自定义代理类。</p>
+<h2 id="Model-View结构的一些概念"><a href="#Model-View结构的一些概念" class="headerlink" title="Model/View结构的一些概念"></a>Model/View结构的一些概念</h2><p>在 Model/View 结构中，数据模型为视图组件和代理提供存取数据的标准接口。在 Qt 中，所有的数据模型类都从 QAbstractltemModel 继承而来，不管底层的<a href="http://c.biancheng.net/data_structure/">数据结构</a>是如何组织数据的，QAbstractltemModel 的子类都以表格的层次结构表示数据，视图组件通过这种规则来存取模型中的数据，但是表现给用户的形式不一样。</p>
+<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z1031610455L.gif" alt="数据模型的几种表现形式"></p>
+<p>图 5 是数据模型的 3 种常见表现形式。不管数据模型的表现形式是怎么样的，数据模型中存储数据的基本单元都是项（item），每个项有一个行号、一个列号，还有一个父项。在列表和表格模式下，所有的项都有一个相同的顶层项；在树状结构中，行号、列号、父项稍微复杂一点，但是由这 3 个参数完全可以定义一个项的位置，从而存取项的数据。</p>
+<h4 id="模型索引（model-index）"><a href="#模型索引（model-index）" class="headerlink" title="模型索引（model index）"></a>模型索引（model index）</h4><p>为了保证数据的表示与数据存取方式隔离，数据模型中引入了模型索引的概念。通过数据模型存取的每个数据都有一个模型索引，视图组件和代理都通过模型索引来获取数据。</p>
+<p>QModelIndex 表示模型索引的类。模型索引提供数据存取的一个临时指针，用于通过数据模型提取或修改数据。因为模型内部组织数据的结构随时可能改变，所以模型索引是临时的。如果需要使用持久性的模型索引，则要使用 QPersistentModelIndex 类。</p>
+<h4 id="行号和列号"><a href="#行号和列号" class="headerlink" title="行号和列号"></a>行号和列号</h4><p>数据模型的基本形式是用行和列定义的表格数据，但这并不意味着底层的数据是用二维数组存储的，使用行和列只是为了组件之间交互方便的一种规定。通过模型索引的行号和列号就可以存取数据。</p>
+<p>要获得一个模型索引，必须提供 3 个参数：行号、列号、父项的模型索引。例如，对于如图 5 中的表格数据模型中的 3 个数据项 A、B、C，获取其模型索引的代码是：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">QModelIndex indexA = model-&gt;<span class="built_in">index</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="built_in">QModelIndex</span>());</span><br><span class="line">QModelIndex indexB = model-&gt;<span class="built_in">index</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="built_in">QModelIndex</span>());</span><br><span class="line">QModelIndex indexC = model-&gt;<span class="built_in">index</span>(<span class="number">2</span>, <span class="number">1</span>, <span class="built_in">QModelIndex</span>());</span><br></pre></td></tr></table></figure>
+
+<p>在创建模型索引的函数中需要传递行号、列号和父项的模型索引。对于列表和表格模式的数据模型，顶层节点总是用 QModelIndex() 表示。</p>
+<h4 id="父项"><a href="#父项" class="headerlink" title="父项"></a>父项</h4><p>当数据模型是列表或表格时，使用行号、列号存储数据比较直观，所有数据项的父项就是顶层项；当数据模型是树状结构时，情况比较复杂（树状结构中，项一般习惯于称为节点），一个节点可以有父节点，也可以是其他节点的父节点，在构造数据项的模型索引时，必须指定正确的行号、列号和父节点。</p>
+<p>对于图 5 中的树状数据模型，节点 A 和节点 C 的父节点是顶层节点，获取模型索引的代码是：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">QModelIndex indexA = model-&gt;<span class="built_in">index</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="built_in">QModelIndex</span>());</span><br><span class="line">QModelIndex indexC = model-&gt;<span class="built_in">index</span>(<span class="number">2</span>, <span class="number">1</span>, <span class="built_in">QModelIndex</span>());</span><br></pre></td></tr></table></figure>
+
+<p>但是，节点 B 的父节点是节点 A，节点 B 的模型索引由下面的代码生成：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">QModelIndex indexB = model-&gt;<span class="built_in">index</span>(<span class="number">1</span>, <span class="number">0</span>, indexA);</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="项的角色"><a href="#项的角色" class="headerlink" title="项的角色"></a>项的角色</h4><p>在为数据模型的一个项设置数据时，可以赋予其不同项的角色的数据。例如，数据模型类 QStandardItemModel 的项数据类是 QStandardItem，其设置数据的函数是：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QStandardItem::setData</span><span class="params">(<span class="keyword">const</span> QVariant &amp;value, <span class="keyword">int</span> role= Qt::UserRole + <span class="number">1</span>)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>其中，value 是需要设置的数据，role 是设置数据的角色。一个项可以有不同角色的数据，用于不同的场合。</p>
+<p>role 是 <code>Qt::ItemDataRole</code> 枚举类型，有多种取值，如 <code>Qt::DisplayRole</code> 角色是在视图组件中显示的字符串，<code>Qt::ToolTipRole</code> 是鼠标提示消息，<code>Qt::UserRole</code> 可以自定义数据。项的标准角色是 <code>Qt::DisplayRole</code>。</p>
+<p>在获取一个项的数据时也需要指定角色，以获取不同角色的数据：</p>
+<p><code>QVariant QStandardItem::data(int role = Qt::UserRole + 1) const</code></p>
+<p>为一个项的不同角色定义数据，可以告知视图组件和代理组件如何显示数据。例如，在图 6 中，项的 DisplayRole 数据是显示的字符串，DecorationRole 是用于装饰显示的属性，ToolTipRole 定义了鼠标提示信息。不同的视图组件对各种角色数据的解释和显示可能不一样，也可能忽略某些角色的数据。</p>
+<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z103161340927.gif" alt="不同角色数据的表现形式"></p>
+]]></content>
+      <categories>
+        <category>Qt</category>
+      </categories>
+      <tags>
+        <tag>转载</tag>
+        <tag>Qt</tag>
+        <tag>Model/View</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL on Qt (1):安装 MySQL 驱动以及连接 MySQL 与 SQLite</title>
+    <url>/2020/07/22/mysqlonqt1/</url>
+    <content><![CDATA[<h1 id="MySQL-on-Qt-1-安装-MySQL-驱动以及连接-MySQL-与-SQLite"><a href="#MySQL-on-Qt-1-安装-MySQL-驱动以及连接-MySQL-与-SQLite" class="headerlink" title="MySQL on Qt (1): 安装 MySQL 驱动以及连接 MySQL 与 SQLite"></a>MySQL on Qt (1): 安装 MySQL 驱动以及连接 MySQL 与 SQLite</h1><blockquote>
+<p>写在前面： </p>
+<p>大一下学期的 CPP 大作业“自主订餐系统”可真是颇费了一些力气，每天晚睡早起撸代码，课都没听，很多知识都是现学现用。</p>
+<p>为了避免当时学到的东西给全部忘光光（`_&gt;`，我这脑子啊。。。），所以我把当时大作业的一些核心部分（一些零碎的小细节，能记就记）给记录一下，一方面是复习，一方面也方便以后用到的时候查阅。</p>
+</blockquote>
+<p>这篇文章是大作业 MySQL + SQLite 操作相关部分的第一章，主要讲一下如何安装 MySQL 驱动（Win 下）以及如何连接 MySQL 及 SQLite。</p>
+<span id="more"></span>
+
+<h2 id="准备部分——安装-MySQL-驱动"><a href="#准备部分——安装-MySQL-驱动" class="headerlink" title="准备部分——安装 MySQL 驱动"></a>准备部分——安装 MySQL 驱动</h2><p>还记得跟着教程学 Qt MySQL 操作的时候兴致冲冲地跟着打下了一行行代码，然后编译—运行，卧槽，报错。。。报错信息如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">QSqlDatabase: QMYSQL driver not loaded</span><br><span class="line"></span><br><span class="line">QSqlDatabase: available drivers: QSQLITE QPSQL QPSQL7</span><br><span class="line"></span><br><span class="line">&quot;Driver not loaded Driver not loaded&quot;</span><br></pre></td></tr></table></figure>
+
+<p>看一下报错信息，大体的意思就是说 Qt 没有连接 MySQL 的驱动。</p>
+<p>查看当前系统环境中的 Qt 支持哪些 Sql 驱动，可以输出一下 QSqlDatabase::drivers() 的值。</p>
+<p>坑爹的 Qt 在 Win 下并没有附带 MySQL 的连接驱动，需要我们自行编译。</p>
+<p>如果只需要连接远程数据库，那我们本地并不需要安装 MySQL，只要找到 MySQL 提供的 <code>libmysql.dll</code> 和 <code>libmysqld.dll</code> 拷贝到 Qt 的安装目录（<code>%QtDir%/migw.../bin</code>）。网上有教程说 Qt 默认自带已经编译好的 <code>qsqlmysql.dll</code> 和 <code>qsqlmysqld.dll</code> （路径在 <code>%QtDir%/mingw.../plugins/sqldrivers</code>），但是实测这些教程都已经老的不能再老了，我的安装目录下就没有自带的编译好的这两个 dll 文件，接下来我们开始着手安装和编译 MySQL 驱动。</p>
+<h3 id="第一步：下载-MySQL-DLL文件"><a href="#第一步：下载-MySQL-DLL文件" class="headerlink" title="第一步：下载 MySQL DLL文件"></a>第一步：下载 MySQL DLL文件</h3><p>扔个地址： </p>
+<blockquote>
+<p><a href="https://dev.mysql.com/downloads/connector/cpp/">https://dev.mysql.com/downloads/connector/cpp/</a></p>
+</blockquote>
+<p>下载下来拷贝一下扔过去就好了。。。</p>
+<p>（我记得当时搞了一个老版本的才能用。。。记不清了。。。需要的时候现搞吧。）</p>
+<h3 id="第二步：-编译-MySQL-驱动"><a href="#第二步：-编译-MySQL-驱动" class="headerlink" title="第二步： 编译 MySQL 驱动"></a>第二步： 编译 MySQL 驱动</h3><p>这一步是重中之重，不巧的是我也忘的差不多了。。。</p>
+<p>这里我们需要有 Qt 的源码，可以去下载一下。Qt 全部源码2G大小，我们可以仅选择模块进行下载。</p>
+<p>用 Qt 打开源码目录下的<code>\src\plugins\sqldrivers\mysql\mysql.pro</code>。</p>
+<p>在末尾加上两句：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">INCLUDEPATH += mysql安装目录\include</span><br><span class="line">LIBS += -Lmysql安装目录\lib\ -llibmysql</span><br></pre></td></tr></table></figure>
+
+<p>构建项目后会生成 <code>qsqlmysql.dll</code> 和 <code>qsqlmysqld.dll</code>两个文件，然后拷贝到<code>%QtDir%/mingw.../plugins/sqldrivers</code>文件夹中。</p>
+<p>准备部分到这里就大体结束了，理论上 Qt 就已经能成功连接 MySQL 。</p>
+<h2 id="上路！连接-MySQL-和-SQLite"><a href="#上路！连接-MySQL-和-SQLite" class="headerlink" title="上路！连接 MySQL 和 SQLite"></a>上路！连接 MySQL 和 SQLite</h2><h3 id="配置工程文件"><a href="#配置工程文件" class="headerlink" title="配置工程文件"></a>配置工程文件</h3><p>若要使用 Qt 的 SQL 库，则需要在工程文件中添加相应的参数。</p>
+<p>CMakeLists.txt:</p>
+<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">find_package</span>(Qt5 Sql)</span><br><span class="line"><span class="keyword">target_link_libraries</span>(Ordering-System-Server PRIVATE Qt5::Sql)</span><br></pre></td></tr></table></figure>
+
+<p>.pro工程文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">QT += sql</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="连接数据库"><a href="#连接数据库" class="headerlink" title="连接数据库"></a>连接数据库</h3><p>SQL 用到的库主要为：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;QSqlDatabase&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;QSqlError&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;QSqlRecord&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;QSqlQuery&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;QSqlIndex&gt;</span></span></span><br></pre></td></tr></table></figure>
+
+<p>其中 QSqlDatabase 是最重要的库，数据库的连接及其他基本操作都要在这个类上执行。</p>
+<p>连接数据库时，我们主要会用到以下几个函数：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//添加数据库</span></span><br><span class="line">[<span class="keyword">static</span>] <span class="function">QSqlDatabase <span class="title">QSqlDatabase::addDatabase</span><span class="params">(<span class="keyword">const</span> QString &amp;type, <span class="keyword">const</span> QString &amp;connectionName = QLatin1String(defaultConnection))</span></span></span><br><span class="line"><span class="function"><span class="comment">//设置数据库相关信息</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QSqlDatabase::setHostName</span><span class="params">(<span class="keyword">const</span> QString &amp;host)</span>        <span class="comment">//主机地址</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QSqlDatabase::setDatabaseName</span><span class="params">(<span class="keyword">const</span> QString &amp;name)</span>    <span class="comment">//数据库名</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QSqlDatabase::setUserName</span><span class="params">(<span class="keyword">const</span> QString &amp;name)</span>    	   <span class="comment">//数据库用户名</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QSqlDatabase::setPassword</span><span class="params">(<span class="keyword">const</span> QString &amp;password)</span>    <span class="comment">//数据库密码</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QSqlDatabase::setPort</span><span class="params">(<span class="keyword">int</span> port)</span>                       <span class="comment">//数据库端口</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这里要特别注意一下<code>addDatabase()</code>这个函数的第二个参数 <em>connectionName</em> ，如果不指定这个参数，<strong>每次添加的数据库连接都会被应用程序当作默认连接</strong>。当初被这个坑了很久，因为大作业中服务端同时操作着两个数据库，一个远程 MySQL 数据库，一个本地 SQLite 数据库，添加第二个 SQLite 数据库后，就出锅不断，原因就在我没有注意第二个参数。</p>
+<p><img src="https://gitee.com/skykeyjoker/PicCloud/raw/master/img/adddatabase.png" alt="Qt Doc中关于 addDatabase的介绍"></p>
+<p>接下来分别就给一下连接 MySQL 和 SQLite 数据库的范例：</p>
+<h4 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL:"></a>MySQL:</h4><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">QSqlDatabase db = QSqlDatabase::<span class="built_in">addDatabase</span>(<span class="string">&quot;QMYSQL&quot;</span>);   <span class="comment">//添加一个数据库 </span></span><br><span class="line"></span><br><span class="line"><span class="comment">//设置数据库信息</span></span><br><span class="line">db.<span class="built_in">setHostName</span>(_dbHost);</span><br><span class="line">db.<span class="built_in">setDatabaseName</span>(_dbName);</span><br><span class="line">db.<span class="built_in">setUserName</span>(_dbUser);</span><br><span class="line">db.<span class="built_in">setPassword</span>(_dbPasswd);</span><br><span class="line">db.<span class="built_in">setPort</span>(_dbPort);</span><br><span class="line"></span><br><span class="line"><span class="keyword">bool</span> dbRet = db.<span class="built_in">open</span>(); <span class="comment">//连接数据库</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!ret)</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Can not open the DB&quot;</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Open the DB successfully.&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>SQLite:</p>
+<p>因为 SQLite 数据库没有网络层，是一种本地储存的关系型数据库，因此连接的时候与 MySQL 有很大的差别。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//设置数据库文件名</span></span><br><span class="line">QString dbPath = QDir::<span class="built_in">currentPath</span>()+<span class="string">&quot;/&quot;</span>+<span class="string">&quot;orders.db&quot;</span>;</span><br><span class="line"></span><br><span class="line">sqliteDb = QSqlDatabase::<span class="built_in">addDatabase</span>(<span class="string">&quot;QSQLITE&quot;</span>,<span class="string">&quot;LocalSqlite&quot;</span>);</span><br><span class="line">sqliteDb.<span class="built_in">setDatabaseName</span>(dbPath);</span><br><span class="line"></span><br><span class="line"><span class="keyword">bool</span> ret = sqliteDb.<span class="built_in">open</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!ret)</span><br><span class="line">	<span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Can not open the DB&quot;</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Open the DB successfully.&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>数据库连接成功！</p>
+<hr>
+<p>MySQL 部分的第一章到此便结束了， 接下来的一章会讲解一些数据库的基本操作。</p>
+<blockquote>
+<p>补充：</p>
+<p>MySQL 与 SQLite 的区别：</p>
+<p><a href="https://blog.csdn.net/zbw1185/article/details/47975965">https://blog.csdn.net/zbw1185/article/details/47975965</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Qt</category>
+      </categories>
+      <tags>
+        <tag>Qt</tag>
+        <tag>Sql</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>C++日期与时间编程（C++11-C++17）</title>
     <url>/2021/05/19/C++%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4%E7%BC%96%E7%A8%8B/</url>
     <content><![CDATA[<h1 id="C-日期与时间编程（C-11-C-17）"><a href="#C-日期与时间编程（C-11-C-17）" class="headerlink" title="C++日期与时间编程（C++11-C++17）"></a>C++日期与时间编程（C++11-C++17）</h1><h2 id="0x00-导言"><a href="#0x00-导言" class="headerlink" title="0x00 导言"></a>0x00 导言</h2><p>日期和时间是在编程中常常接触到的东西，而C++也为程序员提供了强（复）大（杂）的日期和时间编程的相关支持。在C++20标准中，C++的<code>chrono</code>库继C++11标准后也迎来了空前绝后大更新，但本文讨论的重点主要集中在C++11至C++17标准中日期和时间相关的内容，C++20标准中的<code>chrono</code>新东西完全可以另开一个坑。</p>
@@ -608,9 +837,92 @@
         <category>Linux</category>
       </categories>
       <tags>
+        <tag>转载</tag>
         <tag>linux</tag>
         <tag>cmake</tag>
-        <tag>转载</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MySQL on Qt (2):SQL的连接、断开与增删查改基本操作</title>
+    <url>/2020/07/23/mysqlonqt2/</url>
+    <content><![CDATA[<h1 id="MySQL-on-Qt-2-SQL的连接、断开与增删查改基本操作"><a href="#MySQL-on-Qt-2-SQL的连接、断开与增删查改基本操作" class="headerlink" title="MySQL on Qt (2): SQL的连接、断开与增删查改基本操作"></a>MySQL on Qt (2): SQL的连接、断开与增删查改基本操作</h1><blockquote>
+<p>写在前面： </p>
+<p>大一下学期的 CPP 大作业“自主订餐系统”可真是颇费了一些力气，每天晚睡早起撸代码，课都没听，很多知识都是现学现用。</p>
+<p>为了避免当时学到的东西给全部忘光光（`_&gt;`，我这脑子啊。。。），所以我把当时大作业的一些核心部分（一些零碎的小细节，能记就记）给记录一下，一方面是复习，一方面也方便以后用到的时候查阅。</p>
+</blockquote>
+<p>这篇文章是大作业 MySQL + SQLite 操作相关部分的第二章，主要讲一下 Qt 中 MySQL 和 SQLite 连接、断开与增删查改的基本操作。</p>
+<span id="more"></span>
+
+<h2 id="Qt-SQL-类"><a href="#Qt-SQL-类" class="headerlink" title="Qt SQL 类"></a>Qt SQL 类</h2><p><img src="https://gitee.com/skykeyjoker/PicCloud/raw/master/img/sqlmoudles.png" alt="Qt 中 SQl 相关类"></p>
+<ul>
+<li>用户接口层：实现将数据库中的数据链接到窗口部件上</li>
+<li>SQL接口层：提供对数据库的访问</li>
+<li>驱动层：为具体的数据库和SQL接口层之间提供了底层的桥梁</li>
+</ul>
+<p>要使用Qt SQL的类，需要在项目文件（.pro文件）中添加：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">QT += sql</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Qt-SQL-的连接、断开与增删查改操作"><a href="#Qt-SQL-的连接、断开与增删查改操作" class="headerlink" title="Qt SQL 的连接、断开与增删查改操作"></a>Qt SQL 的连接、断开与增删查改操作</h2><p>下面用一个 demo 来演示 Qt 中 SQL 的连接、断开与增删查改操作。</p>
+<img src="https://gitee.com/skykeyjoker/PicCloud/raw/master/img/demo.png" alt="demo" style="zoom:80%;" />
+
+
+
+<hr>
+<p>先来讲数据库的连接与断开。</p>
+<h3 id="连接数据库"><a href="#连接数据库" class="headerlink" title="连接数据库"></a>连接数据库</h3><p>上一章已经讲过如何连接 SQL 数据库，这里就简简单单放一下代码。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Connect to db</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">Widget::connectToDb</span><span class="params">(<span class="keyword">const</span> QString &amp; hostName, <span class="keyword">const</span> <span class="keyword">int</span> &amp; port, <span class="keyword">const</span> QString &amp; databaseName, <span class="keyword">const</span> QString &amp; username, <span class="keyword">const</span> QString &amp; password)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;hostName;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;port;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;databaseName;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;username;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;password;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Set info</span></span><br><span class="line">    _db.<span class="built_in">setHostName</span>(hostName);</span><br><span class="line">    _db.<span class="built_in">setPort</span>(port);</span><br><span class="line">    _db.<span class="built_in">setDatabaseName</span>(databaseName);</span><br><span class="line">    _db.<span class="built_in">setUserName</span>(username);</span><br><span class="line">    _db.<span class="built_in">setPassword</span>(password);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Open Db</span></span><br><span class="line">    <span class="keyword">bool</span> ret = _db.<span class="built_in">open</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里要注意下打印出错信息的技巧，这样可以方便查错。</p>
+<h3 id="断开数据库"><a href="#断开数据库" class="headerlink" title="断开数据库"></a>断开数据库</h3><p>啊这，更简单：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Close Db</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::closeDb</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    _db.<span class="built_in">close</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>接下来讲数据库的增删查改操作。这些操作主要是对 Query 语句的简单利用。</p>
+<p><strong>注意：</strong> MySQL 与 SQLite 的 SQL 语法存在一定区别，要注意区分使用。</p>
+<h3 id="创建数据表"><a href="#创建数据表" class="headerlink" title="创建数据表"></a>创建数据表</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Create Table</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::createTable</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Create table</span></span><br><span class="line">    query.<span class="built_in">exec</span>(<span class="string">&quot;CREATE TABLE `runoob_tbl` \</span></span><br><span class="line"><span class="string">                   (`runoob_id` INT UNSIGNED AUTO_INCREMENT, \</span></span><br><span class="line"><span class="string">                   `runoob_title` VARCHAR(100) NOT NULL,\</span></span><br><span class="line"><span class="string">                   `runoob_author` VARCHAR(40) NOT NULL,\</span></span><br><span class="line"><span class="string">                   `submission_date` DATE,\</span></span><br><span class="line"><span class="string">                   PRIMARY KEY ( `runoob_id`)) &quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="增加字段"><a href="#增加字段" class="headerlink" title="增加字段"></a>增加字段</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Add new column</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::addNewcolumn</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Add column</span></span><br><span class="line">    query.<span class="built_in">exec</span>(<span class="string">&quot;ALTER TABLE runoob_tbl ADD COLUMN new1 VARCHAR(20) DEFAULT NULL;&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="检验表是否存在"><a href="#检验表是否存在" class="headerlink" title="检验表是否存在"></a>检验表是否存在</h3><p>检验数据库中是否存在某表，可以利用 QSqlDatabase 提供的 <code>QSqlDatabase::tables()</code>函数。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Is Table Exists</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">Widget::isTableExists</span><span class="params">(<span class="keyword">const</span> QString &amp;)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(_db.<span class="built_in">tables</span>().<span class="built_in">contains</span>(<span class="string">&quot;user&quot;</span>))</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Table exists&quot;</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Table not exists&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> _db.<span class="built_in">tables</span>().<span class="built_in">contains</span>(<span class="string">&quot;user&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>QSqlDatabase::tables()</code>函数返回一个 <em>QStringList</em> 类型的数据，里面储存着所有表名，所以我们可以很方便的调用 <code>QStringList::contains()</code> 函数了来检验表是否存在。</p>
+<h3 id="查询、遍历数据表"><a href="#查询、遍历数据表" class="headerlink" title="查询、遍历数据表"></a>查询、遍历数据表</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Query Table</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::queryTable</span><span class="params">(<span class="keyword">const</span> QString &amp;)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Query the database</span></span><br><span class="line">    query.<span class="built_in">exec</span>(<span class="string">&quot;SELECT * FROM user WHERE 1&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get record</span></span><br><span class="line">    <span class="keyword">while</span>(query.<span class="built_in">next</span>())</span><br><span class="line">    &#123;</span><br><span class="line">        QSqlRecord record = query.<span class="built_in">record</span>();</span><br><span class="line"></span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;record.<span class="built_in">value</span>(<span class="number">0</span>)&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;record.<span class="built_in">value</span>(<span class="number">1</span>)&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;record.<span class="built_in">value</span>(<span class="number">2</span>)&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;record.<span class="built_in">value</span>(<span class="number">3</span>)&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;record.<span class="built_in">value</span>(<span class="number">4</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>数据表的遍历技巧要记住。</p>
+<h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Insert Data</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::insertData</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Prepare</span></span><br><span class="line">    query.<span class="built_in">prepare</span>(<span class="string">&quot;INSERT INTO user VALUES (:ID, :Name, :Age, :Type, :Gender)&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Bind value</span></span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:ID&quot;</span>,<span class="number">0</span>);</span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:Name&quot;</span>,<span class="string">&quot;test&quot;</span>);</span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:Age&quot;</span>,<span class="number">22</span>);</span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:Type&quot;</span>,<span class="string">&quot;testType&quot;</span>);</span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:Gender&quot;</span>,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Exec inserting</span></span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;query.<span class="built_in">exec</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>插入数据时使用了<code>QSqlDatabase::prepare()</code> 与 <code>QSqlDatabase::bindValue()</code>方法，当然我们也可以直接调用 <code>QSqlDatabase::exec()</code>，使用<code>tr(&quot;%1&quot;).arg(arg1)</code>方法来指定参数。</p>
+<h3 id="更新数据"><a href="#更新数据" class="headerlink" title="更新数据"></a>更新数据</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Update Data</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::updateData</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Update</span></span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;query.<span class="built_in">exec</span>(<span class="string">&quot;UPDATE user SET Age=233 WHERE Name=&#x27;Joker&#x27;&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="删除数据"><a href="#删除数据" class="headerlink" title="删除数据"></a>删除数据</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Delete Data</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::deleteData</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Delete</span></span><br><span class="line">    query.<span class="built_in">exec</span>(<span class="string">&quot;DELETE FROM user WHERE Name=&#x27;test&#x27;&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<p>至此本章的内容基本结束。下一章将讲解 Qt SQL 操作中最为精彩的部分：Model/View 模式。</p>
+<blockquote>
+<p>简单的 MySQL 和 SQLite 教程：</p>
+<p>MySQL: <a href="https://www.runoob.com/mysql/mysql-tutorial.html">https://www.runoob.com/mysql/mysql-tutorial.html</a></p>
+<p>SQLite: <a href="https://www.runoob.com/sqlite/sqlite-tutorial.html">https://www.runoob.com/sqlite/sqlite-tutorial.html</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Qt</category>
+      </categories>
+      <tags>
+        <tag>Qt</tag>
+        <tag>Sql</tag>
       </tags>
   </entry>
   <entry>
@@ -766,318 +1078,6 @@
       </tags>
   </entry>
   <entry>
-    <title>MySQL on Qt (1):安装 MySQL 驱动以及连接 MySQL 与 SQLite</title>
-    <url>/2020/07/22/mysqlonqt1/</url>
-    <content><![CDATA[<h1 id="MySQL-on-Qt-1-安装-MySQL-驱动以及连接-MySQL-与-SQLite"><a href="#MySQL-on-Qt-1-安装-MySQL-驱动以及连接-MySQL-与-SQLite" class="headerlink" title="MySQL on Qt (1): 安装 MySQL 驱动以及连接 MySQL 与 SQLite"></a>MySQL on Qt (1): 安装 MySQL 驱动以及连接 MySQL 与 SQLite</h1><blockquote>
-<p>写在前面： </p>
-<p>大一下学期的 CPP 大作业“自主订餐系统”可真是颇费了一些力气，每天晚睡早起撸代码，课都没听，很多知识都是现学现用。</p>
-<p>为了避免当时学到的东西给全部忘光光（`_&gt;`，我这脑子啊。。。），所以我把当时大作业的一些核心部分（一些零碎的小细节，能记就记）给记录一下，一方面是复习，一方面也方便以后用到的时候查阅。</p>
-</blockquote>
-<p>这篇文章是大作业 MySQL + SQLite 操作相关部分的第一章，主要讲一下如何安装 MySQL 驱动（Win 下）以及如何连接 MySQL 及 SQLite。</p>
-<span id="more"></span>
-
-<h2 id="准备部分——安装-MySQL-驱动"><a href="#准备部分——安装-MySQL-驱动" class="headerlink" title="准备部分——安装 MySQL 驱动"></a>准备部分——安装 MySQL 驱动</h2><p>还记得跟着教程学 Qt MySQL 操作的时候兴致冲冲地跟着打下了一行行代码，然后编译—运行，卧槽，报错。。。报错信息如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">QSqlDatabase: QMYSQL driver not loaded</span><br><span class="line"></span><br><span class="line">QSqlDatabase: available drivers: QSQLITE QPSQL QPSQL7</span><br><span class="line"></span><br><span class="line">&quot;Driver not loaded Driver not loaded&quot;</span><br></pre></td></tr></table></figure>
-
-<p>看一下报错信息，大体的意思就是说 Qt 没有连接 MySQL 的驱动。</p>
-<p>查看当前系统环境中的 Qt 支持哪些 Sql 驱动，可以输出一下 QSqlDatabase::drivers() 的值。</p>
-<p>坑爹的 Qt 在 Win 下并没有附带 MySQL 的连接驱动，需要我们自行编译。</p>
-<p>如果只需要连接远程数据库，那我们本地并不需要安装 MySQL，只要找到 MySQL 提供的 <code>libmysql.dll</code> 和 <code>libmysqld.dll</code> 拷贝到 Qt 的安装目录（<code>%QtDir%/migw.../bin</code>）。网上有教程说 Qt 默认自带已经编译好的 <code>qsqlmysql.dll</code> 和 <code>qsqlmysqld.dll</code> （路径在 <code>%QtDir%/mingw.../plugins/sqldrivers</code>），但是实测这些教程都已经老的不能再老了，我的安装目录下就没有自带的编译好的这两个 dll 文件，接下来我们开始着手安装和编译 MySQL 驱动。</p>
-<h3 id="第一步：下载-MySQL-DLL文件"><a href="#第一步：下载-MySQL-DLL文件" class="headerlink" title="第一步：下载 MySQL DLL文件"></a>第一步：下载 MySQL DLL文件</h3><p>扔个地址： </p>
-<blockquote>
-<p><a href="https://dev.mysql.com/downloads/connector/cpp/">https://dev.mysql.com/downloads/connector/cpp/</a></p>
-</blockquote>
-<p>下载下来拷贝一下扔过去就好了。。。</p>
-<p>（我记得当时搞了一个老版本的才能用。。。记不清了。。。需要的时候现搞吧。）</p>
-<h3 id="第二步：-编译-MySQL-驱动"><a href="#第二步：-编译-MySQL-驱动" class="headerlink" title="第二步： 编译 MySQL 驱动"></a>第二步： 编译 MySQL 驱动</h3><p>这一步是重中之重，不巧的是我也忘的差不多了。。。</p>
-<p>这里我们需要有 Qt 的源码，可以去下载一下。Qt 全部源码2G大小，我们可以仅选择模块进行下载。</p>
-<p>用 Qt 打开源码目录下的<code>\src\plugins\sqldrivers\mysql\mysql.pro</code>。</p>
-<p>在末尾加上两句：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">INCLUDEPATH += mysql安装目录\include</span><br><span class="line">LIBS += -Lmysql安装目录\lib\ -llibmysql</span><br></pre></td></tr></table></figure>
-
-<p>构建项目后会生成 <code>qsqlmysql.dll</code> 和 <code>qsqlmysqld.dll</code>两个文件，然后拷贝到<code>%QtDir%/mingw.../plugins/sqldrivers</code>文件夹中。</p>
-<p>准备部分到这里就大体结束了，理论上 Qt 就已经能成功连接 MySQL 。</p>
-<h2 id="上路！连接-MySQL-和-SQLite"><a href="#上路！连接-MySQL-和-SQLite" class="headerlink" title="上路！连接 MySQL 和 SQLite"></a>上路！连接 MySQL 和 SQLite</h2><h3 id="配置工程文件"><a href="#配置工程文件" class="headerlink" title="配置工程文件"></a>配置工程文件</h3><p>若要使用 Qt 的 SQL 库，则需要在工程文件中添加相应的参数。</p>
-<p>CMakeLists.txt:</p>
-<figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line"><span class="keyword">find_package</span>(Qt5 Sql)</span><br><span class="line"><span class="keyword">target_link_libraries</span>(Ordering-System-Server PRIVATE Qt5::Sql)</span><br></pre></td></tr></table></figure>
-
-<p>.pro工程文件：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">QT += sql</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="连接数据库"><a href="#连接数据库" class="headerlink" title="连接数据库"></a>连接数据库</h3><p>SQL 用到的库主要为：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;QSqlDatabase&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;QSqlError&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;QSqlRecord&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;QSqlQuery&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;QSqlIndex&gt;</span></span></span><br></pre></td></tr></table></figure>
-
-<p>其中 QSqlDatabase 是最重要的库，数据库的连接及其他基本操作都要在这个类上执行。</p>
-<p>连接数据库时，我们主要会用到以下几个函数：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//添加数据库</span></span><br><span class="line">[<span class="keyword">static</span>] <span class="function">QSqlDatabase <span class="title">QSqlDatabase::addDatabase</span><span class="params">(<span class="keyword">const</span> QString &amp;type, <span class="keyword">const</span> QString &amp;connectionName = QLatin1String(defaultConnection))</span></span></span><br><span class="line"><span class="function"><span class="comment">//设置数据库相关信息</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QSqlDatabase::setHostName</span><span class="params">(<span class="keyword">const</span> QString &amp;host)</span>        <span class="comment">//主机地址</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QSqlDatabase::setDatabaseName</span><span class="params">(<span class="keyword">const</span> QString &amp;name)</span>    <span class="comment">//数据库名</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QSqlDatabase::setUserName</span><span class="params">(<span class="keyword">const</span> QString &amp;name)</span>    	   <span class="comment">//数据库用户名</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QSqlDatabase::setPassword</span><span class="params">(<span class="keyword">const</span> QString &amp;password)</span>    <span class="comment">//数据库密码</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QSqlDatabase::setPort</span><span class="params">(<span class="keyword">int</span> port)</span>                       <span class="comment">//数据库端口</span></span></span><br></pre></td></tr></table></figure>
-
-<p>这里要特别注意一下<code>addDatabase()</code>这个函数的第二个参数 <em>connectionName</em> ，如果不指定这个参数，<strong>每次添加的数据库连接都会被应用程序当作默认连接</strong>。当初被这个坑了很久，因为大作业中服务端同时操作着两个数据库，一个远程 MySQL 数据库，一个本地 SQLite 数据库，添加第二个 SQLite 数据库后，就出锅不断，原因就在我没有注意第二个参数。</p>
-<p><img src="https://gitee.com/skykeyjoker/PicCloud/raw/master/img/adddatabase.png" alt="Qt Doc中关于 addDatabase的介绍"></p>
-<p>接下来分别就给一下连接 MySQL 和 SQLite 数据库的范例：</p>
-<h4 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL:"></a>MySQL:</h4><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">QSqlDatabase db = QSqlDatabase::<span class="built_in">addDatabase</span>(<span class="string">&quot;QMYSQL&quot;</span>);   <span class="comment">//添加一个数据库 </span></span><br><span class="line"></span><br><span class="line"><span class="comment">//设置数据库信息</span></span><br><span class="line">db.<span class="built_in">setHostName</span>(_dbHost);</span><br><span class="line">db.<span class="built_in">setDatabaseName</span>(_dbName);</span><br><span class="line">db.<span class="built_in">setUserName</span>(_dbUser);</span><br><span class="line">db.<span class="built_in">setPassword</span>(_dbPasswd);</span><br><span class="line">db.<span class="built_in">setPort</span>(_dbPort);</span><br><span class="line"></span><br><span class="line"><span class="keyword">bool</span> dbRet = db.<span class="built_in">open</span>(); <span class="comment">//连接数据库</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!ret)</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Can not open the DB&quot;</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Open the DB successfully.&quot;</span>;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>SQLite:</p>
-<p>因为 SQLite 数据库没有网络层，是一种本地储存的关系型数据库，因此连接的时候与 MySQL 有很大的差别。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">//设置数据库文件名</span></span><br><span class="line">QString dbPath = QDir::<span class="built_in">currentPath</span>()+<span class="string">&quot;/&quot;</span>+<span class="string">&quot;orders.db&quot;</span>;</span><br><span class="line"></span><br><span class="line">sqliteDb = QSqlDatabase::<span class="built_in">addDatabase</span>(<span class="string">&quot;QSQLITE&quot;</span>,<span class="string">&quot;LocalSqlite&quot;</span>);</span><br><span class="line">sqliteDb.<span class="built_in">setDatabaseName</span>(dbPath);</span><br><span class="line"></span><br><span class="line"><span class="keyword">bool</span> ret = sqliteDb.<span class="built_in">open</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(!ret)</span><br><span class="line">	<span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Can not open the DB&quot;</span>;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Open the DB successfully.&quot;</span>;</span><br></pre></td></tr></table></figure>
-
-<p>数据库连接成功！</p>
-<hr>
-<p>MySQL 部分的第一章到此便结束了， 接下来的一章会讲解一些数据库的基本操作。</p>
-<blockquote>
-<p>补充：</p>
-<p>MySQL 与 SQLite 的区别：</p>
-<p><a href="https://blog.csdn.net/zbw1185/article/details/47975965">https://blog.csdn.net/zbw1185/article/details/47975965</a></p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Qt</category>
-      </categories>
-      <tags>
-        <tag>Qt</tag>
-        <tag>Sql</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>欧拉筛法</title>
-    <url>/2020/07/21/euler-prime/</url>
-    <content><![CDATA[<h1 id="欧拉筛法"><a href="#欧拉筛法" class="headerlink" title="欧拉筛法"></a>欧拉筛法</h1><blockquote>
-<p>原创程画 最后发布于2018-05-15 18:24:08 阅读数 4146  收藏</p>
-</blockquote>
-<p>想看欧拉筛法的可直接拉到最后。</p>
-<p>相信各位对素数并不陌生，素数就是指不能被除了1和自身以外的别的数整除的数，比如2,3,5，而且根据欧几里得的证明来看，素数是无限的，普通的筛选素数的方法可能对较小的数据能在较短时间内完成筛选，但对于很大的数据（比如1e9）就会花费很长的时间。</p>
-<span id="more"></span>
-
-<h2 id="1-普通的求素数方法"><a href="#1-普通的求素数方法" class="headerlink" title="1.普通的求素数方法"></a>1.普通的求素数方法</h2><p>例如，普通的求素数方法时这样的：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> pri[MAXN];</span><br><span class="line"><span class="keyword">int</span> cnt=<span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">prime</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	cnt=<span class="number">0</span>;</span><br><span class="line">	pri[cnt++]=<span class="number">2</span>;</span><br><span class="line">	<span class="keyword">int</span> i,j;</span><br><span class="line">	<span class="keyword">for</span>(i=<span class="number">3</span>;i&lt;=n;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">for</span>(j=<span class="number">2</span>;j&lt;i;++j)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(i%j!=<span class="number">0</span>)</span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(j&gt;=i)</span><br><span class="line">			pri[cnt++]=i;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>根据素数的定义所写的代码很容易理解，但是运行的效率是不太优秀的，所以我们要改进，当然在学习的过程中相信大家也或多或少的学了些改进方法，一个简单的改进方法就是将第二个循环的结束条件改为j&lt;sqrt(i)，相应地再更改判断条件，这样当然可以减少我们运行所需要的时间，但是任然不够好，下面我们就来介绍一下埃式筛法和今天的真正目标——欧拉筛法。</p>
-<h2 id="2-埃式筛法"><a href="#2-埃式筛法" class="headerlink" title="2.埃式筛法"></a>2.埃式筛法</h2><p>先来介绍埃式筛法，埃式筛法的基本思想就是，当我们遍历到一个素数时，把所有该素数的倍数（自然是合数）都筛选出来，我们来看看代码：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> prime[MAXN];</span><br><span class="line"><span class="keyword">bool</span> vis[MAXN];</span><br><span class="line"><span class="keyword">int</span> cnt=<span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Era_prime</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">2</span>;i&lt;=n;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(!vis[i])</span><br><span class="line">			prime[cnt++]=i;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> j=i;j&lt;=n;j+=i)</span><br><span class="line">		&#123;</span><br><span class="line">			vis[j]=<span class="literal">true</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>当我们有没被选过的素数时，加入素数数组prime并且将它的所有n以内的倍数给筛选出来（vis[j]=true），埃式筛法很容易理解，并且在效率上也比较优秀，时间复杂度为O(nlglgn)，但是在处理1e8以上的数据时，还是稍稍力不从心，所以接下来我们着重介绍下线性时间筛法——欧拉筛法，我们还是先来看下代码：</p>
-<h2 id="3-欧拉筛法"><a href="#3-欧拉筛法" class="headerlink" title="3.欧拉筛法"></a>3.欧拉筛法</h2><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">int</span> prime[MAXN];</span><br><span class="line"><span class="keyword">bool</span> vis[MAXN];</span><br><span class="line"><span class="keyword">int</span> cnt=<span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Euler_prime</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">2</span>;i&lt;=n;++i)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(!vis[i])</span><br><span class="line">		&#123;prime[cnt++]=i;vis[i]=<span class="literal">true</span>;&#125;<span class="comment">//vis[i]置为true或不置true都可以</span></span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>;j&lt;cnt;++j)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(i*prime[j]&gt;n)<span class="comment">//判断是否越界</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			vis[i*prime[j]]=<span class="literal">true</span>;<span class="comment">//筛数</span></span><br><span class="line">			<span class="keyword">if</span>(i%prime[j]==<span class="number">0</span>)<span class="comment">//时间复杂度为O(n)的关键！</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p>我们注意到，在用埃式筛法的同时，同一个数字也许会被筛选多次，比如6先被2筛选一次，再被3筛选一次，这样就浪费了很多不必要的时间，而欧拉筛法通过<code>if(i%prime[j]==0)break;</code>这一步就避免了重复筛选的发生，我们举个例子，比如，2先筛选了4，然后进行下一个循环，3筛选6和9，当我们执行到4的时候，可以发现，当<code>i==4</code>时，第一次运行到<code>if(i%prime[j]==0)</code>这一步的时候就直接<code>break;</code>掉了，这也就是说，当我们的合数进入循环时，其实它已经被之前的数筛选过了，所以当合数进入内层循环时，内层循环只执行了一次，从而减少了时间复杂度。</p>
-<p>结束</p>
-<blockquote>
-<p>————————————————<br>版权声明：本文为CSDN博主「程画」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/chczy1/java/article/details/80327323">https://blog.csdn.net/chczy1/java/article/details/80327323</a></p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>C++</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-        <tag>转载</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Qt Model/View（模型/视图）结构（无师自通）</title>
-    <url>/2020/07/23/model-view/</url>
-    <content><![CDATA[<h1 id="Qt-Model-View（模型-视图）结构（无师自通）"><a href="#Qt-Model-View（模型-视图）结构（无师自通）" class="headerlink" title="Qt Model/View（模型/视图）结构（无师自通）"></a>Qt Model/View（模型/视图）结构（无师自通）</h1><blockquote>
-<p>本文转载自：</p>
-<p><a href="http://c.biancheng.net/view/1864.html">http://c.biancheng.net/view/1864.html</a></p>
-</blockquote>
-<p>Model/View（模型/视图）结构是 <a href="http://c.biancheng.net/qt/">Qt</a> 中用界面组件显示与编辑数据的一种结构，视图（View）是显示和编辑数据的界面组件，模型（Model）是视图与原始数据之间的接口。</p>
-<p>GUI 应用程序的一个很重要的功能是由用户在界面上编辑和修改数据，典型的如数据库应用程序。数据库应用程序中，用户在界面上执行各种操作，实际上是修改了界面组件所关联的数据库内的数据。</p>
-<p>将界面组件与所编辑的数据分离开来，又通过数据源的方式连接起来，是处理界面与数据的一种较好的方式。Qt 使用 Model/View 结构来处理这种关系，Model/View 的基本结构如图 1 所示。</p>
-<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z10316062G22.gif" alt="Model/View基本结构"></p>
-<span id="more"></span>
-
-<p>其中各部分的功能如下：</p>
-<ul>
-<li>数据（Data）是实际的数据，如数据库的一个数据表或SQL查询结果，内存中的一个 StringList，或磁盘文件结构等。</li>
-<li>视图或视图组件（View）是屏幕上的界面组件，视图从数据模型获得每个数据项的模型索引（model index），通过模型索引获取数据，然后为界面组件提供显示数据。Qt 提供一些现成的数据视图组件，如 QListView、QTreeView 和 QTableView 等。</li>
-<li>模型或数据模型（Model）与实际数据通信，并为视图组件提供数据接口。它从原始数据提取需要的内容，用于视图组件进行显示和编辑。Qt 中有一些预定义的数据模型，如 QStringListModel 可作为 StringList 的数据模型，QSqlTableModel 可以作为数据库中一个数据表的数据模型。</li>
-</ul>
-<p>由于数据源与显示界面通过 Model/View 结构分离开来，因此可以将一个数据模型在不同的视图中显示，也可以在不修改数据模型的情况下，设计特殊的视图组件。</p>
-<p>在 Model/View 结构中，还提供了代理（Delegate）功能，代理功能可以让用户定制数据的界面显示和编辑方式。在标准的视图组件中，代理功能显示一个数据，当数据被编辑时，代理通过模型索引与数据模型通信，并为编辑数据提供一个编辑器，一般是一个 QLineEdit 组件。</p>
-<p>模型、视图和代理之间使用信号和槽通信。当源数据发生变化时，数据模型发射信号通知视图组件；当用户在界面上操作数据时，视图组件发射信号表示这些操作信息；当编辑数据时，代理发射信号告知数据模型和视图组件编辑器的状态。</p>
-<h2 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h2><p>所有的基于项数据的数据模型（Model）都是基于 QAbstractltemModel 类的，这个类定义了视图组件和代理存取数据的接口。数据无需存储在数据模型里，数据可以是其他类、文件、数据库或任何数据源。</p>
-<p>Qt 中与数据模型相关的几个主要的类的层次结构如图 2 所示：</p>
-<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z103160KBJ.gif" alt="Qt中模型类的层次结构"></p>
-<p>图 2 中的抽象类是不能直接使用的，需要由子类继承来实现一些纯虚函数。Qt 提供了一些模型类用于项数据处理，常见的几个见表 3。</p>
-<table>
-<thead>
-<tr>
-<th>Model 类</th>
-<th>用途</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>QStringListModel</td>
-<td>用于处理字符串列表数据的数据模型类</td>
-</tr>
-<tr>
-<td>QStandardltemModel</td>
-<td>标准的基于项数据的数据模型类，每个项数据可以是任何数据类型</td>
-</tr>
-<tr>
-<td>QFileSy stemModel</td>
-<td>计算机上文件系统的数据模型类</td>
-</tr>
-<tr>
-<td>QSortFilterProxyModel</td>
-<td>与其他数据模型结合，提供排序和过滤功能的数据模型类</td>
-</tr>
-<tr>
-<td>QSqlQueryModel</td>
-<td>用于数据库SQL查询结果的数据模型类</td>
-</tr>
-<tr>
-<td>QSqlTableModel</td>
-<td>用于数据库的一个数据表的数据模型类</td>
-</tr>
-<tr>
-<td>QSqlRelationalTableModel</td>
-<td>用于关系型数据表的数据模型类</td>
-</tr>
-</tbody></table>
-<p>数据库相关的 3 个模型类将在介绍数据库编程时专门说明。如果这些现有的模型类无法满足需求，用户可以从 QAbstractltemModel、QAbstractListModel 或 QAbstractTableModel 继承，生成自己定制的数据模型类。</p>
-<h2 id="视图组件"><a href="#视图组件" class="headerlink" title="视图组件"></a>视图组件</h2><p>视图组件（View）就是显示数据模型的数据的界面组件，Qt 提供的视图组件如下：</p>
-<ul>
-<li>QListView：用于显示单列的列表数据，适用于一维数据的操作。</li>
-<li>QTreeView：用于显示树状结构数据，适用于树状结构数据的操作。</li>
-<li>QTableView：用于显示表格状数据，适用于二维表格型数据的操作。</li>
-<li>QColumnView：用多个QListView显示树状层次结构，树状结构的一层用一个QListView显示。</li>
-<li>QHeaderView：提供行表头或列表头的视图组件，如QTableView的行表头和列表头。</li>
-</ul>
-<p>视图组件在显示数据时，只需调用视图类的 setModel() 函数，为视图组件设置一个数据模型就可以实现视图组件与数据模型之间的关联，在视图组件上的修改将自动保存到关联的数据模型里，一个数据模型可以同时在多个视图组件里显示数据。</p>
-<p>前面介绍了 QListWidget、QTreeWidget 和 QtableWidget 3个可用于数据编辑的组件。这 3 个类称为便利类（convenience classes），它们分别是 3 个视图类的子类，其层次关系如图 4 所示。</p>
-<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z103160934132.gif" alt="视图相关类的层次结构图"></p>
-<p>用于 Model/View 结构的几个视图类直接从 QAbstract ItemView 继承而来，而便利类则从相应的视图类继承而来。</p>
-<p>视图组件类的数据采用单独的数据模型，视图组件不存储数据。便利类则为组件的每个节点或单元格创建一个项（item），用项存储数据、格式设置等。所以，便利类没有数据模型，它实际上是用项的方式集成了数据模型的功能，这样就将界面与数据绑定了。</p>
-<p>所以，便利类缺乏对大型数据源进行灵活处理的能力，适用于小型数据的显示和编辑。</p>
-<h2 id="代理（Delegate）"><a href="#代理（Delegate）" class="headerlink" title="代理（Delegate）"></a>代理（Delegate）</h2><p>代理就是在视图组件上为编辑数据提供编辑器，如在表格组件中编辑一个单元格的数据时，缺省是使用一个 QLineEdit 编辑框。代理负责从数据模型获取相应的数据，然后显示在编辑器里，修改数据后，又将其保存到数据模型中。</p>
-<p>QAbstractltemDelegate 是所有代理类的基类，作为抽象类，它不能直接使用。它的一个子类 QStyledltemDelegate，是 Qt 的视图组件缺省使用的代理类。</p>
-<p>对于一些特殊的数据编辑需求，例如只允许输入整型数，使用一个 QSpinBox 作为代理组件更恰当，从列表中选择数据时使用一个 QComboBox 作为代理组件更好。这时，就可以从 QStyledltemDelegate 继承创建自定义代理类。</p>
-<h2 id="Model-View结构的一些概念"><a href="#Model-View结构的一些概念" class="headerlink" title="Model/View结构的一些概念"></a>Model/View结构的一些概念</h2><p>在 Model/View 结构中，数据模型为视图组件和代理提供存取数据的标准接口。在 Qt 中，所有的数据模型类都从 QAbstractltemModel 继承而来，不管底层的<a href="http://c.biancheng.net/data_structure/">数据结构</a>是如何组织数据的，QAbstractltemModel 的子类都以表格的层次结构表示数据，视图组件通过这种规则来存取模型中的数据，但是表现给用户的形式不一样。</p>
-<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z1031610455L.gif" alt="数据模型的几种表现形式"></p>
-<p>图 5 是数据模型的 3 种常见表现形式。不管数据模型的表现形式是怎么样的，数据模型中存储数据的基本单元都是项（item），每个项有一个行号、一个列号，还有一个父项。在列表和表格模式下，所有的项都有一个相同的顶层项；在树状结构中，行号、列号、父项稍微复杂一点，但是由这 3 个参数完全可以定义一个项的位置，从而存取项的数据。</p>
-<h4 id="模型索引（model-index）"><a href="#模型索引（model-index）" class="headerlink" title="模型索引（model index）"></a>模型索引（model index）</h4><p>为了保证数据的表示与数据存取方式隔离，数据模型中引入了模型索引的概念。通过数据模型存取的每个数据都有一个模型索引，视图组件和代理都通过模型索引来获取数据。</p>
-<p>QModelIndex 表示模型索引的类。模型索引提供数据存取的一个临时指针，用于通过数据模型提取或修改数据。因为模型内部组织数据的结构随时可能改变，所以模型索引是临时的。如果需要使用持久性的模型索引，则要使用 QPersistentModelIndex 类。</p>
-<h4 id="行号和列号"><a href="#行号和列号" class="headerlink" title="行号和列号"></a>行号和列号</h4><p>数据模型的基本形式是用行和列定义的表格数据，但这并不意味着底层的数据是用二维数组存储的，使用行和列只是为了组件之间交互方便的一种规定。通过模型索引的行号和列号就可以存取数据。</p>
-<p>要获得一个模型索引，必须提供 3 个参数：行号、列号、父项的模型索引。例如，对于如图 5 中的表格数据模型中的 3 个数据项 A、B、C，获取其模型索引的代码是：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">QModelIndex indexA = model-&gt;<span class="built_in">index</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="built_in">QModelIndex</span>());</span><br><span class="line">QModelIndex indexB = model-&gt;<span class="built_in">index</span>(<span class="number">1</span>, <span class="number">1</span>, <span class="built_in">QModelIndex</span>());</span><br><span class="line">QModelIndex indexC = model-&gt;<span class="built_in">index</span>(<span class="number">2</span>, <span class="number">1</span>, <span class="built_in">QModelIndex</span>());</span><br></pre></td></tr></table></figure>
-
-<p>在创建模型索引的函数中需要传递行号、列号和父项的模型索引。对于列表和表格模式的数据模型，顶层节点总是用 QModelIndex() 表示。</p>
-<h4 id="父项"><a href="#父项" class="headerlink" title="父项"></a>父项</h4><p>当数据模型是列表或表格时，使用行号、列号存储数据比较直观，所有数据项的父项就是顶层项；当数据模型是树状结构时，情况比较复杂（树状结构中，项一般习惯于称为节点），一个节点可以有父节点，也可以是其他节点的父节点，在构造数据项的模型索引时，必须指定正确的行号、列号和父节点。</p>
-<p>对于图 5 中的树状数据模型，节点 A 和节点 C 的父节点是顶层节点，获取模型索引的代码是：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">QModelIndex indexA = model-&gt;<span class="built_in">index</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="built_in">QModelIndex</span>());</span><br><span class="line">QModelIndex indexC = model-&gt;<span class="built_in">index</span>(<span class="number">2</span>, <span class="number">1</span>, <span class="built_in">QModelIndex</span>());</span><br></pre></td></tr></table></figure>
-
-<p>但是，节点 B 的父节点是节点 A，节点 B 的模型索引由下面的代码生成：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line">QModelIndex indexB = model-&gt;<span class="built_in">index</span>(<span class="number">1</span>, <span class="number">0</span>, indexA);</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="项的角色"><a href="#项的角色" class="headerlink" title="项的角色"></a>项的角色</h4><p>在为数据模型的一个项设置数据时，可以赋予其不同项的角色的数据。例如，数据模型类 QStandardItemModel 的项数据类是 QStandardItem，其设置数据的函数是：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QStandardItem::setData</span><span class="params">(<span class="keyword">const</span> QVariant &amp;value, <span class="keyword">int</span> role= Qt::UserRole + <span class="number">1</span>)</span></span></span><br></pre></td></tr></table></figure>
-
-<p>其中，value 是需要设置的数据，role 是设置数据的角色。一个项可以有不同角色的数据，用于不同的场合。</p>
-<p>role 是 <code>Qt::ItemDataRole</code> 枚举类型，有多种取值，如 <code>Qt::DisplayRole</code> 角色是在视图组件中显示的字符串，<code>Qt::ToolTipRole</code> 是鼠标提示消息，<code>Qt::UserRole</code> 可以自定义数据。项的标准角色是 <code>Qt::DisplayRole</code>。</p>
-<p>在获取一个项的数据时也需要指定角色，以获取不同角色的数据：</p>
-<p><code>QVariant QStandardItem::data(int role = Qt::UserRole + 1) const</code></p>
-<p>为一个项的不同角色定义数据，可以告知视图组件和代理组件如何显示数据。例如，在图 6 中，项的 DisplayRole 数据是显示的字符串，DecorationRole 是用于装饰显示的属性，ToolTipRole 定义了鼠标提示信息。不同的视图组件对各种角色数据的解释和显示可能不一样，也可能忽略某些角色的数据。</p>
-<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z103161340927.gif" alt="不同角色数据的表现形式"></p>
-]]></content>
-      <categories>
-        <category>Qt</category>
-      </categories>
-      <tags>
-        <tag>转载</tag>
-        <tag>Qt</tag>
-        <tag>Model/View</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MySQL on Qt (2):SQL的连接、断开与增删查改基本操作</title>
-    <url>/2020/07/23/mysqlonqt2/</url>
-    <content><![CDATA[<h1 id="MySQL-on-Qt-2-SQL的连接、断开与增删查改基本操作"><a href="#MySQL-on-Qt-2-SQL的连接、断开与增删查改基本操作" class="headerlink" title="MySQL on Qt (2): SQL的连接、断开与增删查改基本操作"></a>MySQL on Qt (2): SQL的连接、断开与增删查改基本操作</h1><blockquote>
-<p>写在前面： </p>
-<p>大一下学期的 CPP 大作业“自主订餐系统”可真是颇费了一些力气，每天晚睡早起撸代码，课都没听，很多知识都是现学现用。</p>
-<p>为了避免当时学到的东西给全部忘光光（`_&gt;`，我这脑子啊。。。），所以我把当时大作业的一些核心部分（一些零碎的小细节，能记就记）给记录一下，一方面是复习，一方面也方便以后用到的时候查阅。</p>
-</blockquote>
-<p>这篇文章是大作业 MySQL + SQLite 操作相关部分的第二章，主要讲一下 Qt 中 MySQL 和 SQLite 连接、断开与增删查改的基本操作。</p>
-<span id="more"></span>
-
-<h2 id="Qt-SQL-类"><a href="#Qt-SQL-类" class="headerlink" title="Qt SQL 类"></a>Qt SQL 类</h2><p><img src="https://gitee.com/skykeyjoker/PicCloud/raw/master/img/sqlmoudles.png" alt="Qt 中 SQl 相关类"></p>
-<ul>
-<li>用户接口层：实现将数据库中的数据链接到窗口部件上</li>
-<li>SQL接口层：提供对数据库的访问</li>
-<li>驱动层：为具体的数据库和SQL接口层之间提供了底层的桥梁</li>
-</ul>
-<p>要使用Qt SQL的类，需要在项目文件（.pro文件）中添加：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">QT += sql</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="Qt-SQL-的连接、断开与增删查改操作"><a href="#Qt-SQL-的连接、断开与增删查改操作" class="headerlink" title="Qt SQL 的连接、断开与增删查改操作"></a>Qt SQL 的连接、断开与增删查改操作</h2><p>下面用一个 demo 来演示 Qt 中 SQL 的连接、断开与增删查改操作。</p>
-<img src="https://gitee.com/skykeyjoker/PicCloud/raw/master/img/demo.png" alt="demo" style="zoom:80%;" />
-
-
-
-<hr>
-<p>先来讲数据库的连接与断开。</p>
-<h3 id="连接数据库"><a href="#连接数据库" class="headerlink" title="连接数据库"></a>连接数据库</h3><p>上一章已经讲过如何连接 SQL 数据库，这里就简简单单放一下代码。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Connect to db</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">Widget::connectToDb</span><span class="params">(<span class="keyword">const</span> QString &amp; hostName, <span class="keyword">const</span> <span class="keyword">int</span> &amp; port, <span class="keyword">const</span> QString &amp; databaseName, <span class="keyword">const</span> QString &amp; username, <span class="keyword">const</span> QString &amp; password)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;hostName;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;port;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;databaseName;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;username;</span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;password;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Set info</span></span><br><span class="line">    _db.<span class="built_in">setHostName</span>(hostName);</span><br><span class="line">    _db.<span class="built_in">setPort</span>(port);</span><br><span class="line">    _db.<span class="built_in">setDatabaseName</span>(databaseName);</span><br><span class="line">    _db.<span class="built_in">setUserName</span>(username);</span><br><span class="line">    _db.<span class="built_in">setPassword</span>(password);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Open Db</span></span><br><span class="line">    <span class="keyword">bool</span> ret = _db.<span class="built_in">open</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这里要注意下打印出错信息的技巧，这样可以方便查错。</p>
-<h3 id="断开数据库"><a href="#断开数据库" class="headerlink" title="断开数据库"></a>断开数据库</h3><p>啊这，更简单：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Close Db</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::closeDb</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    _db.<span class="built_in">close</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<hr>
-<p>接下来讲数据库的增删查改操作。这些操作主要是对 Query 语句的简单利用。</p>
-<p><strong>注意：</strong> MySQL 与 SQLite 的 SQL 语法存在一定区别，要注意区分使用。</p>
-<h3 id="创建数据表"><a href="#创建数据表" class="headerlink" title="创建数据表"></a>创建数据表</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Create Table</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::createTable</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Create table</span></span><br><span class="line">    query.<span class="built_in">exec</span>(<span class="string">&quot;CREATE TABLE `runoob_tbl` \</span></span><br><span class="line"><span class="string">                   (`runoob_id` INT UNSIGNED AUTO_INCREMENT, \</span></span><br><span class="line"><span class="string">                   `runoob_title` VARCHAR(100) NOT NULL,\</span></span><br><span class="line"><span class="string">                   `runoob_author` VARCHAR(40) NOT NULL,\</span></span><br><span class="line"><span class="string">                   `submission_date` DATE,\</span></span><br><span class="line"><span class="string">                   PRIMARY KEY ( `runoob_id`)) &quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="增加字段"><a href="#增加字段" class="headerlink" title="增加字段"></a>增加字段</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Add new column</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::addNewcolumn</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Add column</span></span><br><span class="line">    query.<span class="built_in">exec</span>(<span class="string">&quot;ALTER TABLE runoob_tbl ADD COLUMN new1 VARCHAR(20) DEFAULT NULL;&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="检验表是否存在"><a href="#检验表是否存在" class="headerlink" title="检验表是否存在"></a>检验表是否存在</h3><p>检验数据库中是否存在某表，可以利用 QSqlDatabase 提供的 <code>QSqlDatabase::tables()</code>函数。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Is Table Exists</span></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">Widget::isTableExists</span><span class="params">(<span class="keyword">const</span> QString &amp;)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(_db.<span class="built_in">tables</span>().<span class="built_in">contains</span>(<span class="string">&quot;user&quot;</span>))</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Table exists&quot;</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="built_in">qDebug</span>()&lt;&lt;<span class="string">&quot;Table not exists&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> _db.<span class="built_in">tables</span>().<span class="built_in">contains</span>(<span class="string">&quot;user&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p><code>QSqlDatabase::tables()</code>函数返回一个 <em>QStringList</em> 类型的数据，里面储存着所有表名，所以我们可以很方便的调用 <code>QStringList::contains()</code> 函数了来检验表是否存在。</p>
-<h3 id="查询、遍历数据表"><a href="#查询、遍历数据表" class="headerlink" title="查询、遍历数据表"></a>查询、遍历数据表</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Query Table</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::queryTable</span><span class="params">(<span class="keyword">const</span> QString &amp;)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Query the database</span></span><br><span class="line">    query.<span class="built_in">exec</span>(<span class="string">&quot;SELECT * FROM user WHERE 1&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get record</span></span><br><span class="line">    <span class="keyword">while</span>(query.<span class="built_in">next</span>())</span><br><span class="line">    &#123;</span><br><span class="line">        QSqlRecord record = query.<span class="built_in">record</span>();</span><br><span class="line"></span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;record.<span class="built_in">value</span>(<span class="number">0</span>)&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;record.<span class="built_in">value</span>(<span class="number">1</span>)&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;record.<span class="built_in">value</span>(<span class="number">2</span>)&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;record.<span class="built_in">value</span>(<span class="number">3</span>)&lt;&lt;<span class="string">&quot; &quot;</span>&lt;&lt;record.<span class="built_in">value</span>(<span class="number">4</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>数据表的遍历技巧要记住。</p>
-<h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Insert Data</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::insertData</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Prepare</span></span><br><span class="line">    query.<span class="built_in">prepare</span>(<span class="string">&quot;INSERT INTO user VALUES (:ID, :Name, :Age, :Type, :Gender)&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Bind value</span></span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:ID&quot;</span>,<span class="number">0</span>);</span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:Name&quot;</span>,<span class="string">&quot;test&quot;</span>);</span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:Age&quot;</span>,<span class="number">22</span>);</span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:Type&quot;</span>,<span class="string">&quot;testType&quot;</span>);</span><br><span class="line">    query.<span class="built_in">bindValue</span>(<span class="string">&quot;:Gender&quot;</span>,<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Exec inserting</span></span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;query.<span class="built_in">exec</span>();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>插入数据时使用了<code>QSqlDatabase::prepare()</code> 与 <code>QSqlDatabase::bindValue()</code>方法，当然我们也可以直接调用 <code>QSqlDatabase::exec()</code>，使用<code>tr(&quot;%1&quot;).arg(arg1)</code>方法来指定参数。</p>
-<h3 id="更新数据"><a href="#更新数据" class="headerlink" title="更新数据"></a>更新数据</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Update Data</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::updateData</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Update</span></span><br><span class="line">    <span class="built_in">qDebug</span>()&lt;&lt;query.<span class="built_in">exec</span>(<span class="string">&quot;UPDATE user SET Age=233 WHERE Name=&#x27;Joker&#x27;&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="删除数据"><a href="#删除数据" class="headerlink" title="删除数据"></a>删除数据</h3><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Delete Data</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Widget::deleteData</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Query</span></span><br><span class="line">    QSqlQuery query;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Delete</span></span><br><span class="line">    query.<span class="built_in">exec</span>(<span class="string">&quot;DELETE FROM user WHERE Name=&#x27;test&#x27;&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Error Info</span></span><br><span class="line">    QSqlError error = _db.<span class="built_in">lastError</span>();</span><br><span class="line">    <span class="keyword">if</span>(error.<span class="built_in">type</span>() != QSqlError::NoError)</span><br><span class="line">        <span class="built_in">qDebug</span>()&lt;&lt;error.<span class="built_in">text</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<hr>
-<p>至此本章的内容基本结束。下一章将讲解 Qt SQL 操作中最为精彩的部分：Model/View 模式。</p>
-<blockquote>
-<p>简单的 MySQL 和 SQLite 教程：</p>
-<p>MySQL: <a href="https://www.runoob.com/mysql/mysql-tutorial.html">https://www.runoob.com/mysql/mysql-tutorial.html</a></p>
-<p>SQLite: <a href="https://www.runoob.com/sqlite/sqlite-tutorial.html">https://www.runoob.com/sqlite/sqlite-tutorial.html</a></p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>Qt</category>
-      </categories>
-      <tags>
-        <tag>Qt</tag>
-        <tag>Sql</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>二元运算符重载</title>
     <url>/2020/07/21/%E4%BA%8C%E5%85%83%E8%BF%90%E7%AE%97%E7%AC%A6%E9%87%8D%E8%BD%BD/</url>
     <content><![CDATA[<h1 id="C-二元运算符重载"><a href="#C-二元运算符重载" class="headerlink" title="C++ 二元运算符重载"></a>C++ 二元运算符重载</h1><p>二元运算符需要两个参数，下面是二元运算符的实例。我们平常使用的加运算符（ + ）、减运算符（ - ）、乘运算符（ * ）和除运算符（ / ）都属于二元运算符。就像加(+)运算符。</p>
@@ -1099,6 +1099,96 @@
 <p>输出结果：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">2</span><br><span class="line">2</span><br></pre></td></tr></table></figure>
 
+]]></content>
+      <categories>
+        <category>C++</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>转载</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>构造函数</title>
+    <url>/2020/07/21/%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0/</url>
+    <content><![CDATA[<h1 id="【C-】类构造函数（深拷贝与浅拷贝）"><a href="#【C-】类构造函数（深拷贝与浅拷贝）" class="headerlink" title="【C++】类构造函数（深拷贝与浅拷贝）"></a>【C++】类构造函数（深拷贝与浅拷贝）</h1><blockquote>
+<p>原创Jacky_Feng 最后发布于2019-11-29 19:56:28 阅读数 16  收藏</p>
+</blockquote>
+<h2 id="1-什么是类的构造函数"><a href="#1-什么是类的构造函数" class="headerlink" title="1.什么是类的构造函数"></a>1.什么是类的构造函数</h2><p>类的构造函数是类的一种特殊的成员函数，它会在每次创建类的新对象时被自动调用。没创建一个对象都必须调用一次构造函数。</p>
+<p>构造函数的名称与类的名称是完全相同的，并且不会返回任何类型，也不会返回void。构造函数可用于为某些成员变量设置初始值。</p>
+<span id="more"></span>
+
+<p>实例演示：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Counter</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 类Counter的构造函数</span></span><br><span class="line">    <span class="comment">// 特点：以类名作为函数名，无返回类型</span></span><br><span class="line">    <span class="built_in">Counter</span>()</span><br><span class="line">    &#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;object is being created&quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// 数据成员</span></span><br><span class="line">    <span class="keyword">int</span> m_value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Counter obj1;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>以上代码编译和执行的结果如下：</p>
+<p><strong>object is being created</strong></p>
+</blockquote>
+<p> 该类对象obj1被创建时，编译系统为对象分配内存空间，并自动调用构造函数Counter()完成对象成员变量的初始化工作。</p>
+<h2 id="2-构造函数的分类"><a href="#2-构造函数的分类" class="headerlink" title="2.构造函数的分类"></a>2.构造函数的分类</h2><h3 id="1）按函数有无参数分类"><a href="#1）按函数有无参数分类" class="headerlink" title="1）按函数有无参数分类"></a>1）按函数有无参数分类</h3><img src="https://img-blog.csdnimg.cn/20191129164917429.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0phY2t5X0Zlbmc=,size_16,color_FFFFFF,t_70" alt="有无参数分类" style="zoom:80%;" />
+
+<p> 其中所有带有默认值的有参构造函数会转变成默认构造函数。</p>
+<h3 id="2）按参数的类型分类"><a href="#2）按参数的类型分类" class="headerlink" title="2）按参数的类型分类"></a>2）按参数的类型分类</h3><img src="https://img-blog.csdnimg.cn/20191129165633658.png" alt="按参数的类型分类" style="zoom:80%;" />
+
+<p> 一个类中至少有上述两个构造函数，可以有更多的构造函数（构造函数允许重载），以实现不同形式对象的创建。</p>
+<h2 id="3-构造函数的重载"><a href="#3-构造函数的重载" class="headerlink" title="3.构造函数的重载"></a>3.构造函数的重载</h2><p>和普通成员函数一样，构造函数是允许重载的。一个类中可以有多个重载的构造函数，创建对象时根据传递的实参来判断调用哪个构造函数。创建对象构造函数的调用是强制性的，一旦在类中定义了构造函数，那么创建对象时就一定要调用。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">String</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">String</span>(<span class="keyword">const</span> <span class="keyword">char</span> *str = <span class="literal">NULL</span>); <span class="comment">// 普通构造函数</span></span><br><span class="line">    <span class="built_in">String</span>(<span class="keyword">const</span> String &amp;other);    <span class="comment">// 拷贝构造函数</span></span><br><span class="line">    ~ <span class="built_in">String</span>(<span class="keyword">void</span>);                 <span class="comment">// 析构函数</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">char</span> *m_data; <span class="comment">// 用于保存字符串</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// String 的析构函数</span></span><br><span class="line">String::~<span class="built_in">String</span>(<span class="keyword">void</span>) </span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">delete</span> [] m_data;</span><br><span class="line">    <span class="comment">// 由于m_data 是内部数据类型，也可以写成 delete m_data;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// String 的普通构造函数</span></span><br><span class="line">String::<span class="built_in">String</span>(<span class="keyword">const</span> <span class="keyword">char</span> *str) </span><br><span class="line">&#123;</span><br><span class="line">    cout&lt;&lt;<span class="string">&quot;Ordinary constructor is running&quot;</span>&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 拷贝构造函数</span></span><br><span class="line">String::<span class="built_in">String</span>(<span class="keyword">const</span> String &amp;other) </span><br><span class="line">&#123;</span><br><span class="line">    cout&lt;&lt;<span class="string">&quot;Copy constructor is running&quot;</span>&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	String  str1; </span><br><span class="line">	<span class="function">String  <span class="title">str2</span><span class="params">(<span class="string">&quot;hello&quot;</span>)</span></span>; </span><br><span class="line">	<span class="function">String  <span class="title">str3</span><span class="params">(str2)</span></span>; </span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p> 上面代码编译和执行结果为：</p>
+<img src="https://img-blog.csdnimg.cn/20191129172558212.png" alt="结果" style="zoom:80%;" />
+
+ 
+
+<h2 id="4-常见的构造函数"><a href="#4-常见的构造函数" class="headerlink" title="4.常见的构造函数"></a>4.常见的构造函数</h2><h3 id="1）默认构造函数"><a href="#1）默认构造函数" class="headerlink" title="1）默认构造函数"></a>1）默认构造函数</h3><p>如果用户自己没有定义构造函数，那么编译器会自动生成一个默认构造函数，只是这个构造函数没有形参，函数体也是空的，不执行任何操作。例如：Student类的默认生成的构造函数如下：</p>
+<p>​       <code> Student()&#123;&#125;</code></p>
+<p>==一个类中必须有构造函数，要么用户自己定义，要么编译器自动生成。一旦用户自己定义了构造函数，不管几个，也不管形参如何，编译器都不再自动生成。==</p>
+<p>调用不带参数的构造函数也可以省略括号。即创建对象Student stu()和Student stu是等价的。</p>
+<h3 id="2）-拷贝构造函数"><a href="#2）-拷贝构造函数" class="headerlink" title="2） 拷贝构造函数"></a>2） 拷贝构造函数</h3><p>当以拷贝的方式初始化一个对象时，会调用一个特殊的构造函数，就是拷贝构造函数。拷贝构造函数的名称与类的名称一致，它必须的一个参数是本类型的一个引用变量。</p>
+<p>注意，默认构造函数（即无参构造函数）不一定存在，但是拷贝构造函数总是会存在。</p>
+<blockquote>
+<p>拷贝构造函数常用的三种情况：</p>
+<p>==①当用一个对象去初始化同类的另一个对象==。</p>
+<p>例如：</p>
+<p>​    A test_b(test_a);<br>​    A test_b = test_a;//这两条语句是等价的<br><strong>【注意】第二条语句是初始化语句，不是赋值语句。赋值语句的等号左边是一个早已有定义的变量，赋值语句不会引发拷贝构造函数的调用。</strong></p>
+<pre><code>A test_a,test_b;
+ test_b = test_a;//这句不会引发拷贝构造函数的调用，因为test_b早已生成，已经初始化过了
+</code></pre>
+<p>②==一个对象以值传递的方式传入函数体==，而调用拷贝构造函数时的参数，就是调用函数时所给的实参。</p>
+<p>③==一个对象以值传递的方式从函数中返回==，而调用拷贝构造函数的参数，就是return语句所返回的对象。</p>
+</blockquote>
+<h4 id="浅拷贝"><a href="#浅拷贝" class="headerlink" title="浅拷贝"></a>浅拷贝</h4><p>浅拷贝是指在对象拷贝时，只对对象中的数据成员进行简单的赋值，默认拷贝构造函数执行的也是浅拷贝。大多数情况下“浅拷贝”可以很好的工作，但一旦对象存在动态成员，那么浅拷贝就会出问题。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;assert.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rect</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Rect</span>()</span><br><span class="line">    &#123;</span><br><span class="line">     p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">	~<span class="built_in">Rect</span>()</span><br><span class="line">	&#123;</span><br><span class="line"> 		<span class="built_in">assert</span>(p!=<span class="literal">NULL</span>);</span><br><span class="line">    	<span class="keyword">delete</span> p;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> width;</span><br><span class="line">    <span class="keyword">int</span> height;</span><br><span class="line">    <span class="keyword">int</span> *p;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Rect rect1;</span><br><span class="line">    <span class="function">Rect <span class="title">rect2</span><span class="params">(rect1)</span></span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125; 这段代码运行结束后，会出现运行错误。原因就在于在进行对象拷贝时，对于动态分配的内容没有正确的操作。</span><br></pre></td></tr></table></figure>
+
+<p>原因分析：</p>
+<p>在使用rect1复制rect2时，由于执行的是浅拷贝，只是将成员的值进行赋值，这时 rect1.p = rect2.p，也即这两个指针指向了堆里的同一个空间。</p>
+<img src="https://img-blog.csdnimg.cn/20191129194029601.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0phY2t5X0Zlbmc=,size_16,color_FFFFFF,t_70" alt="原因" style="zoom:80%;" />
+
+<p> 在销毁对象时，两个对象的析构函数将对同一个内存空间释放两次，这就是错误出现的原因。我们需要的不是两个p有相同的值，而是两个p指向的空间有相同的值，解决办法就是使用“深拷贝”。</p>
+<h4 id="深拷贝"><a href="#深拷贝" class="headerlink" title="深拷贝"></a>深拷贝</h4><p>深拷贝对于动态成员，并不是简单地复制，而是重新动态分配空间。</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;assert.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rect</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Rect</span>()</span><br><span class="line">    &#123;</span><br><span class="line">     p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//深拷贝</span></span><br><span class="line">    <span class="built_in">Rect</span>(<span class="keyword">const</span> Rect&amp; r)</span><br><span class="line">    &#123;</span><br><span class="line">     width=r.width;</span><br><span class="line">        height=r.height;</span><br><span class="line">     p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">100</span>);</span><br><span class="line">        *p=*(r.p);</span><br><span class="line">    &#125;</span><br><span class="line">~<span class="built_in">Rect</span>()</span><br><span class="line">&#123;</span><br><span class="line"> <span class="built_in">assert</span>(p!=<span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">delete</span> p;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> width;</span><br><span class="line">    <span class="keyword">int</span> height;</span><br><span class="line">    <span class="keyword">int</span> *p;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Rect rect1;</span><br><span class="line">    <span class="function">Rect <span class="title">rect2</span><span class="params">(rect1)</span></span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>完成对象拷贝地过程为:</p>
+<img src="https://img-blog.csdnimg.cn/2019112919463854.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0phY2t5X0Zlbmc=,size_16,color_FFFFFF,t_70" alt="过程" style="zoom:80%;" />
+
+<p> 此时rect1的p和rect2的p各自指向一段内存空间，但它们指向的空间具有相同的内容，这就是所谓的“深拷贝”。</p>
+<blockquote>
+<p>小结：</p>
+<p><strong>拷贝构造函数有两种：深拷贝和浅拷贝</strong></p>
+<p>当出现类的等号赋值时，会调用拷贝函数，在未定义显示拷贝构造函数的情况下，系统会调用默认的拷贝函数——即浅拷贝，它能够完成成员的一一复制。当数据成员中没有指针时，浅拷贝是可行的。但<strong>当数据成员中有指针</strong>时，如果采用简单的浅拷贝，则两类中的两个指针将指向同一个地址，当对象快结束时，会调用两次析构函数，而导致指针悬挂现象。所以，这时，必须采用深拷贝.</p>
+<p>深拷贝与浅拷贝的区别就在于深拷贝会在堆内存中另外申请空间来储存数据，从而也就解决了指针悬挂的问题。<strong>简而言之，当数据成员中有指针时，必须要用深拷贝。</strong></p>
+</blockquote>
+<h2 id="5-综合实例分析"><a href="#5-综合实例分析" class="headerlink" title="5.综合实例分析"></a>5.综合实例分析</h2><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CPoint</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="keyword">int</span> x;</span><br><span class="line">    <span class="keyword">int</span> y;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">//缺省构造函数,如果定义类时未指定任何构造函数，</span></span><br><span class="line">    <span class="comment">//系统将自动生成不带参数的缺省构造函数</span></span><br><span class="line">    <span class="built_in">CPoint</span>()</span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;默认构造函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        x = <span class="number">0</span>;</span><br><span class="line">        y = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//带一个参数的可用于类型转换的构造函数</span></span><br><span class="line">	<span class="comment">//  explicit    //加上 explicit 可防止 CPoint pt1 = 1; 这种隐性转换</span></span><br><span class="line">    <span class="built_in">CPoint</span>(<span class="keyword">int</span> ix)</span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;1参数构造函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        x = ix;</span><br><span class="line">        y = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//带参数的构造函数</span></span><br><span class="line">	<span class="built_in">CPoint</span>(<span class="keyword">int</span> ix, <span class="keyword">int</span> iy)</span><br><span class="line">	&#123;</span><br><span class="line">    	cout &lt;&lt; <span class="string">&quot;2参数构造函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    	x = ix;</span><br><span class="line">   	 y = iy;</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">//拷贝构造函数,如果此函数不定义，系统将生成缺省拷贝构造函数功能,</span></span><br><span class="line">	<span class="comment">//缺省拷贝构造函数的行为是：用传入的对象参数的成员初始化正要建立的对象的相应成员</span></span><br><span class="line">	<span class="comment">//  explicit    //加上 explicit 可防止 CPoint pt2 = pt1; 这种隐性转换</span></span><br><span class="line">    <span class="built_in">CPoint</span>(<span class="keyword">const</span> CPoint &amp;cp)</span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;拷贝构造函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        x = cp.x;</span><br><span class="line">        y = cp.y;</span><br><span class="line">    &#125;</span><br><span class="line">    CPoint &amp;<span class="keyword">operator</span>=(<span class="keyword">const</span> CPoint &amp;cp)</span><br><span class="line">	&#123;</span><br><span class="line">    	cout &lt;&lt; <span class="string">&quot;赋值重载函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    	<span class="keyword">if</span> (<span class="keyword">this</span> != &amp;cp)</span><br><span class="line">    	&#123;</span><br><span class="line">       	 	x = cp.x;</span><br><span class="line">       	 	y = cp.y;</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">return</span> (*<span class="keyword">this</span>);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">//析构函数，一个类中只能有一个析构函数,如果用户没有定义析构函数，</span></span><br><span class="line">	<span class="comment">//系统会自动未类生成一个缺省的析构函数</span></span><br><span class="line">	~<span class="built_in">CPoint</span>()</span><br><span class="line">	&#123;</span><br><span class="line">    	cout &lt;&lt; <span class="string">&quot;析构函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	CPoint &amp;<span class="keyword">operator</span>=(<span class="keyword">const</span> CPoint &amp;cp)</span><br><span class="line">	&#123;</span><br><span class="line">    	cout &lt;&lt; <span class="string">&quot;赋值重载函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    	<span class="keyword">if</span> (<span class="keyword">this</span> != &amp;cp)</span><br><span class="line">    	&#123;</span><br><span class="line">        	x = cp.x;</span><br><span class="line">        	y = cp.y;</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">return</span> (*<span class="keyword">this</span>);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">//析构函数，一个类中只能有一个析构函数,如果用户没有定义析构函数，</span></span><br><span class="line">	<span class="comment">//系统会自动未类生成一个缺省的析构函数</span></span><br><span class="line">	~<span class="built_in">CPoint</span>()</span><br><span class="line">	&#123;</span><br><span class="line">    	cout &lt;&lt; <span class="string">&quot;析构函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">CPoint <span class="title">p0</span><span class="params">()</span></span>;        <span class="comment">//这是函数的声明，不是实例化类</span></span><br><span class="line">    cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;CPoint pt1;\t\t&quot;</span>;</span><br><span class="line">	CPoint pt1;         <span class="comment">//缺省构造函数</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;CPoint pt2(1);\t\t&quot;</span>;</span><br><span class="line">	<span class="function">CPoint <span class="title">pt2</span><span class="params">(<span class="number">1</span>)</span></span>;      <span class="comment">//一个参数的构造函数</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;CPoint pt3(1, 2);\t&quot;</span>;</span><br><span class="line">	<span class="function">CPoint <span class="title">pt3</span><span class="params">(<span class="number">1</span>, <span class="number">2</span>)</span></span>;   <span class="comment">//两个参数的构造函数</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;CPoint pt4 = 1;\t\t&quot;</span>;</span><br><span class="line">	CPoint pt4 = <span class="number">1</span>;     <span class="comment">//等价于CPoint t4(1);  //explicit</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;CPoint pt5 = t1;\t&quot;</span>;</span><br><span class="line">	CPoint pt5 = pt1;   <span class="comment">//CPoint(t1);</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;CPoint pt6 = CPoint();\t&quot;</span>;</span><br><span class="line">	CPoint pt6 = <span class="built_in">CPoint</span>();  <span class="comment">//CPoint(1); CPoint(1,2);</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;pt6 = CPoint(1);\t&quot;</span>;</span><br><span class="line">	pt6 = <span class="built_in">CPoint</span>(<span class="number">1</span>);</span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;pt6 = 1;\t\t&quot;</span>;</span><br><span class="line">	pt6 = <span class="number">1</span>;            <span class="comment">//首先调用单个参数的构造函数，生成临时对象CPoint(1), 然后调用赋值运算符函数</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;pt6 = t1;\t\t&quot;</span>;</span><br><span class="line">	pt6 = pt1;          <span class="comment">//调用赋值运算符函数</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; endl;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码编译和执行结果如下：</p>
+<img src="https://img-blog.csdnimg.cn/2019112918062265.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0phY2t5X0Zlbmc=,size_16,color_FFFFFF,t_70" alt="执行结果" style="zoom:80%;" />
+
+
+
+<blockquote>
+<p>————————————————<br>版权声明：本文为CSDN博主「Jacky_Feng」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/Jacky_Feng/article/details/103313208">https://blog.csdn.net/Jacky_Feng/article/details/103313208</a></p>
+</blockquote>
 ]]></content>
       <categories>
         <category>C++</category>
@@ -1231,98 +1321,8 @@
       </categories>
       <tags>
         <tag>Qt</tag>
-        <tag>Sql</tag>
         <tag>Model/View</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>构造函数</title>
-    <url>/2020/07/21/%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0/</url>
-    <content><![CDATA[<h1 id="【C-】类构造函数（深拷贝与浅拷贝）"><a href="#【C-】类构造函数（深拷贝与浅拷贝）" class="headerlink" title="【C++】类构造函数（深拷贝与浅拷贝）"></a>【C++】类构造函数（深拷贝与浅拷贝）</h1><blockquote>
-<p>原创Jacky_Feng 最后发布于2019-11-29 19:56:28 阅读数 16  收藏</p>
-</blockquote>
-<h2 id="1-什么是类的构造函数"><a href="#1-什么是类的构造函数" class="headerlink" title="1.什么是类的构造函数"></a>1.什么是类的构造函数</h2><p>类的构造函数是类的一种特殊的成员函数，它会在每次创建类的新对象时被自动调用。没创建一个对象都必须调用一次构造函数。</p>
-<p>构造函数的名称与类的名称是完全相同的，并且不会返回任何类型，也不会返回void。构造函数可用于为某些成员变量设置初始值。</p>
-<span id="more"></span>
-
-<p>实例演示：</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Counter</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// 类Counter的构造函数</span></span><br><span class="line">    <span class="comment">// 特点：以类名作为函数名，无返回类型</span></span><br><span class="line">    <span class="built_in">Counter</span>()</span><br><span class="line">    &#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;object is being created&quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// 数据成员</span></span><br><span class="line">    <span class="keyword">int</span> m_value;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Counter obj1;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>以上代码编译和执行的结果如下：</p>
-<p><strong>object is being created</strong></p>
-</blockquote>
-<p> 该类对象obj1被创建时，编译系统为对象分配内存空间，并自动调用构造函数Counter()完成对象成员变量的初始化工作。</p>
-<h2 id="2-构造函数的分类"><a href="#2-构造函数的分类" class="headerlink" title="2.构造函数的分类"></a>2.构造函数的分类</h2><h3 id="1）按函数有无参数分类"><a href="#1）按函数有无参数分类" class="headerlink" title="1）按函数有无参数分类"></a>1）按函数有无参数分类</h3><img src="https://img-blog.csdnimg.cn/20191129164917429.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0phY2t5X0Zlbmc=,size_16,color_FFFFFF,t_70" alt="有无参数分类" style="zoom:80%;" />
-
-<p> 其中所有带有默认值的有参构造函数会转变成默认构造函数。</p>
-<h3 id="2）按参数的类型分类"><a href="#2）按参数的类型分类" class="headerlink" title="2）按参数的类型分类"></a>2）按参数的类型分类</h3><img src="https://img-blog.csdnimg.cn/20191129165633658.png" alt="按参数的类型分类" style="zoom:80%;" />
-
-<p> 一个类中至少有上述两个构造函数，可以有更多的构造函数（构造函数允许重载），以实现不同形式对象的创建。</p>
-<h2 id="3-构造函数的重载"><a href="#3-构造函数的重载" class="headerlink" title="3.构造函数的重载"></a>3.构造函数的重载</h2><p>和普通成员函数一样，构造函数是允许重载的。一个类中可以有多个重载的构造函数，创建对象时根据传递的实参来判断调用哪个构造函数。创建对象构造函数的调用是强制性的，一旦在类中定义了构造函数，那么创建对象时就一定要调用。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">String</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">String</span>(<span class="keyword">const</span> <span class="keyword">char</span> *str = <span class="literal">NULL</span>); <span class="comment">// 普通构造函数</span></span><br><span class="line">    <span class="built_in">String</span>(<span class="keyword">const</span> String &amp;other);    <span class="comment">// 拷贝构造函数</span></span><br><span class="line">    ~ <span class="built_in">String</span>(<span class="keyword">void</span>);                 <span class="comment">// 析构函数</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">char</span> *m_data; <span class="comment">// 用于保存字符串</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// String 的析构函数</span></span><br><span class="line">String::~<span class="built_in">String</span>(<span class="keyword">void</span>) </span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">delete</span> [] m_data;</span><br><span class="line">    <span class="comment">// 由于m_data 是内部数据类型，也可以写成 delete m_data;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// String 的普通构造函数</span></span><br><span class="line">String::<span class="built_in">String</span>(<span class="keyword">const</span> <span class="keyword">char</span> *str) </span><br><span class="line">&#123;</span><br><span class="line">    cout&lt;&lt;<span class="string">&quot;Ordinary constructor is running&quot;</span>&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 拷贝构造函数</span></span><br><span class="line">String::<span class="built_in">String</span>(<span class="keyword">const</span> String &amp;other) </span><br><span class="line">&#123;</span><br><span class="line">    cout&lt;&lt;<span class="string">&quot;Copy constructor is running&quot;</span>&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	String  str1; </span><br><span class="line">	<span class="function">String  <span class="title">str2</span><span class="params">(<span class="string">&quot;hello&quot;</span>)</span></span>; </span><br><span class="line">	<span class="function">String  <span class="title">str3</span><span class="params">(str2)</span></span>; </span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p> 上面代码编译和执行结果为：</p>
-<img src="https://img-blog.csdnimg.cn/20191129172558212.png" alt="结果" style="zoom:80%;" />
-
- 
-
-<h2 id="4-常见的构造函数"><a href="#4-常见的构造函数" class="headerlink" title="4.常见的构造函数"></a>4.常见的构造函数</h2><h3 id="1）默认构造函数"><a href="#1）默认构造函数" class="headerlink" title="1）默认构造函数"></a>1）默认构造函数</h3><p>如果用户自己没有定义构造函数，那么编译器会自动生成一个默认构造函数，只是这个构造函数没有形参，函数体也是空的，不执行任何操作。例如：Student类的默认生成的构造函数如下：</p>
-<p>​       <code> Student()&#123;&#125;</code></p>
-<p>==一个类中必须有构造函数，要么用户自己定义，要么编译器自动生成。一旦用户自己定义了构造函数，不管几个，也不管形参如何，编译器都不再自动生成。==</p>
-<p>调用不带参数的构造函数也可以省略括号。即创建对象Student stu()和Student stu是等价的。</p>
-<h3 id="2）-拷贝构造函数"><a href="#2）-拷贝构造函数" class="headerlink" title="2） 拷贝构造函数"></a>2） 拷贝构造函数</h3><p>当以拷贝的方式初始化一个对象时，会调用一个特殊的构造函数，就是拷贝构造函数。拷贝构造函数的名称与类的名称一致，它必须的一个参数是本类型的一个引用变量。</p>
-<p>注意，默认构造函数（即无参构造函数）不一定存在，但是拷贝构造函数总是会存在。</p>
-<blockquote>
-<p>拷贝构造函数常用的三种情况：</p>
-<p>==①当用一个对象去初始化同类的另一个对象==。</p>
-<p>例如：</p>
-<p>​    A test_b(test_a);<br>​    A test_b = test_a;//这两条语句是等价的<br><strong>【注意】第二条语句是初始化语句，不是赋值语句。赋值语句的等号左边是一个早已有定义的变量，赋值语句不会引发拷贝构造函数的调用。</strong></p>
-<pre><code>A test_a,test_b;
- test_b = test_a;//这句不会引发拷贝构造函数的调用，因为test_b早已生成，已经初始化过了
-</code></pre>
-<p>②==一个对象以值传递的方式传入函数体==，而调用拷贝构造函数时的参数，就是调用函数时所给的实参。</p>
-<p>③==一个对象以值传递的方式从函数中返回==，而调用拷贝构造函数的参数，就是return语句所返回的对象。</p>
-</blockquote>
-<h4 id="浅拷贝"><a href="#浅拷贝" class="headerlink" title="浅拷贝"></a>浅拷贝</h4><p>浅拷贝是指在对象拷贝时，只对对象中的数据成员进行简单的赋值，默认拷贝构造函数执行的也是浅拷贝。大多数情况下“浅拷贝”可以很好的工作，但一旦对象存在动态成员，那么浅拷贝就会出问题。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;assert.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rect</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Rect</span>()</span><br><span class="line">    &#123;</span><br><span class="line">     p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">	~<span class="built_in">Rect</span>()</span><br><span class="line">	&#123;</span><br><span class="line"> 		<span class="built_in">assert</span>(p!=<span class="literal">NULL</span>);</span><br><span class="line">    	<span class="keyword">delete</span> p;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> width;</span><br><span class="line">    <span class="keyword">int</span> height;</span><br><span class="line">    <span class="keyword">int</span> *p;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Rect rect1;</span><br><span class="line">    <span class="function">Rect <span class="title">rect2</span><span class="params">(rect1)</span></span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125; 这段代码运行结束后，会出现运行错误。原因就在于在进行对象拷贝时，对于动态分配的内容没有正确的操作。</span><br></pre></td></tr></table></figure>
-
-<p>原因分析：</p>
-<p>在使用rect1复制rect2时，由于执行的是浅拷贝，只是将成员的值进行赋值，这时 rect1.p = rect2.p，也即这两个指针指向了堆里的同一个空间。</p>
-<img src="https://img-blog.csdnimg.cn/20191129194029601.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0phY2t5X0Zlbmc=,size_16,color_FFFFFF,t_70" alt="原因" style="zoom:80%;" />
-
-<p> 在销毁对象时，两个对象的析构函数将对同一个内存空间释放两次，这就是错误出现的原因。我们需要的不是两个p有相同的值，而是两个p指向的空间有相同的值，解决办法就是使用“深拷贝”。</p>
-<h4 id="深拷贝"><a href="#深拷贝" class="headerlink" title="深拷贝"></a>深拷贝</h4><p>深拷贝对于动态成员，并不是简单地复制，而是重新动态分配空间。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;assert.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rect</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Rect</span>()</span><br><span class="line">    &#123;</span><br><span class="line">     p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//深拷贝</span></span><br><span class="line">    <span class="built_in">Rect</span>(<span class="keyword">const</span> Rect&amp; r)</span><br><span class="line">    &#123;</span><br><span class="line">     width=r.width;</span><br><span class="line">        height=r.height;</span><br><span class="line">     p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">100</span>);</span><br><span class="line">        *p=*(r.p);</span><br><span class="line">    &#125;</span><br><span class="line">~<span class="built_in">Rect</span>()</span><br><span class="line">&#123;</span><br><span class="line"> <span class="built_in">assert</span>(p!=<span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">delete</span> p;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">int</span> width;</span><br><span class="line">    <span class="keyword">int</span> height;</span><br><span class="line">    <span class="keyword">int</span> *p;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Rect rect1;</span><br><span class="line">    <span class="function">Rect <span class="title">rect2</span><span class="params">(rect1)</span></span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>完成对象拷贝地过程为:</p>
-<img src="https://img-blog.csdnimg.cn/2019112919463854.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0phY2t5X0Zlbmc=,size_16,color_FFFFFF,t_70" alt="过程" style="zoom:80%;" />
-
-<p> 此时rect1的p和rect2的p各自指向一段内存空间，但它们指向的空间具有相同的内容，这就是所谓的“深拷贝”。</p>
-<blockquote>
-<p>小结：</p>
-<p><strong>拷贝构造函数有两种：深拷贝和浅拷贝</strong></p>
-<p>当出现类的等号赋值时，会调用拷贝函数，在未定义显示拷贝构造函数的情况下，系统会调用默认的拷贝函数——即浅拷贝，它能够完成成员的一一复制。当数据成员中没有指针时，浅拷贝是可行的。但<strong>当数据成员中有指针</strong>时，如果采用简单的浅拷贝，则两类中的两个指针将指向同一个地址，当对象快结束时，会调用两次析构函数，而导致指针悬挂现象。所以，这时，必须采用深拷贝.</p>
-<p>深拷贝与浅拷贝的区别就在于深拷贝会在堆内存中另外申请空间来储存数据，从而也就解决了指针悬挂的问题。<strong>简而言之，当数据成员中有指针时，必须要用深拷贝。</strong></p>
-</blockquote>
-<h2 id="5-综合实例分析"><a href="#5-综合实例分析" class="headerlink" title="5.综合实例分析"></a>5.综合实例分析</h2><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CPoint</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="keyword">int</span> x;</span><br><span class="line">    <span class="keyword">int</span> y;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">//缺省构造函数,如果定义类时未指定任何构造函数，</span></span><br><span class="line">    <span class="comment">//系统将自动生成不带参数的缺省构造函数</span></span><br><span class="line">    <span class="built_in">CPoint</span>()</span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;默认构造函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        x = <span class="number">0</span>;</span><br><span class="line">        y = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//带一个参数的可用于类型转换的构造函数</span></span><br><span class="line">	<span class="comment">//  explicit    //加上 explicit 可防止 CPoint pt1 = 1; 这种隐性转换</span></span><br><span class="line">    <span class="built_in">CPoint</span>(<span class="keyword">int</span> ix)</span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;1参数构造函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        x = ix;</span><br><span class="line">        y = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="comment">//带参数的构造函数</span></span><br><span class="line">	<span class="built_in">CPoint</span>(<span class="keyword">int</span> ix, <span class="keyword">int</span> iy)</span><br><span class="line">	&#123;</span><br><span class="line">    	cout &lt;&lt; <span class="string">&quot;2参数构造函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    	x = ix;</span><br><span class="line">   	 y = iy;</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">//拷贝构造函数,如果此函数不定义，系统将生成缺省拷贝构造函数功能,</span></span><br><span class="line">	<span class="comment">//缺省拷贝构造函数的行为是：用传入的对象参数的成员初始化正要建立的对象的相应成员</span></span><br><span class="line">	<span class="comment">//  explicit    //加上 explicit 可防止 CPoint pt2 = pt1; 这种隐性转换</span></span><br><span class="line">    <span class="built_in">CPoint</span>(<span class="keyword">const</span> CPoint &amp;cp)</span><br><span class="line">    &#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;拷贝构造函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        x = cp.x;</span><br><span class="line">        y = cp.y;</span><br><span class="line">    &#125;</span><br><span class="line">    CPoint &amp;<span class="keyword">operator</span>=(<span class="keyword">const</span> CPoint &amp;cp)</span><br><span class="line">	&#123;</span><br><span class="line">    	cout &lt;&lt; <span class="string">&quot;赋值重载函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    	<span class="keyword">if</span> (<span class="keyword">this</span> != &amp;cp)</span><br><span class="line">    	&#123;</span><br><span class="line">       	 	x = cp.x;</span><br><span class="line">       	 	y = cp.y;</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">return</span> (*<span class="keyword">this</span>);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">//析构函数，一个类中只能有一个析构函数,如果用户没有定义析构函数，</span></span><br><span class="line">	<span class="comment">//系统会自动未类生成一个缺省的析构函数</span></span><br><span class="line">	~<span class="built_in">CPoint</span>()</span><br><span class="line">	&#123;</span><br><span class="line">    	cout &lt;&lt; <span class="string">&quot;析构函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	CPoint &amp;<span class="keyword">operator</span>=(<span class="keyword">const</span> CPoint &amp;cp)</span><br><span class="line">	&#123;</span><br><span class="line">    	cout &lt;&lt; <span class="string">&quot;赋值重载函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">    	<span class="keyword">if</span> (<span class="keyword">this</span> != &amp;cp)</span><br><span class="line">    	&#123;</span><br><span class="line">        	x = cp.x;</span><br><span class="line">        	y = cp.y;</span><br><span class="line">    	&#125;</span><br><span class="line">    	<span class="keyword">return</span> (*<span class="keyword">this</span>);</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	<span class="comment">//析构函数，一个类中只能有一个析构函数,如果用户没有定义析构函数，</span></span><br><span class="line">	<span class="comment">//系统会自动未类生成一个缺省的析构函数</span></span><br><span class="line">	~<span class="built_in">CPoint</span>()</span><br><span class="line">	&#123;</span><br><span class="line">    	cout &lt;&lt; <span class="string">&quot;析构函数 &quot;</span> &lt;&lt; <span class="keyword">this</span> &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">CPoint <span class="title">p0</span><span class="params">()</span></span>;        <span class="comment">//这是函数的声明，不是实例化类</span></span><br><span class="line">    cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;CPoint pt1;\t\t&quot;</span>;</span><br><span class="line">	CPoint pt1;         <span class="comment">//缺省构造函数</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;CPoint pt2(1);\t\t&quot;</span>;</span><br><span class="line">	<span class="function">CPoint <span class="title">pt2</span><span class="params">(<span class="number">1</span>)</span></span>;      <span class="comment">//一个参数的构造函数</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;CPoint pt3(1, 2);\t&quot;</span>;</span><br><span class="line">	<span class="function">CPoint <span class="title">pt3</span><span class="params">(<span class="number">1</span>, <span class="number">2</span>)</span></span>;   <span class="comment">//两个参数的构造函数</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;CPoint pt4 = 1;\t\t&quot;</span>;</span><br><span class="line">	CPoint pt4 = <span class="number">1</span>;     <span class="comment">//等价于CPoint t4(1);  //explicit</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;CPoint pt5 = t1;\t&quot;</span>;</span><br><span class="line">	CPoint pt5 = pt1;   <span class="comment">//CPoint(t1);</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;CPoint pt6 = CPoint();\t&quot;</span>;</span><br><span class="line">	CPoint pt6 = <span class="built_in">CPoint</span>();  <span class="comment">//CPoint(1); CPoint(1,2);</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;pt6 = CPoint(1);\t&quot;</span>;</span><br><span class="line">	pt6 = <span class="built_in">CPoint</span>(<span class="number">1</span>);</span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;pt6 = 1;\t\t&quot;</span>;</span><br><span class="line">	pt6 = <span class="number">1</span>;            <span class="comment">//首先调用单个参数的构造函数，生成临时对象CPoint(1), 然后调用赋值运算符函数</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; <span class="string">&quot;pt6 = t1;\t\t&quot;</span>;</span><br><span class="line">	pt6 = pt1;          <span class="comment">//调用赋值运算符函数</span></span><br><span class="line"> </span><br><span class="line">	cout &lt;&lt; endl &lt;&lt; endl;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上述代码编译和执行结果如下：</p>
-<img src="https://img-blog.csdnimg.cn/2019112918062265.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0phY2t5X0Zlbmc=,size_16,color_FFFFFF,t_70" alt="执行结果" style="zoom:80%;" />
-
-
-
-<blockquote>
-<p>————————————————<br>版权声明：本文为CSDN博主「Jacky_Feng」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/Jacky_Feng/article/details/103313208">https://blog.csdn.net/Jacky_Feng/article/details/103313208</a></p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>C++</category>
-      </categories>
-      <tags>
-        <tag>C++</tag>
-        <tag>转载</tag>
+        <tag>Sql</tag>
       </tags>
   </entry>
 </search>
