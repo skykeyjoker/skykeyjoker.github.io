@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"skykeyjoker.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="这里是Skykey的私人博客，有各种垃圾内容&#x3D;。&#x3D;">
+  <meta name="description" content="总有些惊奇的际遇，比方说当我遇见你。">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Skykey&#39;s Home">
 <meta property="og:url" content="https://skykeyjoker.github.io/index.html">
 <meta property="og:site_name" content="Skykey&#39;s Home">
-<meta property="og:description" content="这里是Skykey的私人博客，有各种垃圾内容&#x3D;。&#x3D;">
+<meta property="og:description" content="总有些惊奇的际遇，比方说当我遇见你。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="Skykey">
 <meta name="twitter:card" content="summary">
@@ -192,7 +192,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -259,12 +259,94 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skykeyjoker.github.io/2021/05/19/C++%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Skykey">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skykey's Home">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/05/19/C++%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">C++日期与时间编程（C++11-C++17）</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-19 11:44:17" itemprop="dateCreated datePublished" datetime="2021-05-19T11:44:17+08:00">2021-05-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-12 13:44:33" itemprop="dateModified" datetime="2021-12-12T13:44:33+08:00">2021-12-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="C-日期与时间编程（C-11-C-17）"><a href="#C-日期与时间编程（C-11-C-17）" class="headerlink" title="C++日期与时间编程（C++11-C++17）"></a>C++日期与时间编程（C++11-C++17）</h1><h2 id="0x00-导言"><a href="#0x00-导言" class="headerlink" title="0x00 导言"></a>0x00 导言</h2><p>日期和时间是在编程中常常接触到的东西，而C++也为程序员提供了强（复）大（杂）的日期和时间编程的相关支持。在C++20标准中，C++的<code>chrono</code>库继C++11标准后也迎来了空前绝后大更新，但本文讨论的重点主要集中在C++11至C++17标准中日期和时间相关的内容，C++20标准中的<code>chrono</code>新东西完全可以另开一个坑。</p>
+<p>在翻了N篇cppreference标准、chrome爽吃我800Mb的内存之后，我果断决定把这次的学习心得记下来，以防以后全部忘光光（实在太多了.jpg）。本片学习心得纯新手向，求大佬轻喷。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/05/19/C++%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4%E7%BC%96%E7%A8%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://skykeyjoker.github.io/2021/04/23/cpp11-thread-pool/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -352,7 +434,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -438,7 +520,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -526,7 +608,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -612,7 +694,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -698,7 +780,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -785,7 +867,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -867,7 +949,7 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
       <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -943,93 +1025,11 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://skykeyjoker.github.io/2020/07/21/euler-prime/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="这里是Skykey的私人博客，有各种垃圾内容=。=">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Home">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/21/euler-prime/" class="post-title-link" itemprop="url">欧拉筛法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-21 11:40:14" itemprop="dateCreated datePublished" datetime="2020-07-21T11:40:14+08:00">2020-07-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-11 20:24:43" itemprop="dateModified" datetime="2021-12-11T20:24:43+08:00">2021-12-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="欧拉筛法"><a href="#欧拉筛法" class="headerlink" title="欧拉筛法"></a>欧拉筛法</h1><blockquote>
-<p>原创程画 最后发布于2018-05-15 18:24:08 阅读数 4146  收藏</p>
-</blockquote>
-<p>想看欧拉筛法的可直接拉到最后。</p>
-<p>相信各位对素数并不陌生，素数就是指不能被除了1和自身以外的别的数整除的数，比如2,3,5，而且根据欧几里得的证明来看，素数是无限的，普通的筛选素数的方法可能对较小的数据能在较短时间内完成筛选，但对于很大的数据（比如1e9）就会花费很长的时间。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/21/euler-prime/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
 
 
 
@@ -1089,14 +1089,14 @@
     <img class="site-author-image" itemprop="image" alt="Skykey"
       src="/images/avatar.jpg">
   <p class="site-author-name" itemprop="name">Skykey</p>
-  <div class="site-description" itemprop="description">这里是Skykey的私人博客，有各种垃圾内容=。=</div>
+  <div class="site-description" itemprop="description">总有些惊奇的际遇，比方说当我遇见你。</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1109,7 +1109,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"skykeyjoker.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="C++日期与时间编程（C++11-C++17）0x00 导言日期和时间是在编程中常常接触到的东西，而C++也为程序员提供了强（复）大（杂）的日期和时间编程的相关支持。在C++20标准中，C++的chrono库继C++11标准后也迎来了空前绝后大更新，但本文讨论的重点主要集中在C++11至C++17标准中日期和时间相关的内容，C++20标准中的chrono新东西完全可以另开一个坑。 在翻了N篇cpp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++日期与时间编程（C++11-C++17）">
+<meta property="og:url" content="https://skykeyjoker.github.io/2021/05/19/C++%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Skykey&#39;s Home">
+<meta property="og:description" content="C++日期与时间编程（C++11-C++17）0x00 导言日期和时间是在编程中常常接触到的东西，而C++也为程序员提供了强（复）大（杂）的日期和时间编程的相关支持。在C++20标准中，C++的chrono库继C++11标准后也迎来了空前绝后大更新，但本文讨论的重点主要集中在C++11至C++17标准中日期和时间相关的内容，C++20标准中的chrono新东西完全可以另开一个坑。 在翻了N篇cpp">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:/Users/Skykey/Desktop/ctime.png">
+<meta property="og:image" content="c:/Users/Skykey/Desktop/conversion.png">
+<meta property="article:published_time" content="2021-05-19T03:44:17.000Z">
+<meta property="article:modified_time" content="2021-12-12T05:44:33.806Z">
+<meta property="article:author" content="Skykey">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="C++11">
+<meta property="article:tag" content="C++17">
+<meta property="article:tag" content="日期与时间编程">
+<meta property="article:tag" content="学习心得">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/Skykey/Desktop/ctime.png">
+
+<link rel="canonical" href="https://skykeyjoker.github.io/2021/05/19/C++%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4%E7%BC%96%E7%A8%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
+  <title>C++日期与时间编程（C++11-C++17） | Skykey's Home</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skykey's Home</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Skykey的私人博客。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skykeyjoker.github.io/2021/05/19/C++%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Skykey">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skykey's Home">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C++日期与时间编程（C++11-C++17）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-05-19 11:44:17" itemprop="dateCreated datePublished" datetime="2021-05-19T11:44:17+08:00">2021-05-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-12 13:44:33" itemprop="dateModified" datetime="2021-12-12T13:44:33+08:00">2021-12-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="C-日期与时间编程（C-11-C-17）"><a href="#C-日期与时间编程（C-11-C-17）" class="headerlink" title="C++日期与时间编程（C++11-C++17）"></a>C++日期与时间编程（C++11-C++17）</h1><h2 id="0x00-导言"><a href="#0x00-导言" class="headerlink" title="0x00 导言"></a>0x00 导言</h2><p>日期和时间是在编程中常常接触到的东西，而C++也为程序员提供了强（复）大（杂）的日期和时间编程的相关支持。在C++20标准中，C++的<code>chrono</code>库继C++11标准后也迎来了空前绝后大更新，但本文讨论的重点主要集中在C++11至C++17标准中日期和时间相关的内容，C++20标准中的<code>chrono</code>新东西完全可以另开一个坑。</p>
+<p>在翻了N篇cppreference标准、chrome爽吃我800Mb的内存之后，我果断决定把这次的学习心得记下来，以防以后全部忘光光（实在太多了.jpg）。本片学习心得纯新手向，求大佬轻喷。</p>
+<span id="more"></span>
+
+<h2 id="0x01-概论"><a href="#0x01-概论" class="headerlink" title="0x01 概论"></a>0x01 概论</h2><p>先给两个例子：</p>
+<ol>
+<li>获取当前时间</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** 实现1 **/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctime&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">time_t</span> now = <span class="built_in">time</span>(<span class="literal">nullptr</span>);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;Now is: &quot;</span> &lt;&lt; <span class="built_in">ctime</span>(&amp;now);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** 实现2 **/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;chrono&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctime&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> now = chrono::system_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="keyword">time_t</span> time = chrono::system_clock::<span class="built_in">to_time_t</span>(now);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;Now is: &quot;</span> &lt;&lt; <span class="built_in">ctime</span>(&amp;time) &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>计算时间差</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** 实现1 **/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctime&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">time_t</span> time1 = <span class="built_in">time</span>(<span class="literal">nullptr</span>);</span><br><span class="line">	<span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">1000000000</span>; i++) &#123;</span><br><span class="line">  		sum += <span class="built_in">sqrt</span>(i);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">time_t</span> time2 = <span class="built_in">time</span>(<span class="literal">nullptr</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">double</span> time_diff = <span class="built_in">difftime</span>(time2, time1);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;time1: &quot;</span> &lt;&lt; time1 &lt;&lt; endl;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;time2: &quot;</span> &lt;&lt; time2 &lt;&lt; endl;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;time_diff: &quot;</span> &lt;&lt; time_diff &lt;&lt; <span class="string">&quot;s&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** 实现2 **/</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;chrono&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> start = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line">	<span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100000000</span>; i++) &#123;</span><br><span class="line">    	sum += <span class="built_in">sqrt</span>(i);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">auto</span> end = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">auto</span> time_diff = end - start;</span><br><span class="line">	<span class="keyword">auto</span> duration = chrono::duration_cast&lt;chrono::seconds&gt;(time_diff);</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;Operation cost : &quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot;s&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上文的两个要求都分别给出了两种实现方法，那接下来要说的事情已经显而易见了：</p>
+<p><strong>C++给出了两类日期时间API，分别是：</strong></p>
+<ul>
+<li>C-Style日期时间库，主要位于<code>&lt;ctime&gt;</code>头文件（原C语言<code>&lt;time.h&gt;</code>头文件的C++版本）中。</li>
+<li><code>chrono</code>库：C++11新增的API。</li>
+</ul>
+<p>在C++11引入<code>chrono</code>库之前，C++程序员只能使用C-Style的日期时间库。然而，C-Style日期时间库有着鲜明的缺点：<strong>精度只有秒级别</strong>（当时），这对于对时间有着高精度要求的程序来说是完全不够用的。而C++11引入的<code>chrono</code>库解决了这个问题，它极大地扩展了对精度的支持。当然，针对习惯C-Style日期时间库的程序员来说，C++17也进行了精度的扩充，详情请见下文。</p>
+<p>本文也会分为C-Style和<code>chrono</code>两个板块进行讲解。</p>
+<h2 id="0x02-必备的知识"><a href="#0x02-必备的知识" class="headerlink" title="0x02 必备的知识"></a>0x02 必备的知识</h2><p>在正式进入日期时间库的讨论之前，我们应该先复习一下与日期时间相关的必要知识。</p>
+<h3 id="UTC时间"><a href="#UTC时间" class="headerlink" title="UTC时间"></a>UTC时间</h3><p><strong>协调世界时</strong>（<strong>C</strong>oordinated <strong>U</strong>niversial <strong>T</strong>ime，简称<strong>UTC</strong>）是最主要的时间标准，其以原子时秒长为基础，在时刻上尽量接近于格林威治标准时间。</p>
+<p>协调世界时是世界上调节时钟和时间的主要时间标准，它与0度经线的平太阳时相差不超过1秒。因此UTC时间+8即可获得北京标准时间（UTC+8）。</p>
+<h3 id="本地时间"><a href="#本地时间" class="headerlink" title="本地时间"></a>本地时间</h3><p>本地时间与当地的时区相关，例如中国当地时间采用了北京标准时间（UTC+8）.</p>
+<h3 id="纪元时间"><a href="#纪元时间" class="headerlink" title="纪元时间"></a>纪元时间</h3><p><strong>纪元时间</strong>（Epoch time）又被称为Unix时间（常用Linux的小伙伴可能会比较熟悉）。它表示1970年1月1日00:00UTC以来所经历的<strong>秒数</strong>（不考虑闰秒）。</p>
+<p>例如北京时间2021年5月18日晚上9点07分32秒的纪元时间为：<code>1621372052</code>。</p>
+<p>作为一个敏感的CPP程序员，你应该很快就意识到这个大整数在储存会产生很多问题，例如溢出。然而事实正是如此，在一些历史机器上，使用了32位的有符号整数来储存这个时间戳，因此产生在结果就是：在2038-01-19 03:14:07这一刻，该值会溢出。</p>
+<p>另外，如果你对为什么选1970-1-1日零点做位纪元时间起点，可以看一下这个帖子：</p>
+<p><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/1090869/why-is-1-1-1970-the-epoch-time">Why is 1/1/1970 the “epoch time”?</a></p>
+<h2 id="0x03-C-Style-日期时间库"><a href="#0x03-C-Style-日期时间库" class="headerlink" title="0x03 C-Style 日期时间库"></a>0x03 C-Style 日期时间库</h2><p>C-Style日期时间库主要位于<code>&lt;ctime&gt;</code>头文件中，下面给出头文件中包含的常用的<em>类型</em>和<em>函数</em>。</p>
+<h3 id="常用类型与函数"><a href="#常用类型与函数" class="headerlink" title="常用类型与函数"></a>常用类型与函数</h3><p><strong>类型</strong></p>
+<table>
+<thead>
+<tr>
+<th>类型名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>clock_t</td>
+<td>进程运行时间</td>
+</tr>
+<tr>
+<td>size_t</td>
+<td>sizeof运算符返回的无符号整数类型</td>
+</tr>
+<tr>
+<td>time_t</td>
+<td>从纪元起的时间类型</td>
+</tr>
+<tr>
+<td>tm</td>
+<td>日历时间类型</td>
+</tr>
+<tr>
+<td>timespec*(C++17)*</td>
+<td>以秒和纳秒表示的时间（C++17）</td>
+</tr>
+</tbody></table>
+<p><strong>函数</strong></p>
+<table>
+<thead>
+<tr>
+<th>函数名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>std::clock_t clock()</td>
+<td>返回自程序启动时起的原始处理器时钟时间</td>
+</tr>
+<tr>
+<td>std::time_t time(std::time_t* arg)</td>
+<td>返回自纪元起计的系统当前时间</td>
+</tr>
+<tr>
+<td>double difftime(std::time_t time_end, std::time_t time_beg)</td>
+<td>计算时间之间的差</td>
+</tr>
+<tr>
+<td>int timespec_get(std::timespec* ts, int base)<em>(C++17)</em></td>
+<td>返回基于给定时间基底的日历时间（C++17）</td>
+</tr>
+<tr>
+<td>char* ctime(const std::time_t* time)</td>
+<td>转换 time_t 对象为文本表示</td>
+</tr>
+<tr>
+<td>char* asctime(const std::tm* time_ptr)</td>
+<td>转换 tm 对象为文本表示</td>
+</tr>
+<tr>
+<td>std::size_t strftime(char* str, std::size_t count, const char* format, const std::tm* time)</td>
+<td>转换 tm 对象到自定义的文本表示</td>
+</tr>
+<tr>
+<td>std::size_t wcsftime( wchar_t* str, std::size_t count, const wchar_t* format, const std::tm* time)</td>
+<td>转换 tm 对象为定制的宽字符串文本表示</td>
+</tr>
+<tr>
+<td>std::tm* gmtime(const std::time_t* time)</td>
+<td>将time_t转换成UTC表示的时间</td>
+</tr>
+<tr>
+<td>std::tm* localtime(const std::time_t *time)</td>
+<td>将time_t转换成本地时间</td>
+</tr>
+<tr>
+<td>std::time_t mktime(std::tm* time)</td>
+<td>将tm格式的时间转换成time_t表示的时间</td>
+</tr>
+</tbody></table>
+<p>函数和数据类型又多又杂有木有，刚开始接触的时候很容易弄混且不太容易记住，这里借鉴一下大佬的一张图来理解记忆：</p>
+<p><img src="C:\Users\Skykey\Desktop\ctime.png"></p>
+<p>这幅图中，以数据类型为中心，带方向的实心箭头表示该函数返回相应类型的结果。</p>
+<ul>
+<li>clock函数比较特别，它返回进程运行的时间，因而是相对独立的。</li>
+<li>time_t描述纪元时间（精确到秒），使用time函数获得。</li>
+<li>timespec类型在time_t的基础上增加了纳秒的精度，需要通过timespec_get函数获取。该类型与函数为C++17新增内容。</li>
+<li>tm是日历类型，包含了年月日等信息。可以通过gmtime，localtime和mktime函数进行time_t和tm类型的相互转化。</li>
+<li>gmtime和localtime两个函数存在时区差异相关问题。</li>
+<li>time_t和tm结构都可以用字符串格式输出。ctime和asctime输出的格式是固定的，如果需要自定义格式，需要使用strftime或者wcsftime函数。</li>
+</ul>
+<h3 id="计算进程运行的时间"><a href="#计算进程运行的时间" class="headerlink" title="计算进程运行的时间"></a>计算进程运行的时间</h3><p>clock函数会返回从关联到进程开始执行的实现定义时期的起，进程所用的粗略处理器时间。将此值除以<code>CLOCKS_PER_SEC</code>常量可转换为秒。</p>
+<p>这里给出cppreference上clock函数示例的简化版：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;threads.h&gt;</span> <span class="comment">// POSIX 中的 pthread.h</span></span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// 函数 f() 做一些耗时的工作</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">f</span><span class="params">(<span class="keyword">void</span>* thr_data)</span> <span class="comment">// POSIX 中返回 void*</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">volatile</span> <span class="keyword">double</span> d = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> n=<span class="number">0</span>; n&lt;<span class="number">10000</span>; ++n)</span><br><span class="line">       <span class="keyword">for</span> (<span class="keyword">int</span> m=<span class="number">0</span>; m&lt;<span class="number">10000</span>; ++m)</span><br><span class="line">           d += d*n*m;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">clock_t</span> t1 = <span class="built_in">clock</span>();</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">thrd_t</span> thr1, thr2;  <span class="comment">// C11 ；POSIX 中用 pthread_t</span></span><br><span class="line">    <span class="built_in">thrd_create</span>(&amp;thr1, f, <span class="literal">NULL</span>); <span class="comment">// C11 ； POSIX 中用 pthread_create</span></span><br><span class="line">    <span class="built_in">thrd_create</span>(&amp;thr2, f, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="built_in">thrd_join</span>(thr1, <span class="literal">NULL</span>); <span class="comment">// C11 ； POSIX 中用 pthread_join</span></span><br><span class="line">    <span class="built_in">thrd_join</span>(thr2, <span class="literal">NULL</span>);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">clock_t</span> t2 = <span class="built_in">clock</span>();</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">double</span> dur = <span class="number">1000.0</span>*(t2-t1)/CLOCKS_PER_SEC;</span><br><span class="line"> </span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;CPU time used (per clock(): %.2f ms\n&quot;</span>, dur);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可能的输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CPU time used (per clock(): 1580.00 ms</span><br></pre></td></tr></table></figure>
+
+<p>我们应当注意，clock时间或许会快于或慢于挂钟时间，这取决于操作系统给予程序的执行资源。在单处理器的情况下，若CPU为其他进程所共享，clock可能慢于挂钟，若当前进程为多线程，而有更多资源可用，clock时间可能会快于挂钟。在多处理器情况下，若进程使用了多线程，那么clock时间可能要慢于挂钟。</p>
+<h3 id="获取纪元时间"><a href="#获取纪元时间" class="headerlink" title="获取纪元时间"></a>获取纪元时间</h3><p>使用time函数可以获取储存于time_t类型返回值里的纪元时间。</p>
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">time_t</span> epoch_time = <span class="built_in">time</span>(<span class="literal">nullptr</span>);</span><br><span class="line">cout &lt;&lt; <span class="string">&quot;Epoch time: &quot;</span> &lt;&lt; epoch_time &lt;&lt;endl; </span><br></pre></td></tr></table></figure>
+
+<p>在北京时间2021年5月18日晚上9点07分32秒输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Epoch time: 1621372052</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="计算时间差"><a href="#计算时间差" class="headerlink" title="计算时间差"></a>计算时间差</h3><p>在一些情况下我们需要计算操作所花费的<strong>时间长度</strong>。可以看出，time_t结构中储存的是<strong>时间点</strong>，而通过常识我们得知：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">时间差（时间长度） = 时间点 - 时间点</span><br></pre></td></tr></table></figure>
+
+<p>在C-Style日期时间库中，我们可以通过difftime函数来计算两个时间点的差。</p>
+<p>下面给出cppreference的示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctime&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::<span class="keyword">time_t</span> start = std::<span class="built_in">time</span>(<span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">volatile</span> <span class="keyword">double</span> d;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 一些耗时操作</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> n=<span class="number">0</span>; n&lt;<span class="number">10000</span>; ++n) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> m=<span class="number">0</span>; m&lt;<span class="number">100000</span>; ++m) &#123;</span><br><span class="line">           d += d*n*m;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Wall time passed: &quot;</span></span><br><span class="line">              &lt;&lt; std::<span class="built_in">difftime</span>(std::<span class="built_in">time</span>(<span class="literal">NULL</span>), start) &lt;&lt; <span class="string">&quot; s.\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可能的输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Wall time passed: 7 s.</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="UTC时间与本地时间"><a href="#UTC时间与本地时间" class="headerlink" title="UTC时间与本地时间"></a>UTC时间与本地时间</h3><p>在C-Style日期时间库中，我们可以使用gmtime将std::time_t的纪元时间转换为UTC时间，使用localtime将纪元时间转换为本地时区所代表的日历时间。</p>
+<p>gmtime与localtime返回值的类型为tm结构，即日历时间的结构描述，其结构如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">tm</span> &#123;</span></span><br><span class="line">  <span class="keyword">int</span> tm_sec;</span><br><span class="line">  <span class="keyword">int</span> tm_min</span><br><span class="line">  <span class="keyword">int</span> tm_hour;</span><br><span class="line">  <span class="keyword">int</span> tm_mday;</span><br><span class="line">  <span class="keyword">int</span> tm_mon;</span><br><span class="line">  <span class="keyword">int</span> tm_year;</span><br><span class="line">  <span class="keyword">int</span> tm_wday;</span><br><span class="line">  <span class="keyword">int</span> tm_yday;</span><br><span class="line">  <span class="keyword">int</span> tm_isdst;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>有两点我们需要注意：</p>
+<ul>
+<li>tm_mon表示的范围为[0, 11]。转换成日常使用的月份表示需要+1。</li>
+<li>tm_year表示的是自1900年之后所过的年份数。转换成日常使用的年份表示需要+1900。</li>
+</ul>
+<p>下面给出示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">time_t</span> now = <span class="built_in">time</span>(<span class="literal">nullptr</span>);</span><br><span class="line"></span><br><span class="line">tm* gm_time = <span class="built_in">gmtime</span>(&amp;now);</span><br><span class="line">tm* local_time = <span class="built_in">localtime</span>(&amp;now);</span><br><span class="line"></span><br><span class="line">cout &lt;&lt; <span class="string">&quot;gmtime: &quot;</span> &lt;&lt; <span class="built_in">asctime</span>(gm_time);</span><br><span class="line">cout &lt;&lt; <span class="string">&quot;local_time: &quot;</span> &lt;&lt; <span class="built_in">asctime</span>(local_time);</span><br></pre></td></tr></table></figure>
+
+<p>输出如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gmtime: Tue May <span class="number">18</span> <span class="number">21</span>:<span class="number">36</span>:<span class="number">48</span> <span class="number">2021</span></span><br><span class="line">local_time: Tue May <span class="number">18</span> <span class="number">21</span>:<span class="number">36</span>:<span class="number">48</span> <span class="number">2021</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="输出时间和日期"><a href="#输出时间和日期" class="headerlink" title="输出时间和日期"></a>输出时间和日期</h3><p>获取了时间，我们自然想要将时间以字符串的形式打印出来。此时可以使用ctime函数。</p>
+<p>应注意的是，ctime函数打印的格式是固定的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Www Mmm dd hh:mm:ss yyyy\n</span><br></pre></td></tr></table></figure>
+
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">time_t</span> now = <span class="built_in">time</span>(<span class="literal">nullptr</span>);</span><br><span class="line">cout &lt;&lt; <span class="string">&quot;Now is: &quot;</span> &lt;&lt; <span class="built_in">ctime</span>(&amp;now);</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Now is: Tue May 18 21:39:46 2021</span><br></pre></td></tr></table></figure>
+
+<p>而tm储存的日期时间结构，我们也可以使用asctime函数将其转换为字符串格式。</p>
+<p>然而，ctime和asctime函数其输出的格式都是固定的，在有格式要求的情况下，我们通常有两种做法：</p>
+<ol>
+<li><p>拆分tm结构体的字段：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">time_t now = time(nullptr);</span><br><span class="line">tm* t = localtime(&amp;now);</span><br><span class="line"></span><br><span class="line">cout &lt;&lt; &quot;Now is: &quot; &lt;&lt; t-&gt;tm_year + 1900 &lt;&lt; &quot;/&quot; &lt;&lt; t-&gt;tm_mon + 1&lt;&lt; &quot;/&quot; &lt;&lt; t-&gt;tm_mday &lt;&lt; &quot; &quot;;</span><br><span class="line">cout &lt;&lt; t-&gt;tm_hour &lt;&lt; &quot;:&quot; &lt;&lt; t-&gt;tm_min &lt;&lt; &quot;:&quot; &lt;&lt; t-&gt;tm_sec &lt;&lt; endl;</span><br></pre></td></tr></table></figure></li>
+<li><p>使用strftime或者wcsftime函数来指定格式输出。函数格式可以参考以下文档：</p>
+<p><a target="_blank" rel="noopener" href="https://zh.cppreference.com/w/cpp/chrono/c/strftime">https://zh.cppreference.com/w/cpp/chrono/c/strftime</a></p>
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ctime&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;locale&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::locale::<span class="built_in">global</span>(std::<span class="built_in">locale</span>(<span class="string">&quot;ja_JP.utf8&quot;</span>));</span><br><span class="line">    std::<span class="keyword">time_t</span> t = std::<span class="built_in">time</span>(<span class="literal">NULL</span>);</span><br><span class="line">    <span class="keyword">char</span> mbstr[<span class="number">100</span>];</span><br><span class="line">    <span class="keyword">if</span> (std::<span class="built_in">strftime</span>(mbstr, <span class="built_in"><span class="keyword">sizeof</span></span>(mbstr), <span class="string">&quot;%A %c&quot;</span>, std::<span class="built_in">localtime</span>(&amp;t))) &#123;</span><br><span class="line">        std::cout &lt;&lt; mbstr &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>示例输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">火曜日 2011年12月27日 17時39分03秒</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="C-17新内容timespec，迈向纳秒精度"><a href="#C-17新内容timespec，迈向纳秒精度" class="headerlink" title="C++17新内容timespec，迈向纳秒精度"></a>C++17新内容timespec，迈向纳秒精度</h3><p>纪元时间的精度只有秒，这在很多时候是不够用的。为了解决这个问题，C++17增加timespec类型，提供了纳秒级别的精度。</p>
+<p>一些熟悉C语言的朋友可能会立即满头问号：timespec不是在C11（注意看，是C11，不是CPP11）就已经引入了么？</p>
+<p>但事实的确如此，严格的C++的C-Style日期时间库，在C++17标准才正式引入timespec类型。</p>
+<p>timespec类型结构如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timespec</span> &#123;</span></span><br><span class="line">  std::<span class="keyword">time_t</span> tv_sec;</span><br><span class="line">  <span class="keyword">long</span> tv_nsec;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>其中tv_nsec成员保存了纳秒数。</p>
+<p>示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">timespec ts;</span><br><span class="line"><span class="built_in">timespec_get</span>(&amp;ts, TIME_UTC);</span><br><span class="line"><span class="keyword">char</span> buff[<span class="number">100</span>];</span><br><span class="line"><span class="built_in">strftime</span>(buff, <span class="keyword">sizeof</span> buff, <span class="string">&quot;%D %T&quot;</span>, std::<span class="built_in">gmtime</span>(&amp;ts.tv_sec));</span><br><span class="line"><span class="built_in">printf</span>(<span class="string">&quot;Current time: %s.%09ld UTC\n&quot;</span>, buff, ts.tv_nsec);</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Current time: <span class="number">05</span>/<span class="number">18</span>/<span class="number">21</span> <span class="number">13</span>:<span class="number">50</span>:<span class="number">58.667861100</span> UTC</span><br></pre></td></tr></table></figure>
+
+
+
+<p>C-Style日期时间库至此已基本结束，接下来讲解C++11起新增的chrono库。</p>
+<hr>
+<h2 id="0x04-chrono库"><a href="#0x04-chrono库" class="headerlink" title="0x04 chrono库"></a>0x04 chrono库</h2><p>chrono是以各种精度跟踪时间的类型的灵活汇集。chrono库定义三种主要类型以及工具函数和常用的typedef：</p>
+<ul>
+<li>时钟</li>
+<li>时长</li>
+<li>时间点</li>
+</ul>
+<h3 id="时钟"><a href="#时钟" class="headerlink" title="时钟"></a>时钟</h3><p>C++11的chrono库主要包含了三种类型的时钟：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>system_clock</td>
+<td>来自系统范畴实时时钟的挂钟时间</td>
+</tr>
+<tr>
+<td>steady_clock</td>
+<td>决不会调整的单调时钟</td>
+</tr>
+<tr>
+<td>high_resolution_clock</td>
+<td>拥有可用的最短嘀嗒周期的时钟</td>
+</tr>
+</tbody></table>
+<p>system_clock来源是系统时钟。然而在大多数系统上，系统时间是可以在任何时候被调节的。所以如果用来计算两个时间点的时间差，这并不是一个好的选择。</p>
+<p>steady_clock是一个单调时钟。此时钟的时间点无法减少，因为物理十几件向前移动。因而steady_clock是度量间隔的最适宜的选择。</p>
+<p>high_resolution_clock表示实现提供的拥有最小计次周期的时钟。它可以是system_clock或steady_clock的别名，或者第三个独立时钟。</p>
+<p>对于high_resolution_clock，cppreference给出了以下需要我们注意的地方：</p>
+<p><a target="_blank" rel="noopener" href="https://zh.cppreference.com/w/cpp/chrono/high_resolution_clock">https://zh.cppreference.com/w/cpp/chrono/high_resolution_clock</a></p>
+<blockquote>
+<p><code>high_resolution_clock</code> 在不同标准库实现之间实现不一致，而应该避免使用它。通常它只是 <a target="_blank" rel="noopener" href="https://zh.cppreference.com/w/cpp/chrono/steady_clock">std::chrono::steady_clock</a> 或 <a target="_blank" rel="noopener" href="https://zh.cppreference.com/w/cpp/chrono/system_clock">std::chrono::system_clock</a> 的别名，但实际是哪个取决于库或配置。它是 <code>system_clock</code> 时不是单调的（即时间能后退）。例如对于 gcc 的 libstdc++ 它是 <code>system_clock</code> ，对于 MSVC 它是 <code>steady_clock</code> ，而对于 clang 的 libc++ 它取决于配置。</p>
+<p>通常用户应该直接使用 <a target="_blank" rel="noopener" href="https://zh.cppreference.com/w/cpp/chrono/steady_clock">std::chrono::steady_clock</a> 或 <a target="_blank" rel="noopener" href="https://zh.cppreference.com/w/cpp/chrono/system_clock">std::chrono::system_clock</a> 代替 <code>std::chrono::high_resolution_clock</code> ：对时长度量使用 <code>steady_clock</code> ，对壁钟时间使用 <code>system_clock</code> 。</p>
+</blockquote>
+<p>对于这三个时钟类，有着以下共同的成员：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>now()</td>
+<td>静态成员函数，返回当前时间，类型为clock::time_point</td>
+</tr>
+<tr>
+<td>time_point</td>
+<td>成员类型，当前时钟的时间点类型。</td>
+</tr>
+<tr>
+<td>duration</td>
+<td>成员类型，时钟的时长类型。</td>
+</tr>
+<tr>
+<td>rep</td>
+<td>成员类型，时钟的tick类型，等同于clock::duration::rep</td>
+</tr>
+<tr>
+<td>period</td>
+<td>成员类型，时钟的单位，等同于clock::duration::period</td>
+</tr>
+<tr>
+<td>is_steady</td>
+<td>静态成员类型：是否是稳定时钟，对于steady_clock来说该值一定是true</td>
+</tr>
+</tbody></table>
+<p>每个时钟类都有着一个静态成员函数<code>new()</code>来获取当前时间。该函数的返回类型则是由该时钟类的time_point描述，例如<code>std::chrono::time_point&lt;std::chrono::system_clock&gt;</code>或者<code>std::chrono::time_point&lt;std::chrono::steady_clock&gt;</code>。我们可以使用auto关键字来简写（auto是个好文明）。</p>
+<p>阅读文档，我们不难发现system_clock有着与另外两个clock所不具有的特性：它是唯一有能力映射其时间点到C-Style时间的C++时钟。system_clock提供了两个静态成员函数来与std::time_t进行互相转换：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>to_time_t</td>
+<td>转换系统时钟时间点为 std::time_t</td>
+</tr>
+<tr>
+<td>from_time_t</td>
+<td>转换 std::time_t 到系统时钟时间点</td>
+</tr>
+</tbody></table>
+<p>为了方便理解和记忆，我们也用一副图来描述几种时间类型的转换：</p>
+<p><img src="C:\Users\Skykey\Desktop\conversion.png"></p>
+<h3 id="时长"><a href="#时长" class="headerlink" title="时长"></a>时长</h3><p>人类对精度的要求永无止境。C-Style日期时间库为了提供对纳秒的精度，增加了timespec类型及相关的函数。那如果以后对更高精度的需求越来越高，C++标准库还要不断增加更多的类型和配套函数吗？这明显是一个不合理的设计。因而C++标准提出了一个新的解决思路，而这个思路涉及到了C++11引入的一个新的头文件和类型：ratio。</p>
+<h4 id="ratio"><a href="#ratio" class="headerlink" title="ratio"></a>ratio</h4><p><code>std::ratio</code>定义在<code>&lt;ratio&gt;</code>文件中，提供了编译期的比例计算功能。</p>
+<p><code>std::ratio</code>的定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;</span><br><span class="line">    std::<span class="keyword">intmax_t</span> Num,</span><br><span class="line">    std::<span class="keyword">intmax_t</span> Denom = <span class="number">1</span></span><br><span class="line">&gt; class ratio;</span><br></pre></td></tr></table></figure>
+
+<p>类成员Num即为分子，类成员Denom即为分母。我们可以直接通过调用类成员来获取相关值。</p>
+<p><code>&lt;ratio&gt;</code>头文件还包含了：ratio_add，ratio_subtract，ratio_multiply，ratio_divide来完成分数的加减乘除四则运算。</p>
+<p>例如，想要计算5/7 + 59/1023，我们可以这样写：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ratio_add&lt;ratio&lt;<span class="number">5</span>, <span class="number">7</span>&gt;, ratio&lt;<span class="number">59</span>, <span class="number">1023</span>&gt;&gt; result;</span><br><span class="line"><span class="keyword">double</span> value = ((<span class="keyword">double</span>) result.num) / result.den;</span><br><span class="line">cout &lt;&lt; result.num &lt;&lt; <span class="string">&quot;/&quot;</span> &lt;&lt; result.den &lt;&lt; <span class="string">&quot; = &quot;</span> &lt;&lt; value &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>对于编译期有理数算数的相关内容，可以在这篇文档中找到更多信息：</p>
+<p><a target="_blank" rel="noopener" href="https://zh.cppreference.com/w/cpp/numeric/ratio">https://zh.cppreference.com/w/cpp/numeric/ratio</a></p>
+<p>有了ratio之后，结合<code>std::chrono::duration</code>，我们便可以表示任意精度的值了。</p>
+<p>例如，相对于秒来说，毫秒是1/1,000，微秒是1/1,000,000，纳秒是1/1,000,000,000。通过ratio就可以这样表达：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">std::ratio&lt;<span class="number">1</span>, <span class="number">1000</span>&gt;       milliseconds;</span><br><span class="line">std::ratio&lt;<span class="number">1</span>, <span class="number">1000000</span>&gt;    microseconds;</span><br><span class="line">std::ratio&lt;<span class="number">1</span>, <span class="number">1000000000</span>&gt; nanoseconds;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="时长类型"><a href="#时长类型" class="headerlink" title="时长类型"></a>时长类型</h4><p>类模板 std::chrono::duration 表示时间间隔。有了ratio之后，表达时长就很方便了，下面是chrono库中提供的很常用的几个时长单位：</p>
+<table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th align="left">定义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">std::chrono::nanoseconds</td>
+<td align="left">duration&lt;/*至少 64 位的有符号整数类型*/, std::nano&gt;</td>
+</tr>
+<tr>
+<td align="left">std::chrono::microseconds</td>
+<td align="left">duration&lt;/*至少 55 位的有符号整数类型*/, std::micro&gt;</td>
+</tr>
+<tr>
+<td align="left">std::chrono::milliseconds</td>
+<td align="left">duration&lt;/*至少 45 位的有符号整数类型*/, std::milli&gt;</td>
+</tr>
+<tr>
+<td align="left">std::chrono::seconds</td>
+<td align="left">duration&lt;/*至少 35 位的有符号整数类型*/&gt;</td>
+</tr>
+<tr>
+<td align="left">std::chrono::minutes</td>
+<td align="left">duration&lt;/*至少 29 位的有符号整数类型*/, std::ratio&lt;60»</td>
+</tr>
+<tr>
+<td align="left">std::chrono::hours</td>
+<td align="left">duration&lt;/*至少 23 位的有符号整数类型*/, std::ratio&lt;3600»</td>
+</tr>
+</tbody></table>
+<p>我们可以调用duration类的<code>count()</code>成员函数来获取具体数值。</p>
+<h4 id="时长运算"><a href="#时长运算" class="headerlink" title="时长运算"></a>时长运算</h4><p>时长运算可以直接使用“+”或“-”相加相减。chrono库也提供了几个常用的函数：</p>
+<table>
+<thead>
+<tr>
+<th align="left">函数</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">duration_cast</td>
+<td align="left">进行时长的转换</td>
+</tr>
+<tr>
+<td align="left">floor(C++17)</td>
+<td align="left">以向下取整的方式，将一个时长转换为另一个时长</td>
+</tr>
+<tr>
+<td align="left">ceil(C++17)</td>
+<td align="left">以向上取整的方式，将一个时长转换为另一个时长</td>
+</tr>
+<tr>
+<td align="left">round(C++17)</td>
+<td align="left">转换时长到另一个时长，就近取整，偶数优先</td>
+</tr>
+<tr>
+<td align="left">abs(C++17)</td>
+<td align="left">获取时长的绝对值</td>
+</tr>
+</tbody></table>
+<p>例如：想要知道2个小时零5分钟一共是多少秒，可以这样写：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">chrono::hours <span class="title">two_hours</span><span class="params">(<span class="number">2</span>)</span></span>;</span><br><span class="line"><span class="function">chrono::minutes <span class="title">five_minutes</span><span class="params">(<span class="number">5</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> duration = two_hours + five_minutes;</span><br><span class="line"><span class="keyword">auto</span> seconds = chrono::duration_cast&lt;chrono::seconds&gt;(duration);</span><br><span class="line">cout &lt;&lt; <span class="string">&quot;02:05 is &quot;</span> &lt;&lt; seconds.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot; seconds&quot;</span> &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以得到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">02:05 is 7500 seconds</span><br></pre></td></tr></table></figure>
+
+<p>从C++14开始，你甚至可以用字面值来描述常见的时长。这包括：</p>
+<ul>
+<li><code>h</code>表示小时</li>
+<li><code>min</code>表示分钟</li>
+<li><code>s</code>表示秒</li>
+<li><code>ms</code>表示毫秒</li>
+<li><code>us</code>表示微妙</li>
+<li><code>ns</code>表示纳秒</li>
+</ul>
+<p>这些字面值位于<code>std::chrono_literals</code>命名空间下。于是，可以这样表达2个小时以及5分钟：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std::chrono_literals;</span><br><span class="line"><span class="keyword">auto</span> two_hours = <span class="number">2</span>h;</span><br><span class="line"><span class="keyword">auto</span> five_minutes = <span class="number">5</span>min;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="时间点"><a href="#时间点" class="headerlink" title="时间点"></a>时间点</h3><p>时钟的now函数返回的值就是一个时间点，时间点包含了时钟和时长两个信息。</p>
+<p>类模板<code>std::chrono::time_point</code>表示时间中的一个点，定义如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Clock</span>,</span></span><br><span class="line"><span class="class">    <span class="keyword">class</span> <span class="title">Duration</span> =</span> <span class="keyword">typename</span> Clock::duration</span><br><span class="line">&gt; <span class="class"><span class="keyword">class</span> <span class="title">time_point</span>;</span></span><br></pre></td></tr></table></figure>
+
+<p>与我们的常识一致，时间点具有加法和减法操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">时间点 + 时长 = 时间点</span><br><span class="line">时间点 - 时间点 = 时长</span><br></pre></td></tr></table></figure>
+
+<p>因而我们可以通过两个时间点相减来计算一个时间间隔，示例如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> start = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line"><span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100000000</span>; i++) &#123;</span><br><span class="line">    sum += <span class="built_in">sqrt</span>(i);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">auto</span> end = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> time_diff = end - start;</span><br><span class="line"><span class="keyword">auto</span> duration = chrono::duration_cast&lt;chrono::milliseconds&gt;(time_diff);</span><br><span class="line">cout &lt;&lt; <span class="string">&quot;Operation cost : &quot;</span> &lt;&lt; duration.<span class="built_in">count</span>() &lt;&lt; <span class="string">&quot;ms&quot;</span> &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
+
+<p>两个时间点也存在着比较操作，用于判断一个时间点在另外一个时间点之前还是之后，<code>std::chrono::time_point</code>重载了<code>==</code>，<code>!=</code>，<code>&lt;</code>，<code>&lt;=</code>，<code>&gt;</code>，<code>&gt;=</code>操作符来实现比较操作。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+              <a href="/tags/C-11/" rel="tag"># C++11</a>
+              <a href="/tags/C-17/" rel="tag"># C++17</a>
+              <a href="/tags/%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4%E7%BC%96%E7%A8%8B/" rel="tag"># 日期与时间编程</a>
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%E5%BF%83%E5%BE%97/" rel="tag"># 学习心得</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/04/23/cpp11-thread-pool/" rel="prev" title="基于C++11实现线程池">
+      <i class="fa fa-chevron-left"></i> 基于C++11实现线程池
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#C-%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4%E7%BC%96%E7%A8%8B%EF%BC%88C-11-C-17%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">C++日期与时间编程（C++11-C++17）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-%E5%AF%BC%E8%A8%80"><span class="nav-number">1.1.</span> <span class="nav-text">0x00 导言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E6%A6%82%E8%AE%BA"><span class="nav-number">1.2.</span> <span class="nav-text">0x01 概论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E5%BF%85%E5%A4%87%E7%9A%84%E7%9F%A5%E8%AF%86"><span class="nav-number">1.3.</span> <span class="nav-text">0x02 必备的知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#UTC%E6%97%B6%E9%97%B4"><span class="nav-number">1.3.1.</span> <span class="nav-text">UTC时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E6%97%B6%E9%97%B4"><span class="nav-number">1.3.2.</span> <span class="nav-text">本地时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%AA%E5%85%83%E6%97%B6%E9%97%B4"><span class="nav-number">1.3.3.</span> <span class="nav-text">纪元时间</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-C-Style-%E6%97%A5%E6%9C%9F%E6%97%B6%E9%97%B4%E5%BA%93"><span class="nav-number">1.4.</span> <span class="nav-text">0x03 C-Style 日期时间库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%B1%BB%E5%9E%8B%E4%B8%8E%E5%87%BD%E6%95%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text">常用类型与函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E8%BF%9B%E7%A8%8B%E8%BF%90%E8%A1%8C%E7%9A%84%E6%97%B6%E9%97%B4"><span class="nav-number">1.4.2.</span> <span class="nav-text">计算进程运行的时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E7%BA%AA%E5%85%83%E6%97%B6%E9%97%B4"><span class="nav-number">1.4.3.</span> <span class="nav-text">获取纪元时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%97%B6%E9%97%B4%E5%B7%AE"><span class="nav-number">1.4.4.</span> <span class="nav-text">计算时间差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UTC%E6%97%B6%E9%97%B4%E4%B8%8E%E6%9C%AC%E5%9C%B0%E6%97%B6%E9%97%B4"><span class="nav-number">1.4.5.</span> <span class="nav-text">UTC时间与本地时间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%97%B6%E9%97%B4%E5%92%8C%E6%97%A5%E6%9C%9F"><span class="nav-number">1.4.6.</span> <span class="nav-text">输出时间和日期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C-17%E6%96%B0%E5%86%85%E5%AE%B9timespec%EF%BC%8C%E8%BF%88%E5%90%91%E7%BA%B3%E7%A7%92%E7%B2%BE%E5%BA%A6"><span class="nav-number">1.4.7.</span> <span class="nav-text">C++17新内容timespec，迈向纳秒精度</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-chrono%E5%BA%93"><span class="nav-number">1.5.</span> <span class="nav-text">0x04 chrono库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%92%9F"><span class="nav-number">1.5.1.</span> <span class="nav-text">时钟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%95%BF"><span class="nav-number">1.5.2.</span> <span class="nav-text">时长</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ratio"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">ratio</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E9%95%BF%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">时长类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E9%95%BF%E8%BF%90%E7%AE%97"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">时长运算</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E7%82%B9"><span class="nav-number">1.5.3.</span> <span class="nav-text">时间点</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skykey"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Skykey</p>
+  <div class="site-description" itemprop="description">总有些惊奇的际遇，比方说当我遇见你。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skykeyjoker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zcxzxlc@163.com" title="E-Mail → mailto:zcxzxlc@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/skykeyjoker" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://t.me/Skykeyjoker" title="Telegram → https:&#x2F;&#x2F;t.me&#x2F;Skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-telegram fa-fw"></i>Telegram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skykey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+<div class="moon-menu">
+  <div class="moon-menu-items">
+    
+    <div id="moon-menu-item-back2bottom" class="moon-menu-item">
+      <i class='fas fa-chevron-down'></i>    </div>
+    
+    <div id="moon-menu-item-back2top" class="moon-menu-item">
+      <i class='fas fa-chevron-up'></i>    </div>
+    
+  </div>
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"></circle>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"></circle>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon"><i class='fas fa-ellipsis-v'></i></div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div><script src="/js/injector.js"></script>
+</body>
+</html>
