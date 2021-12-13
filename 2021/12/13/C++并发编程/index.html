@@ -20,30 +20,39 @@
     var CONFIG = {"hostname":"skykeyjoker.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="总有些惊奇的际遇，比方说当我遇见你。">
-<meta property="og:type" content="website">
+  <meta name="description" content="title: C++并发编程date: 2021-04-22 15:27:00tags:  C++ C++11 C++14 C++17 C++并发 学习心得categories: C++  C++ Concurrency0x00 概念CPP11标准以来，C++语言开始支持多线程模型。借助多线程模型，可以开发出更好的并发系统。 并发与并行 并发(Concurrent)：如果多个队列可以交替使用某台咖">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Skykey&#39;s Homeᕕ( ᐛ )ᕗ">
-<meta property="og:url" content="http://skykeyjoker.com/index.html">
+<meta property="og:url" content="http://skykeyjoker.com/2021/12/13/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/index.html">
 <meta property="og:site_name" content="Skykey&#39;s Homeᕕ( ᐛ )ᕗ">
-<meta property="og:description" content="总有些惊奇的际遇，比方说当我遇见你。">
+<meta property="og:description" content="title: C++并发编程date: 2021-04-22 15:27:00tags:  C++ C++11 C++14 C++17 C++并发 学习心得categories: C++  C++ Concurrency0x00 概念CPP11标准以来，C++语言开始支持多线程模型。借助多线程模型，可以开发出更好的并发系统。 并发与并行 并发(Concurrent)：如果多个队列可以交替使用某台咖">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/con_and_par.jpg">
+<meta property="og:image" content="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/cpp_timeline.png">
+<meta property="og:image" content="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/cpu.png">
+<meta property="og:image" content="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/multithread.png">
+<meta property="og:image" content="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/deadlock.png">
+<meta property="og:image" content="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/Thread_pool.svg">
+<meta property="article:published_time" content="2021-12-13T13:40:06.709Z">
+<meta property="article:modified_time" content="2021-12-13T13:41:50.227Z">
 <meta property="article:author" content="Skykey">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/con_and_par.jpg">
 
-<link rel="canonical" href="http://skykeyjoker.com/">
+<link rel="canonical" href="http://skykeyjoker.com/2021/12/13/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 <link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
-  <title>Skykey's Homeᕕ( ᐛ )ᕗ</title>
+  <title> | Skykey's Homeᕕ( ᐛ )ᕗ</title>
   
 
 
@@ -183,81 +192,10 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2020/07/21/about/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/21/about/" class="post-title-link" itemprop="url">About Me</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-21 20:46:52" itemprop="dateCreated datePublished" datetime="2020-07-21T20:46:52+08:00">2020-07-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-11 20:23:09" itemprop="dateModified" datetime="2021-12-11T20:23:09+08:00">2021-12-11</time>
-              </span>
-
-          
-
-        </div>
-      </header>
 
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Skykey"><a href="#Skykey" class="headerlink" title="Skykey"></a>Skykey</h2><h3 id="Hello-World-👋"><a href="#Hello-World-👋" class="headerlink" title="Hello,World! 👋"></a>Hello,World! 👋</h3><p>Hi, I’m Skykey 😉, a programmer 👨🏻‍💻 from China 🇨🇳. I’m an open-source profession and always develop in Cpp/Qt. Currently, I’m working on <a target="_blank" rel="noopener" href="https://github.com/QtDocumentCN/QtDocumentCN">QtDocCN</a>. Besides programming, I like delicious food 🥗🥩🌮🍣 and doing sports 🏃⛹️‍♂️🏋🏼‍♂️.</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/21/about/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
@@ -273,10 +211,9 @@
       <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
+        <h1 class="post-title" itemprop="name headline">
           
-            <a href="/2021/12/13/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">未命名</a>
-        </h2>
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -300,7 +237,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>title: C++并发编程<br>date: 2021-04-22 15:27:00<br>tags:</p>
+        <p>title: C++并发编程<br>date: 2021-04-22 15:27:00<br>tags:</p>
 <ul>
 <li>C++</li>
 <li>C++11</li>
@@ -994,712 +931,31 @@
 <p><code>promise</code>的层次比<code>packaged_task</code>低，所以<code>promise</code>提供给用户的控制粒度也比<code>packaged_task</code>要细。因此，如果你想要更彻底的控制，就选择<code>promise</code>吧。</p>
 <p><code>promise</code>几乎就是<code>future</code>的另一半。对<code>promise</code>调用<code>set_value</code>，就如同对<code>future</code>调用<code>set_value</code>。比起<code>packaged_task</code>，<code>promise</code>并不在意函数的返回值——毕竟它的值需要手动调用<code>set_value</code>进行设置。</p>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2021/12/12/%E5%BD%93%E6%88%91%E8%B0%88%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%97%B6%E6%88%91%E8%B0%88%E4%BA%9B%E4%BB%80%E4%B9%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/12/12/%E5%BD%93%E6%88%91%E8%B0%88%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%97%B6%E6%88%91%E8%B0%88%E4%BA%9B%E4%BB%80%E4%B9%88/" class="post-title-link" itemprop="url">当我谈线程池时我谈些什么</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-12-12 14:01:00" itemprop="dateCreated datePublished" datetime="2021-12-12T14:01:00+08:00">2021-12-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-13 09:37:08" itemprop="dateModified" datetime="2021-12-13T09:37:08+08:00">2021-12-13</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="当我谈线程池时我谈些什么"><a href="#当我谈线程池时我谈些什么" class="headerlink" title="当我谈线程池时我谈些什么"></a>当我谈线程池时我谈些什么</h1><p>最近跟着purecpp社区里的两篇博文复习了一下两种线程池的C++实现（单任务队列、多任务队列），相比于之前那篇C++11实现线程池的博文，语言版本进行了一点小更新（C++14-C++17）。在这里结合代码记录一下学习心得。</p>
-<blockquote>
-<p>12.12，然然首播一周年辣（嘉然小姐首播周年快乐）</p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/12/12/%E5%BD%93%E6%88%91%E8%B0%88%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%97%B6%E6%88%91%E8%B0%88%E4%BA%9B%E4%BB%80%E4%B9%88/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2021/05/19/C++%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4%E7%BC%96%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/05/19/C++%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">C++日期与时间编程（C++11-C++17）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-05-19 11:44:17" itemprop="dateCreated datePublished" datetime="2021-05-19T11:44:17+08:00">2021-05-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-12 13:44:33" itemprop="dateModified" datetime="2021-12-12T13:44:33+08:00">2021-12-12</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="C-日期与时间编程（C-11-C-17）"><a href="#C-日期与时间编程（C-11-C-17）" class="headerlink" title="C++日期与时间编程（C++11-C++17）"></a>C++日期与时间编程（C++11-C++17）</h1><h2 id="0x00-导言"><a href="#0x00-导言" class="headerlink" title="0x00 导言"></a>0x00 导言</h2><p>日期和时间是在编程中常常接触到的东西，而C++也为程序员提供了强（复）大（杂）的日期和时间编程的相关支持。在C++20标准中，C++的<code>chrono</code>库继C++11标准后也迎来了空前绝后大更新，但本文讨论的重点主要集中在C++11至C++17标准中日期和时间相关的内容，C++20标准中的<code>chrono</code>新东西完全可以另开一个坑。</p>
-<p>在翻了N篇cppreference标准、chrome爽吃我800Mb的内存之后，我果断决定把这次的学习心得记下来，以防以后全部忘光光（实在太多了.jpg）。本片学习心得纯新手向，求大佬轻喷。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/05/19/C++%E6%97%A5%E6%9C%9F%E4%B8%8E%E6%97%B6%E9%97%B4%E7%BC%96%E7%A8%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/12/12/%E5%BD%93%E6%88%91%E8%B0%88%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%97%B6%E6%88%91%E8%B0%88%E4%BA%9B%E4%BB%80%E4%B9%88/" rel="prev" title="当我谈线程池时我谈些什么">
+      <i class="fa fa-chevron-left"></i> 当我谈线程池时我谈些什么
+    </a></div>
+      <div class="post-nav-item"></div>
     </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
       </footer>
+    
   </article>
   
   
   
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2021/04/23/cpp11-thread-pool/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/23/cpp11-thread-pool/" class="post-title-link" itemprop="url">基于C++11实现线程池</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-23 19:10:44" itemprop="dateCreated datePublished" datetime="2021-04-23T19:10:44+08:00">2021-04-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-11 20:24:27" itemprop="dateModified" datetime="2021-12-11T20:24:27+08:00">2021-12-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="基于C-11实现线程池"><a href="#基于C-11实现线程池" class="headerlink" title="基于C++11实现线程池"></a>基于C++11实现线程池</h1><h2 id="0x00-导入"><a href="#0x00-导入" class="headerlink" title="0x00 导入"></a>0x00 导入</h2><p>前些日子通过阅读几篇博客，大体学习了一下C++的并发编程（主要是多线程、异步部分）。手撸了一个多生产者-多消费者模型之后，最终觉得这也只是小打小闹而已，需要整个硬货。经过一番思考之后，手撸一个线程池貌似是一个非常合适的练习。线程池前前后后一共折腾了四五个小时左右，最令我意外的是——原本以为最难理解的并发部分反而是最简单的部分，线程池实现中大量的CPP11语法糖才是真正影响我理解的部分。经过三四个小时的阅读博文、查阅资料以及向大佬求教之后，我才真正对线程池实现有了比较深入地理解。“纸上得来终觉浅，绝知此事要躬行。”经历这一番折腾后才清楚地认识到了自己对CPP11理解的薄弱，遂写下这篇博客来总结自己对线程池实现以及所涉及到的CPP11语法糖的理解，方便自己以后再次阅读源码时有所考据。</p>
-<p>文章大量借鉴、节选了众多参考资料，并结合自己的理解进行讲解。参考资料会在最后列出。</p>
-<p>这篇总结会将重心放在C++11的语法糖上，对于C++11的并发编程部分（<code>std::thread</code>, <code>std::future</code>等）将仅进行最简洁最必要的阐述。有关并发编程部分可以移步至几篇大佬总结的比较好的博文中进行补充学习：</p>
-<ol>
-<li>《C++并发编程（从C++11到C++17）》：<a target="_blank" rel="noopener" href="https://paul.pub/cpp-concurrency">https://paul.pub/cpp-concurrency</a></li>
-<li>《从pthread转换到std::thread》：<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002655852">https://segmentfault.com/a/1190000002655852</a></li>
-<li>《货比三家：C++中的task based并发》：<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000002706259">https://segmentfault.com/a/1190000002706259</a></li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/23/cpp11-thread-pool/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2020/07/24/mysqlonqt3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/24/mysqlonqt3/" class="post-title-link" itemprop="url">MySQL on Qt (3):SQL的MVC结构基础知识总结</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-24 10:23:23" itemprop="dateCreated datePublished" datetime="2020-07-24T10:23:23+08:00">2020-07-24</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-11 20:26:05" itemprop="dateModified" datetime="2021-12-11T20:26:05+08:00">2021-12-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Qt/" itemprop="url" rel="index"><span itemprop="name">Qt</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="MySQL-on-Qt-3-SQL的MVC结构基础知识总结"><a href="#MySQL-on-Qt-3-SQL的MVC结构基础知识总结" class="headerlink" title="MySQL on Qt (3): SQL的MVC结构基础知识总结"></a>MySQL on Qt (3): SQL的MVC结构基础知识总结</h1><blockquote>
-<p> 写在前面： </p>
-<p>大一下学期的 CPP 大作业“自主订餐系统”可真是颇费了一些力气，每天晚睡早起撸代码，课都没听，很多知识都是现学现用。</p>
-<p>为了避免当时学到的东西给全部忘光光（`_&gt;`，我这脑子啊。。。），所以我把当时大作业的一些核心部分（一些零碎的小细节，能记就记）给记录一下，一方面是复习，一方面也方便以后用到的时候查阅。</p>
-</blockquote>
-<p>这篇文章是大作业 MySQL + SQLite 操作相关部分的第三章，主要讲一下 Qt 中 SQL 的 MVC 结构的基础知识，包括一部分的 MVC 原理介绍和基础使用。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/24/mysqlonqt3/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2020/07/23/model-view/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/23/model-view/" class="post-title-link" itemprop="url">Qt Model/View（模型/视图）结构（无师自通）</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-23 16:26:13" itemprop="dateCreated datePublished" datetime="2020-07-23T16:26:13+08:00">2020-07-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-11 20:25:14" itemprop="dateModified" datetime="2021-12-11T20:25:14+08:00">2021-12-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Qt/" itemprop="url" rel="index"><span itemprop="name">Qt</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Qt-Model-View（模型-视图）结构（无师自通）"><a href="#Qt-Model-View（模型-视图）结构（无师自通）" class="headerlink" title="Qt Model/View（模型/视图）结构（无师自通）"></a>Qt Model/View（模型/视图）结构（无师自通）</h1><blockquote>
-<p>本文转载自：</p>
-<p><a target="_blank" rel="noopener" href="http://c.biancheng.net/view/1864.html">http://c.biancheng.net/view/1864.html</a></p>
-</blockquote>
-<p>Model/View（模型/视图）结构是 <a target="_blank" rel="noopener" href="http://c.biancheng.net/qt/">Qt</a> 中用界面组件显示与编辑数据的一种结构，视图（View）是显示和编辑数据的界面组件，模型（Model）是视图与原始数据之间的接口。</p>
-<p>GUI 应用程序的一个很重要的功能是由用户在界面上编辑和修改数据，典型的如数据库应用程序。数据库应用程序中，用户在界面上执行各种操作，实际上是修改了界面组件所关联的数据库内的数据。</p>
-<p>将界面组件与所编辑的数据分离开来，又通过数据源的方式连接起来，是处理界面与数据的一种较好的方式。Qt 使用 Model/View 结构来处理这种关系，Model/View 的基本结构如图 1 所示。</p>
-<p><img src="http://c.biancheng.net/uploads/allimg/190103/2-1Z10316062G22.gif" alt="Model/View基本结构"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/23/model-view/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2020/07/23/mysqlonqt2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/23/mysqlonqt2/" class="post-title-link" itemprop="url">MySQL on Qt (2):SQL的连接、断开与增删查改基本操作</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-23 10:18:56" itemprop="dateCreated datePublished" datetime="2020-07-23T10:18:56+08:00">2020-07-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-11 20:26:16" itemprop="dateModified" datetime="2021-12-11T20:26:16+08:00">2021-12-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Qt/" itemprop="url" rel="index"><span itemprop="name">Qt</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="MySQL-on-Qt-2-SQL的连接、断开与增删查改基本操作"><a href="#MySQL-on-Qt-2-SQL的连接、断开与增删查改基本操作" class="headerlink" title="MySQL on Qt (2): SQL的连接、断开与增删查改基本操作"></a>MySQL on Qt (2): SQL的连接、断开与增删查改基本操作</h1><blockquote>
-<p>写在前面： </p>
-<p>大一下学期的 CPP 大作业“自主订餐系统”可真是颇费了一些力气，每天晚睡早起撸代码，课都没听，很多知识都是现学现用。</p>
-<p>为了避免当时学到的东西给全部忘光光（`_&gt;`，我这脑子啊。。。），所以我把当时大作业的一些核心部分（一些零碎的小细节，能记就记）给记录一下，一方面是复习，一方面也方便以后用到的时候查阅。</p>
-</blockquote>
-<p>这篇文章是大作业 MySQL + SQLite 操作相关部分的第二章，主要讲一下 Qt 中 MySQL 和 SQLite 连接、断开与增删查改的基本操作。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/23/mysqlonqt2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2020/07/22/mysqlonqt1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/22/mysqlonqt1/" class="post-title-link" itemprop="url">MySQL on Qt (1):安装 MySQL 驱动以及连接 MySQL 与 SQLite</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-22 17:46:08" itemprop="dateCreated datePublished" datetime="2020-07-22T17:46:08+08:00">2020-07-22</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-11 20:26:31" itemprop="dateModified" datetime="2021-12-11T20:26:31+08:00">2021-12-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Qt/" itemprop="url" rel="index"><span itemprop="name">Qt</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="MySQL-on-Qt-1-安装-MySQL-驱动以及连接-MySQL-与-SQLite"><a href="#MySQL-on-Qt-1-安装-MySQL-驱动以及连接-MySQL-与-SQLite" class="headerlink" title="MySQL on Qt (1): 安装 MySQL 驱动以及连接 MySQL 与 SQLite"></a>MySQL on Qt (1): 安装 MySQL 驱动以及连接 MySQL 与 SQLite</h1><blockquote>
-<p>写在前面： </p>
-<p>大一下学期的 CPP 大作业“自主订餐系统”可真是颇费了一些力气，每天晚睡早起撸代码，课都没听，很多知识都是现学现用。</p>
-<p>为了避免当时学到的东西给全部忘光光（`_&gt;`，我这脑子啊。。。），所以我把当时大作业的一些核心部分（一些零碎的小细节，能记就记）给记录一下，一方面是复习，一方面也方便以后用到的时候查阅。</p>
-</blockquote>
-<p>这篇文章是大作业 MySQL + SQLite 操作相关部分的第一章，主要讲一下如何安装 MySQL 驱动（Win 下）以及如何连接 MySQL 及 SQLite。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/22/mysqlonqt1/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2020/07/21/cmake/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/07/21/cmake/" class="post-title-link" itemprop="url">Linux下CMake使用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-07-21 11:44:17" itemprop="dateCreated datePublished" datetime="2020-07-21T11:44:17+08:00">2020-07-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-12-11 20:24:18" itemprop="dateModified" datetime="2021-12-11T20:24:18+08:00">2021-12-11</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Linux下CMake使用方法"><a href="#Linux下CMake使用方法" class="headerlink" title="Linux下CMake使用方法"></a>Linux下CMake使用方法</h1><p>在 linux 平台下使用 CMake 生成 Makefile 并编译的流程如下：</p>
-<ol>
-<li>编写 CMake 配置文件 CMakeLists.txt 。</li>
-<li>执行命令 <code>cmake PATH</code> 或者 <code>ccmake PATH</code> 生成 Makefile 1 1<code>ccmake</code> 和 <code>cmake</code> 的区别在于前者提供了一个交互式的界面。。其中， <code>PATH</code> 是 CMakeLists.txt 所在的目录。</li>
-<li>使用 <code>make</code> 命令进行编译。</li>
-</ol>
-<p>本文将从实例入手，一步步讲解 CMake 的常见用法，文中所有的实例代码可以在<a target="_blank" rel="noopener" href="https://github.com/wzpan/cmake-demo">这里</a>找到。如果你读完仍觉得意犹未尽，可以继续学习我在文章末尾提供的其他资源。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/07/21/cmake/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 
 
 
@@ -1751,6 +1007,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#C-Concurrency"><span class="nav-number">1.</span> <span class="nav-text">C++ Concurrency</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">0x00 概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E4%B8%8E%E5%B9%B6%E8%A1%8C"><span class="nav-number">1.1.1.</span> <span class="nav-text">并发与并行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%80%A7%E8%83%BD"><span class="nav-number">1.1.2.</span> <span class="nav-text">并发系统的性能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-C-%E4%B8%8E%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">0x01 C++与并发编程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#C-%E6%A0%87%E5%87%86%E7%89%B9%E6%80%A7%E7%9A%84%E8%B7%AF%E7%BA%BF%E5%9B%BE"><span class="nav-number">1.2.1.</span> <span class="nav-text">C++标准特性的路线图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">线程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%BA%BF%E7%A8%8B"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">创建线程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#join%E4%B8%8Edetach"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">join与detach</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E5%BD%93%E5%89%8D%E7%BA%BF%E7%A8%8B"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">管理当前线程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E6%AC%A1%E8%B0%83%E7%94%A8"><span class="nav-number">1.2.2.4.</span> <span class="nav-text">一次调用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.2.2.5.</span> <span class="nav-text">并发任务</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%9E%E4%BA%89%E6%9D%A1%E4%BB%B6%E4%B8%8E%E4%B8%B4%E7%95%8C%E5%8C%BA"><span class="nav-number">1.2.3.</span> <span class="nav-text">竞争条件与临界区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%92%E6%96%A5%E4%BD%93%E4%B8%8E%E9%94%81"><span class="nav-number">1.2.4.</span> <span class="nav-text">互斥体与锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mutex"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">mutex</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E9%94%81%E5%AE%9A%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">通用锁定算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E4%BA%92%E6%96%A5%E7%AE%A1%E7%90%86"><span class="nav-number">1.2.4.4.</span> <span class="nav-text">通用互斥管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#RAII"><span class="nav-number">1.2.4.5.</span> <span class="nav-text">RAII</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F"><span class="nav-number">1.2.4.6.</span> <span class="nav-text">条件变量</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Future"><span class="nav-number">1.2.5.</span> <span class="nav-text">Future</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#async"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">async</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#packaged-task"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">packaged_task</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#promise%E4%B8%8Efuture"><span class="nav-number">1.2.5.3.</span> <span class="nav-text">promise与future</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#task-based%E5%B9%B6%E5%8F%91%EF%BC%9Aasync-packaged-task-promise"><span class="nav-number">1.2.6.</span> <span class="nav-text">task based并发：async, packaged_task, promise</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#TL-DR"><span class="nav-number">1.2.6.1.</span> <span class="nav-text">TL; DR</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AF%94%E8%BE%83"><span class="nav-number">1.2.6.2.</span> <span class="nav-text">比较</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#async-VS-packaged-task-and-promise"><span class="nav-number">1.2.6.3.</span> <span class="nav-text">async VS. packaged_task and promise</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#packaged-task-VS-promise"><span class="nav-number">1.2.6.4.</span> <span class="nav-text">packaged_task VS. promise</span></a></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
