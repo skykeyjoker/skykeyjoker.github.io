@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"skykeyjoker.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="title: C++并发编程date: 2021-04-22 15:27:00tags:  C++ C++11 C++14 C++17 C++并发 学习心得categories: C++  C++ Concurrency0x00 概念CPP11标准以来，C++语言开始支持多线程模型。借助多线程模型，可以开发出更好的并发系统。 并发与并行 并发(Concurrent)：如果多个队列可以交替使用某台咖">
+  <meta name="description" content="C++ Concurrency0x00 概念CPP11标准以来，C++语言开始支持多线程模型。借助多线程模型，可以开发出更好的并发系统。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Skykey&#39;s Homeᕕ( ᐛ )ᕗ">
-<meta property="og:url" content="http://skykeyjoker.com/2021/12/13/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/index.html">
-<meta property="og:site_name" content="Skykey&#39;s Homeᕕ( ᐛ )ᕗ">
-<meta property="og:description" content="title: C++并发编程date: 2021-04-22 15:27:00tags:  C++ C++11 C++14 C++17 C++并发 学习心得categories: C++  C++ Concurrency0x00 概念CPP11标准以来，C++语言开始支持多线程模型。借助多线程模型，可以开发出更好的并发系统。 并发与并行 并发(Concurrent)：如果多个队列可以交替使用某台咖">
+<meta property="og:title" content="C++并发编程">
+<meta property="og:url" content="http://skykeyjoker.com/2021/04/22/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Skykey&#39;s Home">
+<meta property="og:description" content="C++ Concurrency0x00 概念CPP11标准以来，C++语言开始支持多线程模型。借助多线程模型，可以开发出更好的并发系统。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/con_and_par.jpg">
 <meta property="og:image" content="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/cpp_timeline.png">
@@ -33,13 +33,19 @@
 <meta property="og:image" content="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/multithread.png">
 <meta property="og:image" content="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/deadlock.png">
 <meta property="og:image" content="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/Thread_pool.svg">
-<meta property="article:published_time" content="2021-12-13T13:40:06.709Z">
-<meta property="article:modified_time" content="2021-12-13T13:41:50.227Z">
+<meta property="article:published_time" content="2021-04-22T07:27:00.000Z">
+<meta property="article:modified_time" content="2021-12-13T14:50:37.109Z">
 <meta property="article:author" content="Skykey">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="C++11">
+<meta property="article:tag" content="C++17">
+<meta property="article:tag" content="学习心得">
+<meta property="article:tag" content="C++14">
+<meta property="article:tag" content="C++并发">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/con_and_par.jpg">
 
-<link rel="canonical" href="http://skykeyjoker.com/2021/12/13/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+<link rel="canonical" href="http://skykeyjoker.com/2021/04/22/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
 
 
 <script id="page-configurations">
@@ -52,7 +58,7 @@
   };
 </script>
 <link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
-  <title> | Skykey's Homeᕕ( ᐛ )ᕗ</title>
+  <title>C++并发编程 | Skykey's Home</title>
   
 
 
@@ -103,7 +109,7 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Skykey's Homeᕕ( ᐛ )ᕗ</h1>
+      <h1 class="site-title">Skykey's Home</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
       <p class="site-subtitle" itemprop="description">Skykey的私人博客ᕕ( ᐛ )ᕗ</p>
@@ -199,7 +205,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2021/12/13/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+    <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2021/04/22/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -208,11 +214,11 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
+      <meta itemprop="name" content="Skykey's Home">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          C++并发编程
         </h1>
 
         <div class="post-meta">
@@ -221,9 +227,24 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-12-13 21:40:06 / 修改时间：21:41:50" itemprop="dateCreated datePublished" datetime="2021-12-13T21:40:06+08:00">2021-12-13</time>
+              <time title="创建时间：2021-04-22 15:27:00" itemprop="dateCreated datePublished" datetime="2021-04-22T15:27:00+08:00">2021-04-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-13 22:50:37" itemprop="dateModified" datetime="2021-12-13T22:50:37+08:00">2021-12-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
             </span>
 
           
@@ -237,17 +258,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>title: C++并发编程<br>date: 2021-04-22 15:27:00<br>tags:</p>
-<ul>
-<li>C++</li>
-<li>C++11</li>
-<li>C++14</li>
-<li>C++17</li>
-<li>C++并发</li>
-<li>学习心得<br>categories:</li>
-<li>C++</li>
-</ul>
-<h1 id="C-Concurrency"><a href="#C-Concurrency" class="headerlink" title="C++ Concurrency"></a>C++ Concurrency</h1><h2 id="0x00-概念"><a href="#0x00-概念" class="headerlink" title="0x00 概念"></a>0x00 概念</h2><p>CPP11标准以来，C++语言开始支持多线程模型。借助多线程模型，可以开发出更好的并发系统。</p>
+        <h1 id="C-Concurrency"><a href="#C-Concurrency" class="headerlink" title="C++ Concurrency"></a>C++ Concurrency</h1><h2 id="0x00-概念"><a href="#0x00-概念" class="headerlink" title="0x00 概念"></a>0x00 概念</h2><p>CPP11标准以来，C++语言开始支持多线程模型。借助多线程模型，可以开发出更好的并发系统。</p>
+<span id="more"></span>
+
 <h3 id="并发与并行"><a href="#并发与并行" class="headerlink" title="并发与并行"></a>并发与并行</h3><ul>
 <li>并发(Concurrent)：如果多个队列可以交替使用某台咖啡机，则这一行为就是并发的。</li>
 <li>并行(Parallel)：如果存在多台咖啡机可以被多个队列交替使用，则就是并行。</li>
@@ -938,6 +951,14 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+              <a href="/tags/C-11/" rel="tag"># C++11</a>
+              <a href="/tags/C-17/" rel="tag"># C++17</a>
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%E5%BF%83%E5%BE%97/" rel="tag"># 学习心得</a>
+              <a href="/tags/C-14/" rel="tag"># C++14</a>
+              <a href="/tags/C-%E5%B9%B6%E5%8F%91/" rel="tag"># C++并发</a>
+          </div>
 
         
 
@@ -945,10 +966,13 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/12/12/%E5%BD%93%E6%88%91%E8%B0%88%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%97%B6%E6%88%91%E8%B0%88%E4%BA%9B%E4%BB%80%E4%B9%88/" rel="prev" title="当我谈线程池时我谈些什么">
-      <i class="fa fa-chevron-left"></i> 当我谈线程池时我谈些什么
+    <a href="/2020/07/24/mysqlonqt3/" rel="prev" title="MySQL on Qt (3):SQL的MVC结构基础知识总结">
+      <i class="fa fa-chevron-left"></i> MySQL on Qt (3):SQL的MVC结构基础知识总结
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2021/04/23/cpp11-thread-pool/" rel="next" title="基于C++11实现线程池">
+      基于C++11实现线程池 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     

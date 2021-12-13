@@ -22,9 +22,9 @@
 
   <meta name="description" content="总有些惊奇的际遇，比方说当我遇见你。">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Skykey&#39;s Homeᕕ( ᐛ )ᕗ">
+<meta property="og:title" content="Skykey&#39;s Home">
 <meta property="og:url" content="http://skykeyjoker.com/index.html">
-<meta property="og:site_name" content="Skykey&#39;s Homeᕕ( ᐛ )ᕗ">
+<meta property="og:site_name" content="Skykey&#39;s Home">
 <meta property="og:description" content="总有些惊奇的际遇，比方说当我遇见你。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="Skykey">
@@ -43,7 +43,7 @@
   };
 </script>
 <link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
-  <title>Skykey's Homeᕕ( ᐛ )ᕗ</title>
+  <title>Skykey's Home</title>
   
 
 
@@ -94,7 +94,7 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Skykey's Homeᕕ( ᐛ )ᕗ</h1>
+      <h1 class="site-title">Skykey's Home</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
       <p class="site-subtitle" itemprop="description">Skykey的私人博客ᕕ( ᐛ )ᕗ</p>
@@ -198,7 +198,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
+      <meta itemprop="name" content="Skykey's Home">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -261,757 +261,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2021/12/13/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Skykey">
-      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/12/13/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">未命名</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-12-13 21:40:06 / 修改时间：21:41:50" itemprop="dateCreated datePublished" datetime="2021-12-13T21:40:06+08:00">2021-12-13</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>title: C++并发编程<br>date: 2021-04-22 15:27:00<br>tags:</p>
-<ul>
-<li>C++</li>
-<li>C++11</li>
-<li>C++14</li>
-<li>C++17</li>
-<li>C++并发</li>
-<li>学习心得<br>categories:</li>
-<li>C++</li>
-</ul>
-<h1 id="C-Concurrency"><a href="#C-Concurrency" class="headerlink" title="C++ Concurrency"></a>C++ Concurrency</h1><h2 id="0x00-概念"><a href="#0x00-概念" class="headerlink" title="0x00 概念"></a>0x00 概念</h2><p>CPP11标准以来，C++语言开始支持多线程模型。借助多线程模型，可以开发出更好的并发系统。</p>
-<h3 id="并发与并行"><a href="#并发与并行" class="headerlink" title="并发与并行"></a>并发与并行</h3><ul>
-<li>并发(Concurrent)：如果多个队列可以交替使用某台咖啡机，则这一行为就是并发的。</li>
-<li>并行(Parallel)：如果存在多台咖啡机可以被多个队列交替使用，则就是并行。</li>
-</ul>
-<img src="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/con_and_par.jpg" alt="img" style="zoom:80%;" />
-
-<p>并发和并行都是在多任务的环境下的讨论。并行其实是并发的子集，他们的区别在于是否具有多个处理器。</p>
-<p>进程与线程是操作系统的基本概念。</p>
-<blockquote>
-<ul>
-<li><strong>进程</strong>(process)：计算机已运行的程序。进程是程序的基本执行实体；</li>
-<li><strong>线程</strong>(thread)：操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。</li>
-</ul>
-</blockquote>
-<p>绝大多数情况下，所写的程序在一个进程中运行。一个进程至少会包含一个线程。这个线程我们通常称之为==主线程==。</p>
-<p>在默认情况下，代码都是在进程的主线程中运行，除非开发者在程序中创建了新的线程。</p>
-<p>任务在何时占有处理器，通常是由操作系统的调度策略决定的。当开发跨平台软件时，不应对调度策略做任何假设，而应该抱有“系统可能以任意顺序来调度我的任务”这样的想法。</p>
-<h3 id="并发系统的性能"><a href="#并发系统的性能" class="headerlink" title="并发系统的性能"></a>并发系统的性能</h3><p>开发并发系统最主要的动机就是提升系统性能（<em>事实上，这是以增加复杂度为代价的</em>）。</p>
-<p><strong>阿姆达尔定律</strong>告诉我们将系统并行之后性能收益的上限。</p>
-<h2 id="0x01-C-与并发编程"><a href="#0x01-C-与并发编程" class="headerlink" title="0x01 C++与并发编程"></a>0x01 C++与并发编程</h2><h3 id="C-标准特性的路线图"><a href="#C-标准特性的路线图" class="headerlink" title="C++标准特性的路线图"></a>C++标准特性的路线图</h3><p><img src="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/cpp_timeline.png" alt="img"></p>
-<h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><h4 id="创建线程"><a href="#创建线程" class="headerlink" title="创建线程"></a>创建线程</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 01_hello_thread.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;thread&gt;</span> <span class="comment">// ①</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std; <span class="comment">// ②</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">hello</span><span class="params">()</span> </span>&#123; <span class="comment">// ③</span></span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Hello World from new thread.&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="function">thread <span class="title">t</span><span class="params">(hello)</span></span>; <span class="comment">// ④</span></span><br><span class="line">  t.<span class="built_in">join</span>(); <span class="comment">// ⑤</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<ol>
-<li>为了使用多线程的接口，我们需要<code>#include &lt;thread&gt;</code>头文件。</li>
-<li>为了简化声明，本文中的代码都将<code>using namespace std;</code>。</li>
-<li>新建线程的入口是一个普通的函数，它并没有什么特别的地方。</li>
-<li>创建线程的方式就是构造一个<code>thread</code>对象，并指定入口函数。与普通对象不一样的是，此时编译器便会为我们创建一个新的操作系统线程，并在新的线程中执行我们的入口函数。</li>
-<li>关于<code>join</code>函数在下文中讲解。</li>
-</ol>
-</blockquote>
-<p>==thread==可以和==callable==类型一起工作，因此也可以直接用<em>lambda</em>来写线程逻辑。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 02_lambda_thread.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;thread&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="function">thread <span class="title">t</span><span class="params">([] &#123;</span></span></span><br><span class="line"><span class="params"><span class="function">    cout &lt;&lt; <span class="string">&quot;Hello World from lambda thread.&quot;</span> &lt;&lt; endl;</span></span></span><br><span class="line"><span class="params"><span class="function">  &#125;)</span></span>;</span><br><span class="line"></span><br><span class="line">  t.<span class="built_in">join</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>也可以==传递参数==给入口函数，像下面这样：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 03_thread_argument.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">hello</span><span class="params">(string name)</span> </span>&#123;</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Welcome to &quot;</span> &lt;&lt; name &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="function">thread <span class="title">t</span><span class="params">(hello, <span class="string">&quot;https://paul.pub&quot;</span>)</span></span>;</span><br><span class="line">  t.<span class="built_in">join</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>甚至可以传递一个类成员函数。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 假设buy是一个可调用的函数对象，它即可能是函数指针，也可能是函数对象</span></span><br><span class="line"><span class="function">std::thread <span class="title">Annie</span><span class="params">(buy)</span></span>;</span><br><span class="line"><span class="comment">// Annie会去执行buy()</span></span><br><span class="line"><span class="function">std::thread <span class="title">Bob</span><span class="params">(buy, book, food)</span></span>;</span><br><span class="line"><span class="comment">// Bob会去执行buy(book, food)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 假设buy是Consumer的一个可调用的成员函数</span></span><br><span class="line">Consumer Clara;</span><br><span class="line"><span class="function">std::thread <span class="title">action</span><span class="params">(buy, std::ref(Clara), phone)</span></span>;</span><br><span class="line"><span class="comment">// Clara会去执行Consumer.buy(phone)</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>应注意，<strong>参数以拷贝的形式传递</strong>。对于拷贝耗时的对象可能需要传递指针或者引用类型作为参数。但是传递指针和引用，还应考虑参数对象的生命周期。</p>
-<p><strong>注意：</strong>当创建了一个（非空的）线程对象时，对应线程就会执行。</p>
-<h4 id="join与detach"><a href="#join与detach" class="headerlink" title="join与detach"></a>join与detach</h4><ul>
-<li>主要API</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>API</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>join</td>
-<td>等待线程完成其执行</td>
-</tr>
-<tr>
-<td>detach</td>
-<td>允许线程独立执行</td>
-</tr>
-</tbody></table>
-<p>线程启动之后，必须决定等待直接它结束（==join==），还是让他独立运行（==detach==），必须二者选其一。若在==thread==对象<strong>销毁的时候</strong>还没有做决定，则==thread==对象在析构函数将调用==std::terminate()==从而导致进程异常退出。</p>
-<ul>
-<li><code>join</code>：调用此接口时，当前线程会一直阻塞，直到目标线程执行完成（当然，很可能目标线程在此处调用之前就已经执行完成了，不过这不要紧）。因此，如果目标线程的任务非常耗时，你就要考虑好是否需要在主线程上等待它了，因此这很可能会导致主线程卡住。</li>
-<li><code>detach</code>：<code>detach</code>是让目标线程成为守护线程（daemon threads）。一旦<code>detach</code>之后，目标线程将独立执行，即便其对应的<code>thread</code>对象销毁也不影响线程的执行。并且，你无法再与之通信。</li>
-</ul>
-<h4 id="管理当前线程"><a href="#管理当前线程" class="headerlink" title="管理当前线程"></a>管理当前线程</h4><ul>
-<li>主要API</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th align="left">API</th>
-<th align="left">C++标准</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">yield</td>
-<td align="left">C++11</td>
-<td align="left">让出处理器，重新调度各执行线程</td>
-</tr>
-<tr>
-<td align="left">get_id</td>
-<td align="left">C++11</td>
-<td align="left">返回当前线程的线程 id</td>
-</tr>
-<tr>
-<td align="left">sleep_for</td>
-<td align="left">C++11</td>
-<td align="left">使当前线程的执行停止指定的时间段</td>
-</tr>
-<tr>
-<td align="left">sleep_until</td>
-<td align="left">C++11</td>
-<td align="left">使当前线程的执行停止直到指定的时间点</td>
-</tr>
-</tbody></table>
-<p>上面是一些在线程内部使用的API，它们用来对当前线程做一些控制。</p>
-<ul>
-<li><code>yield</code> 通常用在自己的主要任务已经完成的时候，此时希望让出处理器给其他任务使用。</li>
-<li><code>get_id</code> 返回当前线程的id，可以以此来标识不同的线程。</li>
-<li><code>sleep_for</code> 是让当前线程停止一段时间。</li>
-<li><code>sleep_until</code> 和<code>sleep_for</code>类似，但是是以具体的时间点为参数。这两个API都以<a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/header/chrono">chrono</a> API（由于篇幅所限，这里不展开这方面内容）为基础。</li>
-</ul>
-<p>代码示例：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 04_thread_self_manage.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_time</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">auto</span> now = chrono::system_clock::<span class="built_in">now</span>();</span><br><span class="line">  <span class="keyword">auto</span> <span class="keyword">in_time_t</span> = chrono::system_clock::<span class="built_in">to_time_t</span>(now);</span><br><span class="line"></span><br><span class="line">  std::stringstream ss;</span><br><span class="line">  ss &lt;&lt; <span class="built_in">put_time</span>(<span class="built_in">localtime</span>(&amp;<span class="keyword">in_time_t</span>), <span class="string">&quot;%Y-%m-%d %X&quot;</span>);</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;now is: &quot;</span> &lt;&lt; ss.<span class="built_in">str</span>() &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sleep_thread</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  this_thread::<span class="built_in">sleep_for</span>(chrono::<span class="built_in">seconds</span>(<span class="number">3</span>));</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;[thread-&quot;</span> &lt;&lt; this_thread::<span class="built_in">get_id</span>() &lt;&lt; <span class="string">&quot;] is waking up&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">loop_thread</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;[thread-&quot;</span> &lt;&lt; this_thread::<span class="built_in">get_id</span>() &lt;&lt; <span class="string">&quot;] print: &quot;</span> &lt;&lt; i &lt;&lt; endl;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="built_in">print_time</span>();</span><br><span class="line"></span><br><span class="line">  <span class="function">thread <span class="title">t1</span><span class="params">(sleep_thread)</span></span>;</span><br><span class="line">  <span class="function">thread <span class="title">t2</span><span class="params">(loop_thread)</span></span>;</span><br><span class="line"></span><br><span class="line">  t1.<span class="built_in">join</span>();</span><br><span class="line">  t2.<span class="built_in">detach</span>();</span><br><span class="line"></span><br><span class="line">  <span class="built_in">print_time</span>();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>程序输出如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">now is: 2019-10-13 10:17:48</span><br><span class="line">[thread-0x70000cdda000] print: 0</span><br><span class="line">[thread-0x70000cdda000] print: 1</span><br><span class="line">[thread-0x70000cdda000] print: 2</span><br><span class="line">[thread-0x70000cdda000] print: 3</span><br><span class="line">[thread-0x70000cdda000] print: 4</span><br><span class="line">[thread-0x70000cdda000] print: 5</span><br><span class="line">[thread-0x70000cdda000] print: 6</span><br><span class="line">[thread-0x70000cdda000] print: 7</span><br><span class="line">[thread-0x70000cdda000] print: 8</span><br><span class="line">[thread-0x70000cdda000] print: 9</span><br><span class="line">[thread-0x70000cd57000] is waking up</span><br><span class="line">now is: 2019-10-13 10:17:51</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="一次调用"><a href="#一次调用" class="headerlink" title="一次调用"></a>一次调用</h4><ul>
-<li>主要API</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th align="left">API</th>
-<th align="left">C++标准</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">call_once</td>
-<td align="left">C++11</td>
-<td align="left">即便在多线程环境下，也能保证只调用某个函数一次</td>
-</tr>
-<tr>
-<td align="left">once_flag</td>
-<td align="left">C++11</td>
-<td align="left">与<code>call_once</code>配合使用</td>
-</tr>
-</tbody></table>
-<p>在一些情况下，我们有些任务需要执行一次，并且我们只希望它执行一次，例如资源的初始化任务。这个时候就可以用到上面的接口。这个接口会保证，即便在多线程的环境下，相应的函数也只会调用一次。</p>
-<p>下面就是一个示例：有三个线程都会使用<code>init</code>函数，但是只会有一个线程真正执行它。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 05_call_once.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Initialing...&quot;</span> &lt;&lt; endl;</span><br><span class="line">  <span class="comment">// Do something...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">worker</span><span class="params">(once_flag* flag)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">call_once</span>(*flag, init);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  once_flag flag;</span><br><span class="line"></span><br><span class="line">  <span class="function">thread <span class="title">t1</span><span class="params">(worker, &amp;flag)</span></span>;</span><br><span class="line">  <span class="function">thread <span class="title">t2</span><span class="params">(worker, &amp;flag)</span></span>;</span><br><span class="line">  <span class="function">thread <span class="title">t3</span><span class="params">(worker, &amp;flag)</span></span>;</span><br><span class="line"></span><br><span class="line">  t1.<span class="built_in">join</span>();</span><br><span class="line">  t2.<span class="built_in">join</span>();</span><br><span class="line">  t3.<span class="built_in">join</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="并发任务"><a href="#并发任务" class="headerlink" title="并发任务"></a>并发任务</h4><p>下面以一个并发任务为示例讲解如何引入多线程。</p>
-<p>任务示例：现在假设我们需要计算某个范围内所有自然数的平方根之和，例如<code>[1, 10e8]</code>。</p>
-<p>在单线程模型下，我们的代码可能是这样的：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 06_naive_multithread.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> MAX = <span class="number">10e8</span>; <span class="comment">// ①</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">double</span> sum = <span class="number">0</span>; <span class="comment">// ②</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">worker</span><span class="params">(<span class="keyword">int</span> min, <span class="keyword">int</span> max)</span> </span>&#123; <span class="comment">// ③</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = min; i &lt;= max; i++) &#123;</span><br><span class="line">    sum += <span class="built_in">sqrt</span>(i);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">serial_task</span><span class="params">(<span class="keyword">int</span> min, <span class="keyword">int</span> max)</span> </span>&#123; <span class="comment">// ④</span></span><br><span class="line">  <span class="keyword">auto</span> start_time = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line">  sum = <span class="number">0</span>;</span><br><span class="line">  <span class="built_in">worker</span>(<span class="number">0</span>, MAX);</span><br><span class="line">  <span class="keyword">auto</span> end_time = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line">  <span class="keyword">auto</span> ms = chrono::duration_cast&lt;chrono::milliseconds&gt;(end_time - start_time).<span class="built_in">count</span>();</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Serail task finish, &quot;</span> &lt;&lt; ms &lt;&lt; <span class="string">&quot; ms consumed, Result: &quot;</span> &lt;&lt; sum &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这段代码说明如下：</p>
-<ol>
-<li>通过一个常量指定数据范围，这个是为了方便调整。</li>
-<li>通过一个全局变量来存储结果。</li>
-<li>通过一个任务函数来计算值。</li>
-<li>统计任务的执行时间。</li>
-</ol>
-<p>这段程序输出如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Serail task finish, 6406 ms consumed, Result: 2.10819e+13</span><br></pre></td></tr></table></figure>
-
-<p>很显然，上面单线程的做法性能太差了。我们的任务完全是可以并发执行的。并且任务很容易划分。</p>
-<p>下面我们就尝试以多线程的方式来改造原先的程序。</p>
-<p>改造后的程序如下：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 06_naive_multithread.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">concurrent_task</span><span class="params">(<span class="keyword">int</span> min, <span class="keyword">int</span> max)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">auto</span> start_time = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">unsigned</span> concurrent_count = thread::<span class="built_in">hardware_concurrency</span>(); <span class="comment">// ①</span></span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;hardware_concurrency: &quot;</span> &lt;&lt; concurrent_count &lt;&lt; endl;</span><br><span class="line">  vector&lt;thread&gt; threads;</span><br><span class="line">  min = <span class="number">0</span>;</span><br><span class="line">  sum = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> t = <span class="number">0</span>; t &lt; concurrent_count; t++) &#123; <span class="comment">// ②</span></span><br><span class="line">    <span class="keyword">int</span> range = max / concurrent_count * (t + <span class="number">1</span>);</span><br><span class="line">    threads.<span class="built_in">push_back</span>(<span class="built_in">thread</span>(worker, min, range)); <span class="comment">// ③</span></span><br><span class="line">    min = range + <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; t : threads) &#123;</span><br><span class="line">    t.<span class="built_in">join</span>(); <span class="comment">// ④</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">auto</span> end_time = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line">  <span class="keyword">auto</span> ms = chrono::duration_cast&lt;chrono::milliseconds&gt;(end_time - start_time).<span class="built_in">count</span>();</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Concurrent task finish, &quot;</span> &lt;&lt; ms &lt;&lt; <span class="string">&quot; ms consumed, Result: &quot;</span> &lt;&lt; sum &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这段代码说明如下：</p>
-<ol>
-<li><code>thread::hardware_concurrency()</code>可以获取到当前硬件支持多少个线程并行执行。</li>
-<li>根据处理器的情况决定线程的数量。</li>
-<li>对于每一个线程都通过<code>worker</code>函数来完成任务，并划分一部分数据给它处理。</li>
-<li>等待每一个线程执行结束。</li>
-</ol>
-<p>很好，似乎很简单就完成了并发的改造。然后我们运行一下这个程序：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hardware_concurrency: 16</span><br><span class="line">Concurrent task finish, 6246 ms consumed, Result: 1.78162e+12</span><br></pre></td></tr></table></figure>
-
-<p>很抱歉，我们会发现这里的性能并没有明显的提升。更严重的是，这里的结果是错误的。</p>
-<p>要搞清楚为什么结果不正确我们需要更多的背景知识。</p>
-<p>我们知道，对于现代的处理器来说，为了加速处理的速度，每个处理器都会有自己的高速缓存（Cache），这个高速缓存是与每个处理器相对应的，如下图所示：</p>
-<blockquote>
-<p>事实上，目前大部分CPU的缓存已经不只一层。</p>
-</blockquote>
-<img src="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/cpu.png" alt="img" style="zoom:80%;" />
-
-<p>处理器在进行计算的时候，高速缓存会参与其中，例如数据的读和写。而高速缓存和系统主存（Memory）是有可能存在不一致的。即：某个结果计算后保存在处理器的高速缓存中了，但是没有同步到主存中，此时这个值对于其他处理器就是不可见的。</p>
-<p>事情还远不止这么简单。我们对于全局变量值的修改：<code>sum += sqrt(i);</code>这条语句，它并非是原子的。它其实是很多条指令的组合才能完成。假设在某个设备上，这条语句通过下面这几个步骤来完成。它们的时序可能如下所示：</p>
-<img src="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/multithread.png" alt="img" style="zoom:80%;" />
-
-<p>在时间点a的时候，所有线程对于<code>sum</code>变量的值是一致的。</p>
-<p>但是在时间点b之后，thread3上已经对<code>sum</code>进行了赋值。而这个时候其他几个线程也同时在其他处理器上使用了这个值，那么这个时候它们所使用的值就是旧的（错误的）。最后得到的结果也自然是错的。</p>
-<h3 id="竞争条件与临界区"><a href="#竞争条件与临界区" class="headerlink" title="竞争条件与临界区"></a>竞争条件与临界区</h3><p>当多个进程或者线程同时访问共享数据时，只要有一个任务会修改数据，那么就可能会发生问题。此时结果依赖于这些任务执行的相对时间，这种场景称为<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Race_condition"><strong>竞争条件</strong>（race condition）</a>。</p>
-<p>访问共享数据的代码片段称之为<strong>临界区</strong>（critical section）。具体到上面这个示例，临界区就是读写<code>sum</code>变量的地方。</p>
-<p>要避免竞争条件，就需要对临界区进行数据保护。</p>
-<p>很自然的，现在我们能够理解发生竞争条件是因为这些线程在同时访问共享数据，其中有些线程的改动没有让其他线程知道，导致其他线程在错误的基础上进行处理，结果自然也就是错误的。</p>
-<p>那么，如果一次只让一个线程访问共享数据，访问完了再让其他线程接着访问，这样就可以避免问题的发生了。</p>
-<p>接下来介绍的API提供的就是这样的功能。</p>
-<h3 id="互斥体与锁"><a href="#互斥体与锁" class="headerlink" title="互斥体与锁"></a>互斥体与锁</h3><h4 id="mutex"><a href="#mutex" class="headerlink" title="mutex"></a>mutex</h4><p>开发并发系统的目的主要是为了提升性能：将任务分散到多个线程，然后在不同的处理器上同时执行。这些分散开来的线程通常会包含两类任务：</p>
-<ol>
-<li>独立的对于划分给自己的数据的处理</li>
-<li>对于处理结果的汇总</li>
-</ol>
-<p>其中第1项任务因为每个线程是独立的，不存在竞争条件的问题。而第2项任务，由于所有线程都可能往总结果（例如上面的<code>sum</code>变量）汇总，这就需要做保护了。在某一个具体的时刻，只应当有一个线程更新总结果，即：保证每个线程对于共享数据的访问是“互斥”的。<code>mutex</code> 就提供了这样的功能。</p>
-<p><code>mutex</code>是<strong>mut</strong>ual <strong>ex</strong>clusion（互斥）的简写。</p>
-<ul>
-<li>主要API</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th align="left">API</th>
-<th align="left">C++标准</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">mutex</td>
-<td align="left">C++11</td>
-<td align="left">提供基本互斥设施</td>
-</tr>
-<tr>
-<td align="left">timed_mutex</td>
-<td align="left">C++11</td>
-<td align="left">提供互斥设施，带有超时功能</td>
-</tr>
-<tr>
-<td align="left">recursive_mutex</td>
-<td align="left">C++11</td>
-<td align="left">提供能被同一线程递归锁定的互斥设施</td>
-</tr>
-<tr>
-<td align="left">recursive_timed_mutex</td>
-<td align="left">C++11</td>
-<td align="left">提供能被同一线程递归锁定的互斥设施，带有超时功能</td>
-</tr>
-<tr>
-<td align="left">shared_timed_mutex</td>
-<td align="left">C++14</td>
-<td align="left">提供共享互斥设施并带有超时功能</td>
-</tr>
-<tr>
-<td align="left">shared_mutex</td>
-<td align="left">C++17</td>
-<td align="left">提供共享互斥设施</td>
-</tr>
-</tbody></table>
-<p>很明显，在这些类中，<code>mutex</code>是最基础的API。其他类都是在它的基础上的改进。所以这些类都提供了下面三个方法，并且它们的功能是一样的：</p>
-<table>
-<thead>
-<tr>
-<th>方法</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>lock</td>
-<td>锁定互斥体，如果不可用，则阻塞</td>
-</tr>
-<tr>
-<td>try_lock</td>
-<td>尝试锁定互斥体，如果不可用，直接返回</td>
-</tr>
-<tr>
-<td>unlock</td>
-<td>解锁互斥体</td>
-</tr>
-</tbody></table>
-<p>这三个方法提供了基础的锁定和解除锁定的功能。使用<code>lock</code>意味着你有很强的意愿一定要获取到互斥体，而使用<code>try_lock</code>则是进行一次尝试。这意味着如果失败了，你通常还有其他的路径可以走。</p>
-<p>在这些基础功能之上，其他的类分别在下面三个方面进行了扩展：</p>
-<ul>
-<li><strong>超时</strong>：<code>timed_mutex</code>，<code>recursive_timed_mutex</code>，<code>shared_timed_mutex</code>的名称都带有<code>timed</code>，这意味着它们都支持超时功能。它们都提供了<code>try_lock_for</code>和<code>try_lock_until</code>方法，这两个方法分别可以指定超时的时间长度和时间点。如果在超时的时间范围内没有能获取到锁，则直接返回，不再继续等待。</li>
-<li><strong>可重入</strong>：<code>recursive_mutex</code>和<code>recursive_timed_mutex</code>的名称都带有<code>recursive</code>。可重入或者叫做可递归，是指在同一个线程中，同一把锁可以锁定多次。这就避免了一些不必要的死锁。</li>
-<li><strong>共享</strong>：<code>shared_timed_mutex</code>和<code>shared_mutex</code>提供了共享功能。对于这类互斥体，实际上是提供了两把锁：一把是共享锁，一把是互斥锁。一旦某个线程获取了互斥锁，任何其他线程都无法再获取互斥锁和共享锁；但是如果有某个线程获取到了共享锁，其他线程无法再获取到互斥锁，但是还有获取到共享锁。这里互斥锁的使用和其他的互斥体接口和功能一样。而共享锁可以同时被多个线程同时获取到（使用共享锁的接口见下面的表格）。共享锁通常用在<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Readers%E2%80%93writers_problem">读者写者模型</a>上。</li>
-</ul>
-<p>使用共享锁的接口如下：</p>
-<table>
-<thead>
-<tr>
-<th>方法</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>lock_shared</td>
-<td>获取互斥体的共享锁，如果无法获取则阻塞</td>
-</tr>
-<tr>
-<td>try_lock_shared</td>
-<td>尝试获取共享锁，如果不可用，直接返回</td>
-</tr>
-<tr>
-<td>unlock_shared</td>
-<td>解锁共享锁</td>
-</tr>
-</tbody></table>
-<p>接下来，我们就借助刚学到的<code>mutex</code>来改造我们的并发系统，改造后的程序如下：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 07_mutex_lock.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> MAX = <span class="number">10e8</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> mutex exclusive;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">concurrent_worker</span><span class="params">(<span class="keyword">int</span> min, <span class="keyword">int</span> max)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = min; i &lt;= max; i++) &#123;</span><br><span class="line">    exclusive.<span class="built_in">lock</span>(); <span class="comment">// ①</span></span><br><span class="line">    sum += <span class="built_in">sqrt</span>(i);</span><br><span class="line">    exclusive.<span class="built_in">unlock</span>(); <span class="comment">// ②</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">concurrent_task</span><span class="params">(<span class="keyword">int</span> min, <span class="keyword">int</span> max)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">auto</span> start_time = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">unsigned</span> concurrent_count = thread::<span class="built_in">hardware_concurrency</span>();</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;hardware_concurrency: &quot;</span> &lt;&lt; concurrent_count &lt;&lt; endl;</span><br><span class="line">  vector&lt;thread&gt; threads;</span><br><span class="line">  min = <span class="number">0</span>;</span><br><span class="line">  sum = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> t = <span class="number">0</span>; t &lt; concurrent_count; t++) &#123;</span><br><span class="line">    <span class="keyword">int</span> range = max / concurrent_count * (t + <span class="number">1</span>);</span><br><span class="line">    threads.<span class="built_in">push_back</span>(<span class="built_in">thread</span>(concurrent_worker, min, range)); <span class="comment">// ③</span></span><br><span class="line">    min = range + <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; threads.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">    threads[i].<span class="built_in">join</span>();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">auto</span> end_time = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line">  <span class="keyword">auto</span> ms = chrono::duration_cast&lt;chrono::milliseconds&gt;(end_time - start_time).<span class="built_in">count</span>();</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Concurrent task finish, &quot;</span> &lt;&lt; ms &lt;&lt; <span class="string">&quot; ms consumed, Result: &quot;</span> &lt;&lt; sum &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这里只有三个地方需要关注：</p>
-<ol>
-<li>在访问共享数据之前加锁</li>
-<li>访问完成之后解锁</li>
-<li>在多线程中使用带锁的版本</li>
-</ol>
-<p>执行之后结果输出如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hardware_concurrency: 16</span><br><span class="line">Concurrent task finish, 74232 ms consumed, Result: 2.10819e+13</span><br></pre></td></tr></table></figure>
-
-<p>这下结果是对了，但是我们却发现这个版本比原先单线程的版本性能还要差很多。这是为什么？</p>
-<p>这是因为加锁和解锁是有代价的，这里计算最耗时的地方在锁里面，每次只能有一个线程串行执行，相比于单线程模型，它不但是串行的，还增加了锁的负担，因此就更慢了。</p>
-<p>这就是为什么前面说多线程系统会增加系统的复杂度，而且并非多线程系统一定就有更好的性能。</p>
-<p>不过，对于这里的问题是可以改进的。我们仔细思考一下：我们划分给每个线程的数据其实是独立的，对于数据的处理是耗时的，但其实这部分逻辑每个线程可以单独处理，没必要加锁。只有在最后汇总数据的时候进行一次锁保护就可以了。</p>
-<p>于是我们改造<code>concurrent_worker</code>，像下面这样：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 08_improved_mutex_lock.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">concurrent_worker</span><span class="params">(<span class="keyword">int</span> min, <span class="keyword">int</span> max)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> tmp_sum = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = min; i &lt;= max; i++) &#123;</span><br><span class="line">    tmp_sum += <span class="built_in">sqrt</span>(i); <span class="comment">// ①</span></span><br><span class="line">  &#125;</span><br><span class="line">  exclusive.<span class="built_in">lock</span>(); <span class="comment">// ②</span></span><br><span class="line">  sum += tmp_sum;</span><br><span class="line">  exclusive.<span class="built_in">unlock</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这段代码的改变在于两处：</p>
-<ol>
-<li>通过一个局部变量保存当前线程的处理结果</li>
-<li>在汇总总结过的时候进行锁保护</li>
-</ol>
-<p>运行一下改进后的程序，其结果输出如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hardware_concurrency: 16</span><br><span class="line">Concurrent task finish, 451 ms consumed, Result: 2.10819e+13</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，性能一下就提升了好多倍。我们终于体验到多线程带来的好处了。</p>
-<p>我们用锁的<strong>粒度</strong>（granularity）来描述锁的范围。<strong>细粒度</strong>（fine-grained）是指锁保护较小的范围，<strong>粗粒度</strong>（coarse-grained）是指锁保护较大的范围。出于性能的考虑，我们应该保证锁的粒度尽可能的细。并且，不应该在获取锁的范围内执行耗时的操作，例如执行IO。如果是耗时的运算，也应该尽可能的移到锁的外面。</p>
-<blockquote>
-<p>In general, a lock should be held for only the minimum possible time needed to perform the required operations.</p>
-<p>–《C++ Concurrency in Action》</p>
-</blockquote>
-<h4 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h4><p>死锁是并发系统很常见的一类问题。</p>
-<p>死锁是指：两个或以上的运算单元，每一方都在等待其他方释放资源，但是所有方都不愿意释放资源。结果是没有任何一方能继续推进下去，于是整个系统无法再继续运转。</p>
-<p>死锁在现实中也很常见，例如：两个孩子分别拿着玩具的一半然后哭着要从对方手里得到另外一半玩具，但是谁都不肯让步。</p>
-<p>下面我们来看一个编程示例。</p>
-<p>现在假设我们在开发一个银行的系统，这个系统包含了转账的功能。</p>
-<p>首先我们创建一个<code>Account</code>类来描述银行账号。由于这仅仅是一个演示使用的代码，所以我们希望代码足够的简单。<code>Account</code>类仅仅包含名称和金额两个字段。</p>
-<p>另外，为了支持并发，这个类包含了一个<code>mutex</code>对象，用来保护账号金额，在读写账号金额时需要先加锁保护。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 09_deadlock_bank_transfer.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Account</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Account</span>(string name, <span class="keyword">double</span> money): <span class="built_in">mName</span>(name), <span class="built_in">mMoney</span>(money) &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">changeMoney</span><span class="params">(<span class="keyword">double</span> amount)</span> </span>&#123;</span><br><span class="line">    mMoney += amount;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function">string <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mName;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">double</span> <span class="title">getMoney</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mMoney;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function">mutex* <span class="title">getLock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> &amp;mMoneyLock;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  string mName;</span><br><span class="line">  <span class="keyword">double</span> mMoney;</span><br><span class="line">  mutex mMoneyLock;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p><code>Account</code>类很简单，我想就不用多做说明了。</p>
-<p>接下来，我们再创建一个描述银行的<code>Bank</code>类。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 09_deadlock_bank_transfer.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Bank</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">addAccount</span><span class="params">(Account* account)</span> </span>&#123;</span><br><span class="line">    mAccounts.<span class="built_in">insert</span>(account);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">bool</span> <span class="title">transferMoney</span><span class="params">(Account* accountA, Account* accountB, <span class="keyword">double</span> amount)</span> </span>&#123;</span><br><span class="line">    <span class="function">lock_guard <span class="title">guardA</span><span class="params">(*accountA-&gt;getLock())</span></span>; <span class="comment">// ①</span></span><br><span class="line">    <span class="function">lock_guard <span class="title">guardB</span><span class="params">(*accountB-&gt;getLock())</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (amount &gt; accountA-&gt;<span class="built_in">getMoney</span>()) &#123; <span class="comment">// ②</span></span><br><span class="line">      <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    accountA-&gt;<span class="built_in">changeMoney</span>(-amount); <span class="comment">// ③</span></span><br><span class="line">    accountB-&gt;<span class="built_in">changeMoney</span>(amount);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">double</span> <span class="title">totalMoney</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">    <span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> a : mAccounts) &#123;</span><br><span class="line">      sum += a-&gt;<span class="built_in">getMoney</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  set&lt;Account*&gt; mAccounts;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>银行类中记录了所有的账号，并且提供了一个方法用来查询整个银行的总金额。</p>
-<p>这其中，我们最主要要关注转账的实现：<code>transferMoney</code>。该方法的几个关键点如下：</p>
-<ol>
-<li>为了保证线程安全，在修改每个账号之前，需要获取相应的锁。</li>
-<li>判断转出账户金额是否足够，如果不够此次转账失败。</li>
-<li>进行转账。</li>
-</ol>
-<p>有了银行和账户结构之后就可以开发转账系统了，同样的，由于是为了演示所用，我们的转账系统也会尽可能的简单：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 09_deadlock_bank_transfer.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">randomTransfer</span><span class="params">(Bank* bank, Account* accountA, Account* accountB)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="keyword">double</span> randomMoney = ((<span class="keyword">double</span>)<span class="built_in">rand</span>() / RAND_MAX) * <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">if</span> (bank-&gt;<span class="built_in">transferMoney</span>(accountA, accountB, randomMoney)) &#123;</span><br><span class="line">      cout &lt;&lt; <span class="string">&quot;Transfer &quot;</span> &lt;&lt; randomMoney &lt;&lt; <span class="string">&quot; from &quot;</span> &lt;&lt; accountA-&gt;<span class="built_in">getName</span>()</span><br><span class="line">           &lt;&lt; <span class="string">&quot; to &quot;</span> &lt;&lt; accountB-&gt;<span class="built_in">getName</span>()</span><br><span class="line">           &lt;&lt; <span class="string">&quot;, Bank totalMoney: &quot;</span> &lt;&lt; bank-&gt;<span class="built_in">totalMoney</span>() &lt;&lt; endl;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      cout &lt;&lt; <span class="string">&quot;Transfer failed, &quot;</span></span><br><span class="line">           &lt;&lt; accountA-&gt;<span class="built_in">getName</span>() &lt;&lt; <span class="string">&quot; has only $&quot;</span> &lt;&lt; accountA-&gt;<span class="built_in">getMoney</span>() &lt;&lt; <span class="string">&quot;, but &quot;</span></span><br><span class="line">           &lt;&lt; randomMoney &lt;&lt; <span class="string">&quot; required&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这里每次生成一个随机数，然后通过银行进行转账。</p>
-<p>最后我们在<code>main</code>函数中创建两个线程，互相在两个账号之间来回转账：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 09_deadlock_bank_transfer.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="function">Account <span class="title">a</span><span class="params">(<span class="string">&quot;Paul&quot;</span>, <span class="number">100</span>)</span></span>;</span><br><span class="line">  <span class="function">Account <span class="title">b</span><span class="params">(<span class="string">&quot;Moira&quot;</span>, <span class="number">100</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">  Bank aBank;</span><br><span class="line">  aBank.<span class="built_in">addAccount</span>(&amp;a);</span><br><span class="line">  aBank.<span class="built_in">addAccount</span>(&amp;b);</span><br><span class="line"></span><br><span class="line">  <span class="function">thread <span class="title">t1</span><span class="params">(randomTransfer, &amp;aBank, &amp;a, &amp;b)</span></span>;</span><br><span class="line">  <span class="function">thread <span class="title">t2</span><span class="params">(randomTransfer, &amp;aBank, &amp;b, &amp;a)</span></span>;</span><br><span class="line"></span><br><span class="line">  t1.<span class="built_in">join</span>();</span><br><span class="line">  t2.<span class="built_in">join</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>至此，我们的银行转账系统就开发完成了。然后编译并运行，其结果可能像下面这样：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">Transfer 13.2901 from Paul to Moira, Bank totalMoney: 20042.6259 from Moira to Paul, Bank totalMoney: 200</span><br><span class="line">Transfer failed, Moira has only $34.7581, but 66.3208 required</span><br><span class="line">Transfer failed, Moira has only $34.7581, but </span><br><span class="line">Transfer 93.191 from 53.9176 required</span><br><span class="line">Transfer 60.6146 from Moira to Paul, Bank totalMoney: 200</span><br><span class="line">Transfer 49.7304 from Moira to Paul, Bank totalMoney: 200Paul to Moira, Bank totalMoney: </span><br><span class="line">Transfer failed, Moira has only $17.6041, but 18.1186 required</span><br><span class="line">Transfer failed, Moira has only $17.6041, but 18.893 required</span><br><span class="line">Transfer failed, Moira has only $17.6041, but 34.7078 required</span><br><span class="line">Transfer failed, Moira has only $17.6041, but 33.9569 required</span><br><span class="line">Transfer 12.7899 from 200</span><br><span class="line">Moira to Paul, Bank totalMoney: 200</span><br><span class="line">Transfer failed, Moira has only $63.9373, but 80.9038 required</span><br><span class="line">Transfer 50.933 from Moira to Paul, Bank totalMoney: 200</span><br><span class="line">Transfer failed, Moira has only $13.0043, but 30.2056 required</span><br><span class="line">Transfer failed, Moira has only $Transfer 59.123 from Paul to Moira, Bank totalMoney: 200</span><br><span class="line">Transfer 29.0486 from Paul to Moira, Bank totalMoney: 20013.0043, but 64.7307 required</span><br></pre></td></tr></table></figure>
-
-<p>如果你运行了这个程序，你会发现很快它就卡住不动了。为什么？</p>
-<p>因为发生了死锁。</p>
-<p>我们仔细思考一下这两个线程的逻辑：这两个线程可能会同时获取其中一个账号的锁，然后又想获取另外一个账号的锁，此时就发生了死锁。如下图所示：</p>
-<p><img src="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/deadlock.png" alt="img"></p>
-<p>当然，发生死锁的原因远不止上面这一种情况。如果两个线程互相<code>join</code>就可能发生死锁。还有在一个线程中对一个不可重入的互斥体（例如<code>mutex</code>而非<code>recursive_mutex</code>）多次加锁也会死锁。</p>
-<p>你可能会觉得，我可不会这么傻，写出这样的代码。但实际上，很多时候是由于代码的深层次嵌套导致了死锁的发生，由于调用关系的复杂导致发现这类问题并不容易。</p>
-<p>如果仔细看一下上面的输出，我们会发现还有另外一个问题：这里的输出是乱的。两个线程的输出混杂在一起了。究其原因也很容易理解：两个线程可能会同时输出，没有做好隔离。</p>
-<p>下面我们就来逐步解决上面的问题。</p>
-<p>对于输出混乱的问题很好解决，专门用一把锁来保护输出逻辑即可：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 10_improved_bank_transfer.cpp</span></span><br><span class="line"></span><br><span class="line">mutex sCoutLock;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">randomTransfer</span><span class="params">(Bank* bank, Account* accountA, Account* accountB)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="keyword">double</span> randomMoney = ((<span class="keyword">double</span>)<span class="built_in">rand</span>() / RAND_MAX) * <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">if</span> (bank-&gt;<span class="built_in">transferMoney</span>(accountA, accountB, randomMoney)) &#123;</span><br><span class="line">      sCoutLock.<span class="built_in">lock</span>();</span><br><span class="line">      cout &lt;&lt; <span class="string">&quot;Transfer &quot;</span> &lt;&lt; randomMoney &lt;&lt; <span class="string">&quot; from &quot;</span> &lt;&lt; accountA-&gt;<span class="built_in">getName</span>()</span><br><span class="line">          &lt;&lt; <span class="string">&quot; to &quot;</span> &lt;&lt; accountB-&gt;<span class="built_in">getName</span>()</span><br><span class="line">          &lt;&lt; <span class="string">&quot;, Bank totalMoney: &quot;</span> &lt;&lt; bank-&gt;<span class="built_in">totalMoney</span>() &lt;&lt; endl;</span><br><span class="line">      sCoutLock.<span class="built_in">unlock</span>();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      sCoutLock.<span class="built_in">lock</span>();</span><br><span class="line">      cout &lt;&lt; <span class="string">&quot;Transfer failed, &quot;</span></span><br><span class="line">           &lt;&lt; accountA-&gt;<span class="built_in">getName</span>() &lt;&lt; <span class="string">&quot; has only &quot;</span> &lt;&lt; accountA-&gt;<span class="built_in">getMoney</span>() &lt;&lt; <span class="string">&quot;, but &quot;</span></span><br><span class="line">           &lt;&lt; randomMoney &lt;&lt; <span class="string">&quot; required&quot;</span> &lt;&lt; endl;</span><br><span class="line">      sCoutLock.<span class="built_in">unlock</span>();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="通用锁定算法"><a href="#通用锁定算法" class="headerlink" title="通用锁定算法"></a>通用锁定算法</h4><ul>
-<li>主要API</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th align="left">API</th>
-<th align="left">C++标准</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">lock</td>
-<td align="left">C++11</td>
-<td align="left">锁定指定的互斥体，若任何一个不可用则阻塞</td>
-</tr>
-<tr>
-<td align="left">try_lock</td>
-<td align="left">C++11</td>
-<td align="left">试图通过重复调用 try_lock 获得互斥体的所有权</td>
-</tr>
-</tbody></table>
-<p>要避免死锁，需要仔细的思考和设计业务逻辑。</p>
-<p>有一个比较简单的原则可以避免死锁，即：对所有的锁进行排序，每次一定要按照顺序来获取锁，不允许乱序。例如：要获取某个玩具，一定要先拿到锁A，再拿到锁B，才能玩玩具。这样就不会死锁了。</p>
-<p>这个原则虽然简单，但却不容易遵守。因为数据常常是分散在很多地方的。</p>
-<p>不过好消息是，C++ 11标准中为我们提供了一些工具来避免因为多把锁而导致的死锁。我们只要直接调用这些接口就可以了。这个就是上面提到的两个函数。它们都支持传入多个<a target="_blank" rel="noopener" href="https://en.cppreference.com/w/cpp/named_req/Lockable">Lockable</a>对象。</p>
-<p>接下来我们用它来改造之前死锁的转账系统：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 10_improved_bank_transfer.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">transferMoney</span><span class="params">(Account* accountA, Account* accountB, <span class="keyword">double</span> amount)</span> </span>&#123;</span><br><span class="line">  <span class="built_in">lock</span>(*accountA-&gt;<span class="built_in">getLock</span>(), *accountB-&gt;<span class="built_in">getLock</span>());    <span class="comment">// ①</span></span><br><span class="line">  <span class="function">lock_guard <span class="title">lockA</span><span class="params">(*accountA-&gt;getLock(), adopt_lock)</span></span>;  <span class="comment">// ②</span></span><br><span class="line">  <span class="function">lock_guard <span class="title">lockB</span><span class="params">(*accountB-&gt;getLock(), adopt_lock)</span></span>;  <span class="comment">// ③</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (amount &gt; accountA-&gt;<span class="built_in">getMoney</span>()) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  accountA-&gt;<span class="built_in">changeMoney</span>(-amount);</span><br><span class="line">  accountB-&gt;<span class="built_in">changeMoney</span>(amount);</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这里只改动了3行代码。</p>
-<ol>
-<li>这里通过<code>lock</code>函数来获取两把锁，标准库的实现会保证不会发生死锁。</li>
-<li><code>lock_guard</code>在下面我们还会详细介绍。这里只要知道它会在自身对象生命周期的范围内锁定互斥体即可。创建<code>lock_guard</code>的目的是为了在<code>transferMoney</code>结束的时候释放锁，<code>lockB</code>也是一样。但需要注意的是，这里传递了 <code>adopt_lock</code>表示：现在是已经获取到互斥体了的状态了，不用再次加锁（如果不加<code>adopt_lock</code>就是二次锁定了）。</li>
-</ol>
-<p>运行一下这个改造后的程序，其输出如下所示：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 17.5974 required</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 59.2104 required</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 49.6379 required</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 63.6373 required</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 51.8742 required</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 50.0081 required</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 86.1041 required</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 51.3278 required</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 66.5754 required</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 32.1867 required</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 62.0039 required</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 98.7819 required</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 27.046 required</span><br><span class="line">Transfer failed, Paul has only $1.76243, but 62.9155 required</span><br><span class="line">Transfer 98.8478 from Moira to Paul, Bank totalMoney: 200</span><br><span class="line">Transfer 80.0722 from Moira to Paul, Bank totalMoney: 200</span><br><span class="line">Transfer 73.7035 from Moira to Paul, Bank totalMoney: 200</span><br><span class="line">Transfer 34.4476 from Moira to Paul, Bank totalMoney: 200</span><br><span class="line">Transfer failed, Moira has only $10.0142, but 61.3033 required</span><br><span class="line">Transfer failed, Moira has only $10.0142, but 24.5595 required</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>现在这个转账程序会一直运行下去，不会再死锁了。输出也是正常的了。</p>
-<h4 id="通用互斥管理"><a href="#通用互斥管理" class="headerlink" title="通用互斥管理"></a>通用互斥管理</h4><ul>
-<li>主要API</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th align="left">API</th>
-<th align="left">C++标准</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">lock_guard</td>
-<td align="left">C++11</td>
-<td align="left">实现严格基于作用域的互斥体所有权包装器</td>
-</tr>
-<tr>
-<td align="left">unique_lock</td>
-<td align="left">C++11</td>
-<td align="left">实现可移动的互斥体所有权包装器</td>
-</tr>
-<tr>
-<td align="left">shared_lock</td>
-<td align="left">C++14</td>
-<td align="left">实现可移动的共享互斥体所有权封装器</td>
-</tr>
-<tr>
-<td align="left">scoped_lock</td>
-<td align="left">C++17</td>
-<td align="left">用于多个互斥体的免死锁 RAII 封装器</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th align="left">锁定策略</th>
-<th align="left">C++标准</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">defer_lock</td>
-<td align="left">C++11</td>
-<td align="left">类型为 <code>defer_lock_t</code>，不获得互斥的所有权</td>
-</tr>
-<tr>
-<td align="left">try_to_lock</td>
-<td align="left">C++11</td>
-<td align="left">类型为<code>try_to_lock_t</code>，尝试获得互斥的所有权而不阻塞</td>
-</tr>
-<tr>
-<td align="left">adopt_lock</td>
-<td align="left">C++11</td>
-<td align="left">类型为<code>adopt_lock_t</code>，假设调用方已拥有互斥的所有权</td>
-</tr>
-</tbody></table>
-<p>互斥体（<code>mutex</code>相关类）提供了对于资源的保护功能，但是手动的锁定（调用<code>lock</code>或者<code>try_lock</code>）和解锁（调用<code>unlock</code>）互斥体是要耗费比较大的精力的，我们需要精心考虑和设计代码才行。因为我们需要保证，在任何情况下，解锁要和加锁配对，因为假设出现一条路径导致获取锁之后没有正常释放，就会影响整个系统。如果考虑方法还可以会抛出异常，这样的代码写起来会很费劲。</p>
-<p>鉴于这个原因，标准库就提供了上面的这些API。它们都使用了叫做RAII的编程技巧，来简化我们手动加锁和解锁的“体力活”。</p>
-<p>请看下面的例子：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// https://en.cppreference.com/w/cpp/thread/lock_guard</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;thread&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;mutex&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">int</span> g_i = <span class="number">0</span>;</span><br><span class="line">std::mutex g_i_mutex;  <span class="comment">// ①</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">safe_increment</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lock</span><span class="params">(g_i_mutex)</span></span>;  <span class="comment">// ②</span></span><br><span class="line">  ++g_i;</span><br><span class="line"></span><br><span class="line">  std::cout &lt;&lt; std::this_thread::<span class="built_in">get_id</span>() &lt;&lt; <span class="string">&quot;: &quot;</span> &lt;&lt; g_i &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">  <span class="comment">// ③</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;main: &quot;</span> &lt;&lt; g_i &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line"> </span><br><span class="line">  <span class="function">std::thread <span class="title">t1</span><span class="params">(safe_increment)</span></span>; <span class="comment">// ④</span></span><br><span class="line">  <span class="function">std::thread <span class="title">t2</span><span class="params">(safe_increment)</span></span>;</span><br><span class="line"> </span><br><span class="line">  t1.<span class="built_in">join</span>();</span><br><span class="line">  t2.<span class="built_in">join</span>();</span><br><span class="line"> </span><br><span class="line">  std::cout &lt;&lt; <span class="string">&quot;main: &quot;</span> &lt;&lt; g_i &lt;&lt; <span class="string">&#x27;\n&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这段代码中：</p>
-<ol>
-<li>全局的互斥体<code>g_i_mutex</code>用来保护全局变量<code>g_i</code></li>
-<li>这是一个设计为可以被多线程环境使用的方法。因此需要通过互斥体来进行保护。这里没有调用<code>lock</code>方法，而是直接使用<code>lock_guard</code>来锁定互斥体。</li>
-<li>在方法结束的时候，局部变量<code>std::lock_guard&lt;std::mutex&gt; lock</code>会被销毁，它对互斥体的锁定也就解除了。</li>
-<li>在多个线程中使用这个方法。</li>
-</ol>
-<h4 id="RAII"><a href="#RAII" class="headerlink" title="RAII"></a>RAII</h4><p>上面的几个类（<code>lock_guard</code>，<code>unique_lock</code>，<code>shared_lock</code>，<code>scoped_lock</code>）都使用了一个叫做RAII的编程技巧。</p>
-<p>RAII全称是Resource Acquisition Is Initialization，直译过来就是：资源获取即初始化。</p>
-<p>RAII是一种<a target="_blank" rel="noopener" href="http://www.stroustrup.com/bs_faq2.html#finally">C++编程技术</a>，它将必须在使用前请求的资源（例如：分配的堆内存、执行线程、打开的套接字、打开的文件、锁定的互斥体、磁盘空间、数据库连接等——任何存在受限供给中的事物）的生命周期与一个对象的生存周期相绑定。 RAII保证资源可用于任何会访问该对象的函数。它亦保证所有资源在其控制对象的生存期结束时，以获取顺序的逆序释放。类似地，若资源获取失败（构造函数以异常退出），则为已构造完成的对象和基类子对象所获取的所有资源，会以初始化顺序的逆序释放。这有效地利用了语言特性以消除内存泄漏并保证异常安全。</p>
-<p>RAII 可总结如下:</p>
-<ul>
-<li>将每个资源封装入一个类，其中：<ul>
-<li>构造函数请求资源，并建立所有类不变式，或在它无法完成时抛出异常，</li>
-<li>析构函数释放资源并决不抛出异常；</li>
-</ul>
-</li>
-<li>始终经由 RAII 类的实例使用满足要求的资源，该资源<ul>
-<li>自身拥有自动存储期或临时生存期，或</li>
-<li>具有与自动或临时对象的生存期绑定的生存期</li>
-</ul>
-</li>
-</ul>
-<p>回想一下上文中的<code>transferMoney</code>方法中的三行代码：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">lock</span>(*accountA-&gt;<span class="built_in">getLock</span>(), *accountB-&gt;<span class="built_in">getLock</span>());</span><br><span class="line"><span class="function">lock_guard <span class="title">lockA</span><span class="params">(*accountA-&gt;getLock(), adopt_lock)</span></span>;</span><br><span class="line"><span class="function">lock_guard <span class="title">lockB</span><span class="params">(*accountB-&gt;getLock(), adopt_lock)</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>如果使用<code>unique_lock</code>这三行代码还有一种等价的写法：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">unique_lock <span class="title">lockA</span><span class="params">(*accountA-&gt;getLock(), defer_lock)</span></span>;</span><br><span class="line"><span class="function">unique_lock <span class="title">lockB</span><span class="params">(*accountB-&gt;getLock(), defer_lock)</span></span>;</span><br><span class="line"><span class="built_in">lock</span>(*accountA-&gt;<span class="built_in">getLock</span>(), *accountB-&gt;<span class="built_in">getLock</span>());</span><br></pre></td></tr></table></figure>
-
-<p>请注意这里<code>lock</code>方法的调用位置。这里先定义<code>unique_lock</code>指定了<code>defer_lock</code>，因此实际没有锁定互斥体，而是到第三行才进行锁定。</p>
-<p>最后，借助<code>scoped_lock</code>，我们可以将三行代码合成一行，这种写法也是等价的。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">scoped_lock <span class="title">lockAll</span><span class="params">(*accountA-&gt;getLock(), *accountB-&gt;getLock())</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p><code>scoped_lock</code>会在其生命周期范围内锁定互斥体，销毁的时候解锁。同时，它可以锁定多个互斥体，并且避免死锁。</p>
-<p>目前，只还有<code>shared_lock</code>我们没有提到。它与其他几个类的区别在于：它是以共享的方式锁定互斥体。</p>
-<h4 id="条件变量"><a href="#条件变量" class="headerlink" title="条件变量"></a>条件变量</h4><table>
-<thead>
-<tr>
-<th align="left">API</th>
-<th align="left">C++标准</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">condition_variable</td>
-<td align="left">C++ 11</td>
-<td align="left">提供与 std::unique_lock 关联的条件变量</td>
-</tr>
-<tr>
-<td align="left">condition_variable_any</td>
-<td align="left">C++ 11</td>
-<td align="left">提供与任何锁类型关联的条件变量</td>
-</tr>
-<tr>
-<td align="left">notify_all_at_thread_exit</td>
-<td align="left">C++ 11</td>
-<td align="left">安排到在此线程完全结束时对 notify_all 的调用</td>
-</tr>
-<tr>
-<td align="left">cv_status</td>
-<td align="left">C++ 11</td>
-<td align="left">列出条件变量上定时等待的可能结果</td>
-</tr>
-</tbody></table>
-<p>至此，我们还有一个地方可以改进。那就是：转账金额不足的时候，程序直接返回了<code>false</code>。这很难说是一个好的策略。因为，即便虽然当前账号金额不足以转账，但只要别的账号又转账进来之后，当前这个转账操作也许就可以继续执行了。</p>
-<p>这在很多业务中是很常见的一个需求：每一次操作都要正确执行，如果条件不满足就停下来等待，直到条件满足之后再继续。而不是直接返回。</p>
-<p>条件变量提供了一个可以让多个线程间同步协作的功能。这对于<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Producer%E2%80%93consumer_problem">生产者-消费者模型</a>很有意义。在这个模型下：</p>
-<ul>
-<li>生产者和消费者共享一个工作区。这个区间的大小是有限的。</li>
-<li>生产者总是产生数据放入工作区中，当工作区满了。它就停下来等消费者消费一部分数据，然后继续工作。</li>
-<li>消费者总是从工作区中拿出数据使用。当工作区中的数据全部被消费空了之后，它也会停下来等待生产者往工作区中放入新的数据。</li>
-</ul>
-<p>从上面可以看到，无论是生产者还是消费者，当它们工作的条件不满足时，它们并不是直接报错返回，而是停下来等待，直到条件满足。</p>
-<p>下面我们就借助于条件变量，再次改造之前的银行转账系统。</p>
-<p>这个改造主要在于账号类。我们重点是要调整<code>changeMoney</code>方法。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 11_bank_transfer_wait_notify.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Account</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Account</span>(string name, <span class="keyword">double</span> money): <span class="built_in">mName</span>(name), <span class="built_in">mMoney</span>(money) &#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">changeMoney</span><span class="params">(<span class="keyword">double</span> amount)</span> </span>&#123;</span><br><span class="line">    <span class="function">unique_lock <span class="title">lock</span><span class="params">(mMoneyLock)</span></span>; <span class="comment">// ②</span></span><br><span class="line">    mConditionVar.<span class="built_in">wait</span>(lock, [<span class="keyword">this</span>, amount] &#123; <span class="comment">// ③</span></span><br><span class="line">      <span class="keyword">return</span> mMoney + amount &gt; <span class="number">0</span>; <span class="comment">// ④</span></span><br><span class="line">    &#125;);</span><br><span class="line">    mMoney += amount;</span><br><span class="line">    mConditionVar.<span class="built_in">notify_all</span>(); <span class="comment">// ⑤</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function">string <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mName;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">double</span> <span class="title">getMoney</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mMoney;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  string mName;</span><br><span class="line">  <span class="keyword">double</span> mMoney;</span><br><span class="line">  mutex mMoneyLock;</span><br><span class="line">  condition_variable mConditionVar; <span class="comment">// ①</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>这几处改动说明如下：</p>
-<ol>
-<li>这里声明了一个条件变量，用来在多个线程之间协作。</li>
-<li>这里使用的是<code>unique_lock</code>，这是为了与条件变量相配合。因为条件变量会解锁和重新锁定互斥体。</li>
-<li>这里是比较重要的一个地方：通过条件变量进行等待。此时：会通过后面的lambda表达式判断条件是否满足。如果满足则继续；如果不满足，则<strong>此处会解锁互斥体，并让当前线程等待</strong>。<strong>解锁</strong>这一点非常重要，因为只有这样，才能让其他线程获取互斥体。</li>
-<li>这里是条件变量等待的条件。如果你不熟悉lambda表达式，请自行网上学习，或者阅读<a target="_blank" rel="noopener" href="https://paul.pub/cpp-lambda-function-bind/">我之前写的文章</a>。</li>
-<li>此处也很重要。当金额发生变动之后，我们需要通知所有在条件变量上等待的其他线程。此时所有调用<code>wait</code>线程都会再次唤醒，然后尝试获取锁（当然，只有一个能获取到）并再次判断条件是否满足。除了<code>notify_all</code>还有<code>notify_one</code>，它只通知一个等待的线程。<code>wait</code>和<code>notify</code>就构成了线程间互相协作的工具。</li>
-</ol>
-<p>请注意：<code>wait</code>和<code>notify_all</code>虽然是写在一个函数中的，但是在运行时它们是在多线程环境中执行的，因此对于这段代码，需要能够从不同线程的角度去思考代码的逻辑。这也是开发并发系统比较难的地方。</p>
-<p>有了上面的改动之后，银行的转账方法实现起来就很简单了，不用再考虑数据保护的问题了：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 11_bank_transfer_wait_notify.cpp</span><br><span class="line"></span><br><span class="line">void Bank::transferMoney(Account* accountA, Account* accountB, double amount) &#123;</span><br><span class="line">    accountA-&gt;changeMoney(-amount);</span><br><span class="line">    accountB-&gt;changeMoney(amount);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>当然，转账逻辑也会变得简单，不用再管转账失败的情况发生。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 11_bank_transfer_wait_notify.cpp</span></span><br><span class="line"></span><br><span class="line">mutex sCoutLock;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">randomTransfer</span><span class="params">(Bank* bank, Account* accountA, Account* accountB)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(<span class="literal">true</span>) &#123;</span><br><span class="line">    <span class="keyword">double</span> randomMoney = ((<span class="keyword">double</span>)<span class="built_in">rand</span>() / RAND_MAX) * <span class="number">100</span>;</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="function">lock_guard <span class="title">guard</span><span class="params">(sCoutLock)</span></span>;</span><br><span class="line">      cout &lt;&lt; <span class="string">&quot;Try to Transfer &quot;</span> &lt;&lt; randomMoney</span><br><span class="line">           &lt;&lt; <span class="string">&quot; from &quot;</span> &lt;&lt; accountA-&gt;<span class="built_in">getName</span>() &lt;&lt; <span class="string">&quot;(&quot;</span> &lt;&lt; accountA-&gt;<span class="built_in">getMoney</span>()</span><br><span class="line">           &lt;&lt; <span class="string">&quot;) to &quot;</span> &lt;&lt; accountB-&gt;<span class="built_in">getName</span>() &lt;&lt; <span class="string">&quot;(&quot;</span> &lt;&lt; accountB-&gt;<span class="built_in">getMoney</span>()</span><br><span class="line">           &lt;&lt; <span class="string">&quot;), Bank totalMoney: &quot;</span> &lt;&lt; bank-&gt;<span class="built_in">totalMoney</span>() &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">    bank-&gt;<span class="built_in">transferMoney</span>(accountA, accountB, randomMoney);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>修改完之后的程序运行输出如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">Try to Transfer 13.72 from Moira(10.9287) to Paul(189.071), Bank totalMoney: 200</span><br><span class="line">Try to Transfer 28.6579 from Paul(189.071) to Moira(10.9287), Bank totalMoney: 200</span><br><span class="line">Try to Transfer 91.8049 from Paul(160.413) to Moira(39.5866), Bank totalMoney: 200</span><br><span class="line">Try to Transfer 5.56383 from Paul(82.3285) to Moira(117.672), Bank totalMoney: 200</span><br><span class="line">Try to Transfer 11.3594 from Paul(76.7646) to Moira(123.235), Bank totalMoney: 200</span><br><span class="line">Try to Transfer 16.9557 from Paul(65.4053) to Moira(134.595), Bank totalMoney: 200</span><br><span class="line">Try to Transfer 74.998 from Paul(48.4495) to Moira(151.55), Bank totalMoney: 200</span><br><span class="line">Try to Transfer 65.3005 from Moira(151.55) to Paul(48.4495), Bank totalMoney: 200</span><br><span class="line">Try to Transfer 90.6084 from Moira(86.25) to Paul(113.75), Bank totalMoney: 125.002</span><br><span class="line">Try to Transfer 99.6425 from Moira(70.6395) to Paul(129.36), Bank totalMoney: 200</span><br><span class="line">Try to Transfer 55.2091 from Paul(129.36) to Moira(70.6395), Bank totalMoney: 200</span><br><span class="line">Try to Transfer 92.259 from Paul(74.1513) to Moira(125.849), Bank totalMoney: 200</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-
-<p>这下比之前都要好了。</p>
-<h3 id="Future"><a href="#Future" class="headerlink" title="Future"></a>Future</h3><table>
-<thead>
-<tr>
-<th align="left">API</th>
-<th align="left">C++标准</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">async</td>
-<td align="left">C++11</td>
-<td align="left">异步运行一个函数，并返回保有其结果的<code>std::future</code></td>
-</tr>
-<tr>
-<td align="left">future</td>
-<td align="left">C++11</td>
-<td align="left">等待被异步设置的值</td>
-</tr>
-<tr>
-<td align="left">packaged_task</td>
-<td align="left">C++11</td>
-<td align="left">打包一个函数，存储其返回值以进行异步获取</td>
-</tr>
-<tr>
-<td align="left">promise</td>
-<td align="left">C++11</td>
-<td align="left">存储一个值以进行异步获取</td>
-</tr>
-<tr>
-<td align="left">shared_future</td>
-<td align="left">C++11</td>
-<td align="left">等待被异步设置的值（可能为其他 future 所引用）</td>
-</tr>
-</tbody></table>
-<p>这一小节中，我们来熟悉更多的可以在并发环境中使用的工具，它们都位于<code>&lt;future&gt;</code>头文件中。</p>
-<h4 id="async"><a href="#async" class="headerlink" title="async"></a>async</h4><p>很多语言都提供了异步的机制。异步使得耗时的操作不影响当前主线程的执行流。</p>
-<p>在C++11中，<code>async</code>便是完成这样的功能的。下面是一个代码示例：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 12_async_task.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">int</span> MAX = <span class="number">10e8</span>;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">worker</span><span class="params">(<span class="keyword">int</span> min, <span class="keyword">int</span> max)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = min; i &lt;= max; i++) &#123;</span><br><span class="line">    sum += <span class="built_in">sqrt</span>(i);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  sum = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">auto</span> f1 = <span class="built_in">async</span>(worker, <span class="number">0</span>, MAX);</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Async task triggered&quot;</span> &lt;&lt; endl;</span><br><span class="line">  f1.<span class="built_in">wait</span>();</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Async task finish, result: &quot;</span> &lt;&lt; sum &lt;&lt; endl &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这仍然是我们之前熟悉的例子。这里有两个地方需要说明：</p>
-<ol>
-<li>这里以异步的方式启动了任务。它会返回一个<code>future</code>对象。<code>future</code>用来存储异步任务的执行结果，关于<code>future</code>我们在后面<code>packaged_task</code>的例子中再详细说明。在这个例子中我们仅仅用它来等待任务执行完成。</li>
-<li>此处是等待异步任务执行完成。</li>
-</ol>
-<p>需要注意的是，默认情况下，<code>async</code>是启动一个新的线程，还是以同步的方式（不启动新的线程）运行任务，这一点标准是没有指定的，由具体的编译器决定。如果希望一定要以新的线程来异步执行任务，可以通过<code>launch::async</code>来明确说明。<code>launch</code>中有两个常量：</p>
-<ul>
-<li><code>async</code>：运行新线程，以异步执行任务。</li>
-<li><code>deferred</code>：调用方线程上第一次请求其结果时才执行任务，即惰性求值。</li>
-</ul>
-<p>除了通过函数来指定异步任务，还可以lambda表达式的方式来指定。如下所示：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 12_async_task.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">double</span> result = <span class="number">0</span>;</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Async task with lambda triggered, thread: &quot;</span> &lt;&lt; this_thread::<span class="built_in">get_id</span>() &lt;&lt; endl;</span><br><span class="line">  <span class="keyword">auto</span> f2 = <span class="built_in">async</span>(launch::async, [&amp;result]() &#123;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Lambda task in thread: &quot;</span> &lt;&lt; this_thread::<span class="built_in">get_id</span>() &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= MAX; i++) &#123;</span><br><span class="line">      result += <span class="built_in">sqrt</span>(i);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;);</span><br><span class="line">  f2.<span class="built_in">wait</span>();</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Async task with lambda finish, result: &quot;</span> &lt;&lt; result &lt;&lt; endl &lt;&lt; endl;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在上面这段代码中，我们使用一个lambda表达式来编写异步任务的逻辑，并通过<code>launch::async</code>明确指定要通过独立的线程来执行任务，同时我们打印出了线程的id。</p>
-<p>这段代码输出如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Async task with lambda triggered, thread: 0x11290d5c0</span><br><span class="line">Lambda task in thread: 0x700007aa1000</span><br><span class="line">Async task with lambda finish, result: 2.10819e+13</span><br></pre></td></tr></table></figure>
-
-<p>对于面向对象编程来说，很多时候肯定希望以对象的方法来指定异步任务。下面是一个示例：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 12_async_task.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Worker</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">Worker</span>(<span class="keyword">int</span> min, <span class="keyword">int</span> max): <span class="built_in">mMin</span>(min), <span class="built_in">mMax</span>(max) &#123;&#125; <span class="comment">// ①</span></span><br><span class="line">  <span class="function"><span class="keyword">double</span> <span class="title">work</span><span class="params">()</span> </span>&#123; <span class="comment">// ②</span></span><br><span class="line">    mResult = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = mMin; i &lt;= mMax; i++) &#123;</span><br><span class="line">      mResult += <span class="built_in">sqrt</span>(i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> mResult;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">double</span> <span class="title">getResult</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> mResult;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">int</span> mMin;</span><br><span class="line">  <span class="keyword">int</span> mMax;</span><br><span class="line">  <span class="keyword">double</span> mResult;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="function">Worker <span class="title">w</span><span class="params">(<span class="number">0</span>, MAX)</span></span>;</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Task in class triggered&quot;</span> &lt;&lt; endl;</span><br><span class="line">  <span class="keyword">auto</span> f3 = <span class="built_in">async</span>(&amp;Worker::work, &amp;w); <span class="comment">// ③</span></span><br><span class="line">  f3.<span class="built_in">wait</span>();</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Task in class finish, result: &quot;</span> &lt;&lt; w.<span class="built_in">getResult</span>() &lt;&lt; endl &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这段代码有三处需要说明：</p>
-<ol>
-<li>这里通过一个类来描述任务。这个类是对前面提到的任务的封装。它包含了任务的输入参数，和输出结果。</li>
-<li><code>work</code>函数是任务的主体逻辑。</li>
-<li>通过<code>async</code>执行任务：这里指定了具体的任务函数以及相应的对象。请注意这里是<code>&amp;w</code>，因此传递的是对象的指针。如果不写<code>&amp;</code>将传入<code>w</code>对象的临时复制。</li>
-</ol>
-<h4 id="packaged-task"><a href="#packaged-task" class="headerlink" title="packaged_task"></a>packaged_task</h4><p>在一些业务中，我们可能会有很多的任务需要调度。这时我们常常会设计出任务队列和线程池的结构。此时，就可以使用<code>packaged_task</code>来包装任务。</p>
-<p><code>packaged_task</code>绑定到一个函数或者可调用对象上。当它被调用时，它就会调用其绑定的函数或者可调用对象。并且，可以通过与之相关联的<code>future</code>来获取任务的结果。调度程序只需要处理<code>packaged_task</code>，而非各个函数。</p>
-<p><code>packaged_task</code>对象是一个可调用对象，它可以被封装成一个<code>std::fucntion</code>，或者作为线程函数传递给<code>std::thread</code>，或者直接调用。</p>
-<p>下面是一个代码示例：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 13_packaged_task.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">concurrent_worker</span><span class="params">(<span class="keyword">int</span> min, <span class="keyword">int</span> max)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = min; i &lt;= max; i++) &#123;</span><br><span class="line">    sum += <span class="built_in">sqrt</span>(i);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">concurrent_task</span><span class="params">(<span class="keyword">int</span> min, <span class="keyword">int</span> max)</span> </span>&#123;</span><br><span class="line">  vector&lt;future&lt;<span class="keyword">double</span>&gt;&gt; results; <span class="comment">// ①</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">unsigned</span> concurrent_count = thread::<span class="built_in">hardware_concurrency</span>();</span><br><span class="line">  min = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; concurrent_count; i++) &#123; <span class="comment">// ②</span></span><br><span class="line">    <span class="function">packaged_task&lt;<span class="title">double</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span>&gt; <span class="title">task</span><span class="params">(concurrent_worker)</span></span>; <span class="comment">// ③</span></span><br><span class="line">    results.<span class="built_in">push_back</span>(task.<span class="built_in">get_future</span>()); <span class="comment">// ④</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> range = max / concurrent_count * (i + <span class="number">1</span>);</span><br><span class="line">    <span class="function">thread <span class="title">t</span><span class="params">(std::move(task), min, range)</span></span>; <span class="comment">// ⑤</span></span><br><span class="line">    t.<span class="built_in">detach</span>();</span><br><span class="line"></span><br><span class="line">    min = range + <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;threads create finish&quot;</span> &lt;&lt; endl;</span><br><span class="line">  <span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; r : results) &#123;</span><br><span class="line">    sum += r.<span class="built_in">get</span>(); <span class="comment">// ⑥</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">auto</span> start_time = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">double</span> r = <span class="built_in">concurrent_task</span>(<span class="number">0</span>, MAX);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">auto</span> end_time = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line">  <span class="keyword">auto</span> ms = chrono::duration_cast&lt;chrono::milliseconds&gt;(end_time - start_time).<span class="built_in">count</span>();</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Concurrent task finish, &quot;</span> &lt;&lt; ms &lt;&lt; <span class="string">&quot; ms consumed, Result: &quot;</span> &lt;&lt; r &lt;&lt; endl;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在这段代码中：</p>
-<ol>
-<li>首先创建一个集合来存储<code>future</code>对象。我们将用它来获取任务的结果。</li>
-<li>同样的，根据CPU的情况来创建线程的数量。</li>
-<li>将任务包装成<code>packaged_task</code>。请注意，由于<code>concurrent_worker</code>被包装成了任务，我们无法直接获取它的<code>return</code>值。而是要通过<code>future</code>对象来获取。</li>
-<li>获取任务关联的<code>future</code>对象，并将其存入集合中。</li>
-<li>通过一个新的线程来执行任务，并传入需要的参数。</li>
-<li>通过<code>future</code>集合，逐个获取每个任务的计算结果，将其累加。这里<code>r.get()</code>获取到的就是每个任务中<code>concurrent_worker</code>的返回值。</li>
-</ol>
-<p>为了简单起见，这里的示例只使用了我们熟悉的例子和结构。但在实际上的工程中，调用关系通常更复杂，你可以借助于<code>packaged_task</code>将任务组装成队列，然后通过<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Thread_pool">线程池</a>的方式进行调度：</p>
-<p><img src="https://paul-pub.oss-cn-beijing.aliyuncs.com/2019/2019-11-26-cpp-concurrency/Thread_pool.svg" alt="img"></p>
-<h4 id="promise与future"><a href="#promise与future" class="headerlink" title="promise与future"></a>promise与future</h4><p>在上面的例子中，<code>concurrent_task</code>的结果是通过<code>return</code>返回的。但在一些时候，我们可能不能这么做：在得到任务结果之后，可能还有一些事情需要继续处理，例如清理工作。</p>
-<p>这个时候，就可以将<code>promise</code>与<code>future</code>配对使用。这样就可以将返回结果和任务结束两个事情分开。</p>
-<p>下面是对上面代码示例的改写：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 14_promise_future.cpp</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">concurrent_worker</span><span class="params">(<span class="keyword">int</span> min, <span class="keyword">int</span> max)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = min; i &lt;= max; i++) &#123;</span><br><span class="line">    sum += <span class="built_in">sqrt</span>(i);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">concurrent_task</span><span class="params">(<span class="keyword">int</span> min, <span class="keyword">int</span> max, promise&lt;<span class="keyword">double</span>&gt;* result)</span> </span>&#123; <span class="comment">// ①</span></span><br><span class="line">  vector&lt;future&lt;<span class="keyword">double</span>&gt;&gt; results;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">unsigned</span> concurrent_count = thread::<span class="built_in">hardware_concurrency</span>();</span><br><span class="line">  min = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; concurrent_count; i++) &#123;</span><br><span class="line">    <span class="function">packaged_task&lt;<span class="title">double</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span>&gt; <span class="title">task</span><span class="params">(concurrent_worker)</span></span>;</span><br><span class="line">    results.<span class="built_in">push_back</span>(task.<span class="built_in">get_future</span>()); </span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> range = max / concurrent_count * (i + <span class="number">1</span>);</span><br><span class="line">    <span class="function">thread <span class="title">t</span><span class="params">(std::move(task), min, range)</span></span>;</span><br><span class="line">    t.<span class="built_in">detach</span>();</span><br><span class="line"></span><br><span class="line">    min = range + <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;threads create finish&quot;</span> &lt;&lt; endl;</span><br><span class="line">  <span class="keyword">double</span> sum = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">auto</span>&amp; r : results) &#123;</span><br><span class="line">    sum += r.<span class="built_in">get</span>();</span><br><span class="line">  &#125;</span><br><span class="line">  result-&gt;<span class="built_in">set_value</span>(sum); <span class="comment">// ②</span></span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;concurrent_task finish&quot;</span> &lt;&lt; endl;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">auto</span> start_time = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line"></span><br><span class="line">  promise&lt;<span class="keyword">double</span>&gt; sum; <span class="comment">// ③</span></span><br><span class="line">  <span class="built_in">concurrent_task</span>(<span class="number">0</span>, MAX, &amp;sum);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">auto</span> end_time = chrono::steady_clock::<span class="built_in">now</span>();</span><br><span class="line">  <span class="keyword">auto</span> ms = chrono::duration_cast&lt;chrono::milliseconds&gt;(end_time - start_time).<span class="built_in">count</span>();</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Concurrent task finish, &quot;</span> &lt;&lt; ms &lt;&lt; <span class="string">&quot; ms consumed.&quot;</span> &lt;&lt; endl;</span><br><span class="line">  cout &lt;&lt; <span class="string">&quot;Result: &quot;</span> &lt;&lt; sum.<span class="built_in">get_future</span>().<span class="built_in">get</span>() &lt;&lt; endl; <span class="comment">// ④</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这段代码和上面的示例在很大程度上是一样的。只有小部分内容做了改动：</p>
-<ol>
-<li><code>concurrent_task</code>不再直接返回计算结果，而是增加了一个<code>promise</code>对象来存放结果。</li>
-<li>在任务计算完成之后，将总结过设置到<code>promise</code>对象上。一旦这里调用了<code>set_value</code>，其相关联的<code>future</code>对象就会就绪。</li>
-<li>这里是在<code>main</code>中创建一个<code>promoise</code>来存放结果，并以指针的形式传递进<code>concurrent_task</code>中。</li>
-<li>通过<code>sum.get_future().get()</code>来获取结果。第2点中已经说了：一旦调用了<code>set_value</code>，其相关联的<code>future</code>对象就会就绪。</li>
-</ol>
-<p>需要注意的是，<code>future</code>对象只有被一个线程获取值。并且在调用<code>get()</code>之后，就没有可以获取的值了。如果从多个线程调用<code>get()</code>会出现数据竞争，其结果是未定义的。</p>
-<p>如果真的需要在多个线程中获取<code>future</code>的结果，可以使用<code>shared_future</code>。</p>
-<h3 id="task-based并发：async-packaged-task-promise"><a href="#task-based并发：async-packaged-task-promise" class="headerlink" title="task based并发：async, packaged_task, promise"></a>task based并发：async, packaged_task, promise</h3><h4 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL; DR"></a>TL; DR</h4><ul>
-<li><strong>async</strong>：提供最高层次的抽象。如果你不需要控制线程的运行时机，就选这个。</li>
-<li><strong>packaged_task</strong>：抽象层次比<code>async</code>低。如果你需要控制线程的运行时机，且线程执行的结果即目标结果时，选这个。</li>
-<li><strong>promise</strong>：抽象层次最低。当你想在线程中设置目标结果的值，选这个。</li>
-</ul>
-<h4 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h4><p><code>async</code>、<code>packaged_task</code>和<code>promise</code>三者有一个共同点：它们都可以返回一个<code>future</code>对象，用户可以通过这个<code>future</code>的<code>get</code>方法获取最终的结果。</p>
-<p>在下面的代码中，分别用这三者实现同样的功能：延时2秒后返回0：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;chrono&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;future&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;thread&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">std::packaged_task&lt;<span class="title">int</span><span class="params">()</span>&gt; <span class="title">task</span><span class="params">([]()&#123; </span></span></span><br><span class="line"><span class="params"><span class="function">            std::chrono::milliseconds dura( <span class="number">2000</span>  );</span></span></span><br><span class="line"><span class="params"><span class="function">            std::this_thread::sleep_for( dura  );</span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="keyword">return</span> <span class="number">0</span>; </span></span></span><br><span class="line"><span class="params"><span class="function">            &#125;)</span></span>;</span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; f1 = task.<span class="built_in">get_future</span>();</span><br><span class="line">    std::<span class="built_in">thread</span>(std::<span class="built_in">move</span>(task)).<span class="built_in">detach</span>();</span><br><span class="line"></span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; f2 = std::<span class="built_in">async</span>(std::launch::async, []()&#123; </span><br><span class="line">            std::chrono::milliseconds <span class="built_in">dura</span>( <span class="number">2000</span>  );</span><br><span class="line">            std::this_thread::<span class="built_in">sleep_for</span>( dura  );</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line">    std::promise&lt;<span class="keyword">int</span>&gt; p;</span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; f3 = p.<span class="built_in">get_future</span>();</span><br><span class="line">    std::<span class="built_in">thread</span>([](std::promise&lt;<span class="keyword">int</span>&gt; p)&#123; </span><br><span class="line">            std::chrono::milliseconds <span class="built_in">dura</span>( <span class="number">2000</span>  );</span><br><span class="line">            std::this_thread::<span class="built_in">sleep_for</span>( dura  );</span><br><span class="line">            p.<span class="built_in">set_value</span>(<span class="number">0</span>); </span><br><span class="line">            &#125;,</span><br><span class="line">            std::<span class="built_in">move</span>(p)).<span class="built_in">detach</span>();</span><br><span class="line"></span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Waiting...&quot;</span> &lt;&lt; std::flush;</span><br><span class="line">    f1.<span class="built_in">wait</span>();</span><br><span class="line">    f2.<span class="built_in">wait</span>();</span><br><span class="line">    f3.<span class="built_in">wait</span>();</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;Done!\nResults are: &quot;</span></span><br><span class="line">        &lt;&lt; f1.<span class="built_in">get</span>() &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; f2.<span class="built_in">get</span>() &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; f3.<span class="built_in">get</span>() &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>从上面这段代码可以看到，这三者分别工作在不同的抽象层次上。</p>
-<ol>
-<li><code>async</code>层次最高，你只需要给它提供一个函数，它就会返回一个<code>future</code>对象。接下来就只需等待结果了。</li>
-<li><code>packaged_task</code>次之，你在创建了<code>packaged_task</code>后，还要创建一个<code>thread</code>，并把<code>packaged_task</code>交给它执行。</li>
-<li><code>promise</code>就最低了。在创建了<code>thread</code>之后，你还要把对应的<code>promise</code>作为参数传入。这还没完，别忘了在函数中<strong>手动</strong>设置<code>promise</code>的值。</li>
-</ol>
-<p>那么我们的第一个结论就很清晰了：<code>async</code>抽象层次最高，所以除非你需要对并发过程进行细粒度的控制（比如在一些场合下），优先使用<code>async</code>来执行异步任务。</p>
-<p>那么什么属于是“一些场合”呢？</p>
-<h4 id="async-VS-packaged-task-and-promise"><a href="#async-VS-packaged-task-and-promise" class="headerlink" title="async VS. packaged_task and promise"></a>async VS. packaged_task and promise</h4><p>前面已经看到，<code>async</code>会接收一个函数，并返回一个<code>future</code>。在默认情况下，该函数会被就地执行。这也许不是你想要的。通过传递<code>std::launch::defer</code>，可以修改为直到调用<code>future.get</code>才开始执行<code>async</code>中的函数。</p>
-<p>即使这样，如果你想把执行函数的时机和获取future对象的时机分离，最好还是放弃用<code>async</code>，而是使用更为底层的<code>packaged_task</code>和<code>promise</code>。</p>
-<p>BTW，<code>async</code>有一个古怪的特性，如果你把<code>async</code>返回的<code>future</code>赋值给一个临时变量（或者没管它的返回值），当该变量生命周期结束时，程序会一直阻塞直到<code>async</code>中的函数执行完毕。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    std::future&lt;<span class="keyword">int</span>&gt; tmp = std::<span class="built_in">async</span>(std::launch::async, []()&#123; </span><br><span class="line">            std::chrono::milliseconds <span class="built_in">dura</span>(VERY_LONG_TIME);</span><br><span class="line">            std::this_thread::<span class="built_in">sleep_for</span>(dura);</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>; </span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="comment">// block here for VERY_LONG_TIME</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这种意料之外的行为会在C++14中被取消掉。所以你用的编译器可能不会遇到这问题。</p>
-<h4 id="packaged-task-VS-promise"><a href="#packaged-task-VS-promise" class="headerlink" title="packaged_task VS. promise"></a>packaged_task VS. promise</h4><p>剩下的两个之中怎么选呢？</p>
-<p><code>promise</code>的层次比<code>packaged_task</code>低，所以<code>promise</code>提供给用户的控制粒度也比<code>packaged_task</code>要细。因此，如果你想要更彻底的控制，就选择<code>promise</code>吧。</p>
-<p><code>promise</code>几乎就是<code>future</code>的另一半。对<code>promise</code>调用<code>set_value</code>，就如同对<code>future</code>调用<code>set_value</code>。比起<code>packaged_task</code>，<code>promise</code>并不在意函数的返回值——毕竟它的值需要手动调用<code>set_value</code>进行设置。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2021/12/12/%E5%BD%93%E6%88%91%E8%B0%88%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%97%B6%E6%88%91%E8%B0%88%E4%BA%9B%E4%BB%80%E4%B9%88/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1021,7 +270,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
+      <meta itemprop="name" content="Skykey's Home">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -1105,7 +354,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
+      <meta itemprop="name" content="Skykey's Home">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -1187,7 +436,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
+      <meta itemprop="name" content="Skykey's Home">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -1266,6 +515,87 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2021/04/22/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Skykey">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skykey's Home">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/22/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" class="post-title-link" itemprop="url">C++并发编程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-22 15:27:00" itemprop="dateCreated datePublished" datetime="2021-04-22T15:27:00+08:00">2021-04-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-12-13 22:50:37" itemprop="dateModified" datetime="2021-12-13T22:50:37+08:00">2021-12-13</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="C-Concurrency"><a href="#C-Concurrency" class="headerlink" title="C++ Concurrency"></a>C++ Concurrency</h1><h2 id="0x00-概念"><a href="#0x00-概念" class="headerlink" title="0x00 概念"></a>0x00 概念</h2><p>CPP11标准以来，C++语言开始支持多线程模型。借助多线程模型，可以开发出更好的并发系统。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/04/22/C++%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://skykeyjoker.com/2020/07/24/mysqlonqt3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1275,7 +605,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
+      <meta itemprop="name" content="Skykey's Home">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -1361,7 +691,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
+      <meta itemprop="name" content="Skykey's Home">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -1449,7 +779,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
+      <meta itemprop="name" content="Skykey's Home">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -1535,7 +865,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
+      <meta itemprop="name" content="Skykey's Home">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
@@ -1621,7 +951,7 @@
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Skykey's Homeᕕ( ᐛ )ᕗ">
+      <meta itemprop="name" content="Skykey's Home">
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
