@@ -21,6 +21,102 @@
 ]]></content>
   </entry>
   <entry>
+    <title>Linux低延迟服务器调优</title>
+    <url>/2022/01/27/Linux%E4%BD%8E%E5%BB%B6%E8%BF%9F%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B0%83%E4%BC%98/</url>
+    <content><![CDATA[<h1 id="Linux低延迟服务器调优"><a href="#Linux低延迟服务器调优" class="headerlink" title="Linux低延迟服务器调优"></a>Linux低延迟服务器调优</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>本文基于饶萌大佬的《Linux低延迟服务器系统调优》一文总结整理，自行补充了一些细节。大佬博文指路：</p>
+<p><a href="https://zhuanlan.zhihu.com/p/58669088">Linux低延迟服务器系统调优</a></p>
+<p>低延迟关键不在于低，而在于<strong>稳定</strong>，稳定即可预期，可掌控，这对高频领域来说尤其重要。谈及Linux低延迟技术时，人们经常提到“Kernel Bypass”（内核旁路），即绕过内核，这是因为内核处理不仅慢且延迟不稳定。因此一个延迟要求很高的实时任务是不能触碰内核的，“避免触碰”是一个比Bypass更高的要求：不能以<strong>任何</strong>方式进入内核。中断（Interrupt）是进入内核的方式之一，本文的关键点也在于避免关键线程被中断。即使中断发生时线程是空闲的，但重新回到用户态后CPU缓存被污染了，下一次处理请求的延迟也会变得不稳定。</p>
+<h2 id="绑定核心"><a href="#绑定核心" class="headerlink" title="绑定核心"></a>绑定核心</h2><p>中断是CPU Core收到的，可以让关键线程<strong>绑定</strong>在某个Core上，然后避免各种中断源（IRQ）向这个Core发送中断。</p>
+<p>绑定程序在一个核上运行，有两种方法：<code>taskset</code>和<code>sched_setaffinity</code>。</p>
+<h3 id="CPU-Affinity"><a href="#CPU-Affinity" class="headerlink" title="CPU Affinity"></a>CPU Affinity</h3><p>中文译作“CPU亲和力”，是指在CMP结构下，能够将一个或多个进程绑定到一个或多个处理器上运行。</p>
+<h3 id="查看进程分配的CPU-Core"><a href="#查看进程分配的CPU-Core" class="headerlink" title="查看进程分配的CPU Core"></a>查看进程分配的CPU Core</h3><p>可以使用<code>taskset</code>命令查看：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">taskset -c -p &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+
+<p>运行结构：</p>
+<figure class="highlight console"><table><tr><td class="code"><pre><span class="line">pid 17147&#x27;s current affinity list: 3-5</span><br></pre></td></tr></table></figure>
+
+<p>该CPU亲和力列表表明该进程可能会被安排在3-5中任意一个CPU Core上。</p>
+<p>更具体地查看某进程当前正运行在哪个CPU Core上，我们可以使用<code>top</code>命令查看：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">top -p &lt;uid&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="taskset"><a href="#taskset" class="headerlink" title="taskset"></a>taskset</h3><p>使用<code>taskset</code>命令将进程绑定到指定核：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">taskset -cp &lt;core&gt; &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">taskset -cp 1,2,3 31693</span><br></pre></td></tr></table></figure>
+
+<p>该例会将PID为31693的进程绑定到1-3核上运行。</p>
+<h3 id="sched-setaffinity"><a href="#sched-setaffinity" class="headerlink" title="sched_setaffinity"></a>sched_setaffinity</h3><p>编写代码时，我们可以通过<code>sched_setaffinity()</code>函数设置CPU亲和力的掩码，从而将该线程或者进程与指定的CPU绑定。</p>
+<p>一个CPU的亲和力掩码用一个<code>cpu_set_t</code>结构体来表示一个CPU集合，下面这几个宏分别对掩码集进行操作：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="built_in">CPU_ZERO</span>(<span class="keyword">cpu_set_t</span>* cpusetp);               <span class="comment">// 清空一个集合</span></span><br><span class="line"><span class="built_in">CPU_SET</span>(<span class="keyword">size_t</span> cpu, <span class="keyword">cpu_set_t</span>* cpusetp);    <span class="comment">// 加入CPU Core到集合</span></span><br><span class="line"><span class="built_in">CPU_CLR</span>(<span class="keyword">size_t</span> cpu, <span class="keyword">cpu_set_t</span>* cpusetp);    <span class="comment">// 从集合中删除指定的CPU Core</span></span><br><span class="line"><span class="built_in">CPU_ISSET</span>(<span class="keyword">size_t</span> cpu, <span class="keyword">cpu_set_t</span>* cpusetp);  <span class="comment">// 检查一个CPU Core是否在集合中</span></span><br></pre></td></tr></table></figure>
+
+<p>使用<code>sched_setaffinity()</code>与<code>sched*_*getaffinity()</code>等函数需要引进头文件<code>sched.h</code>。</p>
+<ul>
+<li>头文件：<code>sched.h</code></li>
+<li><code>int sched_setaffinity(pid_t pid, size_t cpusetsize, const cpu_set_t* mask)</code><br>该函数将PID为<em>pid</em>的进程设置为运行在<em>mask</em>指定的CPU Core上。<br>* 若<em>pid</em>为0，则表示指定当前进程。<br>* <em>cpusetsize</em>为<em>mask</em>的大小，通常为<code>sizeof(cpu_set_t)</code>。<br>* <em>cpuset</em>即用<code>cpu_set_t</code>结构体表示的CPU Core集合。<br>* 函数返回0表示成功，失败则返回-1。</li>
+<li><code>int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t* mask)</code><br>函数获取PID为<em>pid</em>的进程CPU亲和力掩码，并保存在<em>mask</em>结构体中，即获得指定pid当前可以运行在哪些CPU上。<br>* 若<em>pid</em>为0，则表示指定当前进程。<br>* <em>cpusetsize</em>为<em>mask</em>的大小，通常为<code>sizeof(cpu_set_t)</code>。<br>* <em>cpuset</em>即用<code>cpu_set_t</code>结构体表示的CPU Core集合。<br>* 函数返回0表示成功，失败则返回-1。</li>
+</ul>
+<p>使用示例：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __USE_GNU</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sched.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> std::cout;</span><br><span class="line"><span class="keyword">using</span> std::endl;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// CPU Core Binded sched_setaffinity</span></span><br><span class="line">    <span class="keyword">cpu_set_t</span> mask;  <span class="comment">// CPU Core Set</span></span><br><span class="line">    <span class="built_in">CPU_ZERO</span>(&amp;mask);  <span class="comment">// Set Zero</span></span><br><span class="line">    <span class="built_in">CPU_SET</span>(<span class="number">6</span>, &amp;mask);  <span class="comment">// Add core to set</span></span><br><span class="line">    <span class="built_in">CPU_SET</span>(<span class="number">7</span>, &amp;mask);</span><br><span class="line">    <span class="built_in">CPU_SET</span>(<span class="number">8</span>, &amp;mask);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> rc;</span><br><span class="line">    <span class="keyword">if</span>((rc = <span class="built_in">sched_setaffinity</span>(<span class="number">0</span>, <span class="built_in"><span class="keyword">sizeof</span></span>(mask), &amp;mask))</span><br><span class="line">    &#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Warning: Set affinity failed!&quot;</span>&lt;&lt;<span class="built_in">strerror</span>(rc)&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">cpu_set_t</span> get;</span><br><span class="line">        <span class="keyword">if</span>((rc = <span class="built_in">sched_getaffinity</span>(<span class="number">0</span>, <span class="built_in"><span class="keyword">sizeof</span></span>(get), &amp;get)))</span><br><span class="line">        &#123;</span><br><span class="line">             cout&lt;&lt;<span class="string">&quot;Waring: Could not get thread affinity.&quot;</span>&lt;&lt;endl;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">pid_t</span> pid = <span class="built_in">getpid</span>();</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Current PID: &quot;</span>&lt;&lt;pid&lt;&lt;endl;</span><br><span class="line">        <span class="keyword">size_t</span> i;</span><br><span class="line">        <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="built_in">sysconf</span>(_SC_NPROCESSORS_CONF); ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">CPU_ISSUE</span>(i, &amp;get))</span><br><span class="line">                cout&lt;&lt;<span class="string">&quot;Running on processor: &quot;</span>&lt;&lt;i&lt;&lt;endl;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：若使用到pthread，则需要将pthread.h放到sched.h之后，并在sched.h之前声明#define __USE_GNU，否则会出现undefined reference CPU_ZERO等错误。</p>
+</blockquote>
+<h2 id="屏蔽硬中断（硬盘、网卡）"><a href="#屏蔽硬中断（硬盘、网卡）" class="headerlink" title="屏蔽硬中断（硬盘、网卡）"></a>屏蔽硬中断（硬盘、网卡）</h2><p>中断源（IRQ）向CPU Core发送中断，CPU Core调用中断处理程序对中断进程处理。我们可以通过改写<code>/proc/irq/*/smp_affinity</code>文件，避免中断源（IRQ）向某些CPU Core发送中断。该方法对硬盘、网卡等设备引起的硬中断有效。</p>
+<h3 id="查看设备中断数据"><a href="#查看设备中断数据" class="headerlink" title="查看设备中断数据"></a>查看设备中断数据</h3><p>通过查看<code>/proc/interrupts</code>文件可查看设备中断数据：</p>
+<figure class="highlight console"><table><tr><td class="code"><pre><span class="line">           CPU0       CPU1       CPU2       CPU3       CPU4       CPU5       CPU6       CPU7       </span><br><span class="line">  0:         17          0          0          0          0          0          0          0   IO-APIC   2-edge      timer</span><br><span class="line">  8:          0          0          0          0          0          1          0          0   IO-APIC   8-edge      rtc0</span><br><span class="line">  9:       4058        258        157         14        464        454         34        134   IO-APIC   9-fasteoi   acpi</span><br><span class="line"> 16:     137153      19574      11430      10138      47072      27502      15934      10113   IO-APIC  16-fasteoi   ahci[0000:05:00.0], xhci-hcd:usb1, nvkm</span><br><span class="line"> 17:         16          3          1          9         35          2          2          1   IO-APIC  17-fasteoi   snd_hda_intel:card1</span><br><span class="line"> 18:      88952       2170       1592       1253       4255       5430       1790       1738   IO-APIC  18-fasteoi   wlp3s0</span><br><span class="line"> 22:     172111       2954       2515       1897       5000       3684       2479       2513   IO-APIC  22-fasteoi   snd_hda_intel:card0</span><br><span class="line">NMI:          0          0          0          0          0          0          0          0   Non-maskable interrupts</span><br><span class="line">LOC:     395090     279787     239243     235695     233918      90471      94234      90479   Local timer interrupts</span><br><span class="line">SPU:          0          0          0          0          0          0          0          0   Spurious interrupts</span><br><span class="line">PMI:          0          0          0          0          0          0          0          0   Performance monitoring interrupts</span><br><span class="line">IWI:          0          0          0          1          1          1          0          3   IRQ work interrupts</span><br><span class="line">RTR:          6          0          0          0          0          0          0          0   APIC ICR read retries</span><br><span class="line">RES:       7425       5663       4375       3801       3051       2825       1963       1787   Rescheduling interrupts</span><br><span class="line">CAL:         31         29         24         22         36         28         34         31   Function call interrupts</span><br><span class="line">TLB:      10387      11374      10758      11769       7566       8508       8799       7195   TLB shootdowns</span><br><span class="line">TRM:          2          2          2          2          2          2          2          2   Thermal event interrupts</span><br><span class="line">THR:          0          0          0          0          0          0          0          0   Threshold APIC interrupts</span><br><span class="line">MCE:          0          0          0          0          0          0          0          0   Machine check exceptions</span><br><span class="line">MCP:         17         17         17         17         17         17         17         17   Machine check polls</span><br><span class="line">ERR:          0</span><br><span class="line">MIS:          0</span><br><span class="line">PIN:          0          0          0          0          0          0          0          0   Posted-interrupt notification event</span><br><span class="line">PIW:          0          0          0          0          0          0          0          0   Posted-interrupt wakeup event</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第一列是IRQ号</li>
+<li>第二列开始表示某CPU内核被多少次中断。</li>
+</ul>
+<h3 id="SMP-AFFINITY"><a href="#SMP-AFFINITY" class="headerlink" title="SMP_AFFINITY"></a>SMP_AFFINITY</h3><p>SMP，即symmetric multiprocessing（对称多处理器），通过多个处理器处理程序的方式。smp_affinity文件处理一个IRQ的中断亲和性。在smp_affinity文件结合每个IRQ号在<code>/proc/irq/&#123;IRQ_NUMBER&#125;/smp_affinity</code>文件。该文件的值是一个16进制掩码表示系统的所有CPU核。</p>
+<p>例如，Solarflare网卡的设备名为eth1，其中断如下：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">grep eth1 /proc/interrupts</span><br></pre></td></tr></table></figure>
+
+<p>输出如下：</p>
+<figure class="highlight console"><table><tr><td class="code"><pre><span class="line">64:    95218  168786727  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  IR-PCI-MSI-edge  eth1-0</span><br><span class="line">65:    38440  53649095   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  IR-PCI-MSI-edge  eth1-1</span><br><span class="line">66:    6207   1011519    0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  IR-PCI-MSI-edge  eth1-ptp</span><br></pre></td></tr></table></figure>
+
+<p>可以看到eth1设备共有三个IRQ号：64,65,66，其相对应的smp_afffinity文件时：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat /proc/irq/64/smp_affinity</span><br><span class="line">cat /proc/irq/65/smp_affinity</span><br><span class="line">cat /proc/irq/66/smp_affinity</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0000,00000000,00000000,0000000f</span><br><span class="line">0000,00000000,00000000,0000000f</span><br><span class="line">0000,00000000,00000000,0000000f</span><br></pre></td></tr></table></figure>
+
+<p>smp_affinity是16进制表示，f就是二进制的1111，表示0-3这四个CPU Core都会参与处理中断。</p>
+<p>假设我们想要指定仅0-1这两个核心处理中断，则可以写入如下数据到smp_affinity：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> 3 &gt; /proc/irq/64/smp_affinity</span><br><span class="line"><span class="built_in">echo</span> 3 &gt; /proc/irq/65/smp_affinity</span><br><span class="line"><span class="built_in">echo</span> 3 &gt; /proc/irq/66/smp_affinity</span><br></pre></td></tr></table></figure>
+
+<h2 id="屏蔽软中断（Work-queue）"><a href="#屏蔽软中断（Work-queue）" class="headerlink" title="屏蔽软中断（Work queue）"></a>屏蔽软中断（Work queue）</h2><p>workqueue是自kernel2.6引入的一种任务执行机制，和softirq，tasklet并称下半部（bottom half）三剑客。workqueue在进程上下文异步执行任务，能够进行睡眠。可以通过改写<code>/sys/devices/virtual/workqueue/*/cpumask</code>文件实现屏蔽Work queue的软中断。</p>
+<p><code>/sys/devices/virtual/workqueue/cpumask</code>文件中记录了全局的cpumask，可以影响所有的workqueue。文件内容格式与smp_affinity相同：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">cat /sys/devices/virtual/workqueue/cpumask</span><br></pre></td></tr></table></figure>
+
+<p>输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0000,00000000,00000000,00000007</span><br></pre></td></tr></table></figure>
+
+<p>代表0-2这三个CPU Core用来处理work queue，我们可以通过写入”f”来仅让与核心进程无关的0-3这四个CPU Core参与work queue处理：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;f&#x27;</span> &gt; /sys/devices/virtual/workqueue/cpumask</span><br></pre></td></tr></table></figure>
+
+<h2 id="屏蔽软中断（Local-Timer-Interrupt）"><a href="#屏蔽软中断（Local-Timer-Interrupt）" class="headerlink" title="屏蔽软中断（Local Timer Interrupt）"></a>屏蔽软中断（Local Timer Interrupt）</h2><p>Linux的scheduler time slice是通过LOC实现的，如果我们让一个线程独占一个CPU Core，就不需要scheduler在这个CPU Core上切换进程。可以通过<code>isolcpus</code>系统启动选项隔离一些核，让他们只能被绑定的线程使用。同时，我们还可以启用“adaptive-ticks”模式，达到减少独占线程收到LOC频率的效果，这可以通过<code>nohz_full</code>和<code>rcu_nocbs</code>启动选项实现。</p>
+<p>假设令6-8三个核心屏蔽软中断，我们需要在系统启动选项中加入：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nohz=on nohz_full=6-8 rcu_nocbs=6-8</span><br></pre></td></tr></table></figure>
+
+<p>进入adaptive-ticks模式后，如果CPU Core上的running task只有一个时，系统向其发送的LOC频率会显著降低，但LOC不能被完全屏蔽，系统内核的一些操作比如计算CPU负载等仍然需要周期性的LOC。</p>
+<h2 id="更多"><a href="#更多" class="headerlink" title="更多"></a>更多</h2><p>中断和smp_affinity：</p>
+<p><a href="https://huataihuang.gitbooks.io/cloud-atlas/content/os/linux/kernel/cpu/interrupt_and_smp_affinity.html">中断和smp_affinity</a></p>
+<p>SolarFlare资源汇总：</p>
+<p><a href="https://williamlfang.github.io/shared/2019-12-20-solarflare%E8%B5%84%E6%BA%90%E6%B1%87%E6%80%BB/">SolarFlare资源汇总</a></p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+      </categories>
+      <tags>
+        <tag>学习心得</tag>
+        <tag>Linux</tag>
+        <tag>低延迟系统</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Qt实现简易心跳包机制</title>
     <url>/2022/01/01/tcpheart/</url>
     <content><![CDATA[<h1 id="Qt实现简易心跳包机制"><a href="#Qt实现简易心跳包机制" class="headerlink" title="Qt实现简易心跳包机制"></a>Qt实现简易心跳包机制</h1><p>因为网络通信的不稳定性，在一些实时性、网络稳定性要求较高的情境下，我们需要一个实时检测客户端与服务端之间的连接状态和通信功能是否运行正常的机制，心跳包机制便是其中之一。接下来我会讲一下在之前的一个小项目中，利用Qt实现的简易心跳包检测机制。</p>
@@ -1590,8 +1686,8 @@
       </categories>
       <tags>
         <tag>Qt</tag>
-        <tag>Model/View</tag>
         <tag>Sql</tag>
+        <tag>Model/View</tag>
       </tags>
   </entry>
   <entry>

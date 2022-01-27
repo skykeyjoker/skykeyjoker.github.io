@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"skykeyjoker.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Linux低延迟服务器调优概述本文基于饶萌大佬的《Linux低延迟服务器系统调优》一文总结整理，自行补充了一些细节。大佬博文指路： Linux低延迟服务器系统调优 低延迟关键不在于低，而在于稳定，稳定即可预期，可掌控，这对高频领域来说尤其重要。谈及Linux低延迟技术时，人们经常提到“Kernel Bypass”（内核旁路），即绕过内核，这是因为内核处理不仅慢且延迟不稳定。因此一个延迟要求很高的实">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux低延迟服务器调优">
+<meta property="og:url" content="https://skykeyjoker.com/2022/01/27/Linux%E4%BD%8E%E5%BB%B6%E8%BF%9F%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B0%83%E4%BC%98/index.html">
+<meta property="og:site_name" content="Skykey&#39;s Home">
+<meta property="og:description" content="Linux低延迟服务器调优概述本文基于饶萌大佬的《Linux低延迟服务器系统调优》一文总结整理，自行补充了一些细节。大佬博文指路： Linux低延迟服务器系统调优 低延迟关键不在于低，而在于稳定，稳定即可预期，可掌控，这对高频领域来说尤其重要。谈及Linux低延迟技术时，人们经常提到“Kernel Bypass”（内核旁路），即绕过内核，这是因为内核处理不仅慢且延迟不稳定。因此一个延迟要求很高的实">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-01-27T06:01:00.000Z">
+<meta property="article:modified_time" content="2022-01-27T10:48:36.264Z">
+<meta property="article:author" content="Skykey">
+<meta property="article:tag" content="学习心得">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="低延迟系统">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://skykeyjoker.com/2022/01/27/Linux%E4%BD%8E%E5%BB%B6%E8%BF%9F%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B0%83%E4%BC%98/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
+  <title>Linux低延迟服务器调优 | Skykey's Home</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skykey's Home</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Skykey的私人博客ᕕ( ᐛ )ᕗ</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>Links</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+  <a href="https://github.com/skykeyjoker" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skykeyjoker.com/2022/01/27/Linux%E4%BD%8E%E5%BB%B6%E8%BF%9F%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B0%83%E4%BC%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Skykey">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skykey's Home">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux低延迟服务器调优
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-01-27 14:01:00 / 修改时间：18:48:36" itemprop="dateCreated datePublished" datetime="2022-01-27T14:01:00+08:00">2022-01-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/01/27/Linux%E4%BD%8E%E5%BB%B6%E8%BF%9F%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B0%83%E4%BC%98/" class="post-meta-item leancloud_visitors" data-flag-title="Linux低延迟服务器调优" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/01/27/Linux%E4%BD%8E%E5%BB%B6%E8%BF%9F%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B0%83%E4%BC%98/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/01/27/Linux%E4%BD%8E%E5%BB%B6%E8%BF%9F%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B0%83%E4%BC%98/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Linux低延迟服务器调优"><a href="#Linux低延迟服务器调优" class="headerlink" title="Linux低延迟服务器调优"></a>Linux低延迟服务器调优</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>本文基于饶萌大佬的《Linux低延迟服务器系统调优》一文总结整理，自行补充了一些细节。大佬博文指路：</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/58669088">Linux低延迟服务器系统调优</a></p>
+<p>低延迟关键不在于低，而在于<strong>稳定</strong>，稳定即可预期，可掌控，这对高频领域来说尤其重要。谈及Linux低延迟技术时，人们经常提到“Kernel Bypass”（内核旁路），即绕过内核，这是因为内核处理不仅慢且延迟不稳定。因此一个延迟要求很高的实时任务是不能触碰内核的，“避免触碰”是一个比Bypass更高的要求：不能以<strong>任何</strong>方式进入内核。中断（Interrupt）是进入内核的方式之一，本文的关键点也在于避免关键线程被中断。即使中断发生时线程是空闲的，但重新回到用户态后CPU缓存被污染了，下一次处理请求的延迟也会变得不稳定。</p>
+<h2 id="绑定核心"><a href="#绑定核心" class="headerlink" title="绑定核心"></a>绑定核心</h2><p>中断是CPU Core收到的，可以让关键线程<strong>绑定</strong>在某个Core上，然后避免各种中断源（IRQ）向这个Core发送中断。</p>
+<p>绑定程序在一个核上运行，有两种方法：<code>taskset</code>和<code>sched_setaffinity</code>。</p>
+<h3 id="CPU-Affinity"><a href="#CPU-Affinity" class="headerlink" title="CPU Affinity"></a>CPU Affinity</h3><p>中文译作“CPU亲和力”，是指在CMP结构下，能够将一个或多个进程绑定到一个或多个处理器上运行。</p>
+<h3 id="查看进程分配的CPU-Core"><a href="#查看进程分配的CPU-Core" class="headerlink" title="查看进程分配的CPU Core"></a>查看进程分配的CPU Core</h3><p>可以使用<code>taskset</code>命令查看：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">taskset -c -p &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+
+<p>运行结构：</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pid 17147&#x27;s current affinity list: 3-5</span><br></pre></td></tr></table></figure>
+
+<p>该CPU亲和力列表表明该进程可能会被安排在3-5中任意一个CPU Core上。</p>
+<p>更具体地查看某进程当前正运行在哪个CPU Core上，我们可以使用<code>top</code>命令查看：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top -p &lt;uid&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="taskset"><a href="#taskset" class="headerlink" title="taskset"></a>taskset</h3><p>使用<code>taskset</code>命令将进程绑定到指定核：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">taskset -cp &lt;core&gt; &lt;pid&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">taskset -cp 1,2,3 31693</span><br></pre></td></tr></table></figure>
+
+<p>该例会将PID为31693的进程绑定到1-3核上运行。</p>
+<h3 id="sched-setaffinity"><a href="#sched-setaffinity" class="headerlink" title="sched_setaffinity"></a>sched_setaffinity</h3><p>编写代码时，我们可以通过<code>sched_setaffinity()</code>函数设置CPU亲和力的掩码，从而将该线程或者进程与指定的CPU绑定。</p>
+<p>一个CPU的亲和力掩码用一个<code>cpu_set_t</code>结构体来表示一个CPU集合，下面这几个宏分别对掩码集进行操作：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CPU_ZERO</span>(<span class="keyword">cpu_set_t</span>* cpusetp);               <span class="comment">// 清空一个集合</span></span><br><span class="line"><span class="built_in">CPU_SET</span>(<span class="keyword">size_t</span> cpu, <span class="keyword">cpu_set_t</span>* cpusetp);    <span class="comment">// 加入CPU Core到集合</span></span><br><span class="line"><span class="built_in">CPU_CLR</span>(<span class="keyword">size_t</span> cpu, <span class="keyword">cpu_set_t</span>* cpusetp);    <span class="comment">// 从集合中删除指定的CPU Core</span></span><br><span class="line"><span class="built_in">CPU_ISSET</span>(<span class="keyword">size_t</span> cpu, <span class="keyword">cpu_set_t</span>* cpusetp);  <span class="comment">// 检查一个CPU Core是否在集合中</span></span><br></pre></td></tr></table></figure>
+
+<p>使用<code>sched_setaffinity()</code>与<code>sched*_*getaffinity()</code>等函数需要引进头文件<code>sched.h</code>。</p>
+<ul>
+<li>头文件：<code>sched.h</code></li>
+<li><code>int sched_setaffinity(pid_t pid, size_t cpusetsize, const cpu_set_t* mask)</code><br>该函数将PID为<em>pid</em>的进程设置为运行在<em>mask</em>指定的CPU Core上。<br>* 若<em>pid</em>为0，则表示指定当前进程。<br>* <em>cpusetsize</em>为<em>mask</em>的大小，通常为<code>sizeof(cpu_set_t)</code>。<br>* <em>cpuset</em>即用<code>cpu_set_t</code>结构体表示的CPU Core集合。<br>* 函数返回0表示成功，失败则返回-1。</li>
+<li><code>int sched_getaffinity(pid_t pid, size_t cpusetsize, cpu_set_t* mask)</code><br>函数获取PID为<em>pid</em>的进程CPU亲和力掩码，并保存在<em>mask</em>结构体中，即获得指定pid当前可以运行在哪些CPU上。<br>* 若<em>pid</em>为0，则表示指定当前进程。<br>* <em>cpusetsize</em>为<em>mask</em>的大小，通常为<code>sizeof(cpu_set_t)</code>。<br>* <em>cpuset</em>即用<code>cpu_set_t</code>结构体表示的CPU Core集合。<br>* 函数返回0表示成功，失败则返回-1。</li>
+</ul>
+<p>使用示例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __USE_GNU</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sched.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> std::cout;</span><br><span class="line"><span class="keyword">using</span> std::endl;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// CPU Core Binded sched_setaffinity</span></span><br><span class="line">    <span class="keyword">cpu_set_t</span> mask;  <span class="comment">// CPU Core Set</span></span><br><span class="line">    <span class="built_in">CPU_ZERO</span>(&amp;mask);  <span class="comment">// Set Zero</span></span><br><span class="line">    <span class="built_in">CPU_SET</span>(<span class="number">6</span>, &amp;mask);  <span class="comment">// Add core to set</span></span><br><span class="line">    <span class="built_in">CPU_SET</span>(<span class="number">7</span>, &amp;mask);</span><br><span class="line">    <span class="built_in">CPU_SET</span>(<span class="number">8</span>, &amp;mask);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">int</span> rc;</span><br><span class="line">    <span class="keyword">if</span>((rc = <span class="built_in">sched_setaffinity</span>(<span class="number">0</span>, <span class="built_in"><span class="keyword">sizeof</span></span>(mask), &amp;mask))</span><br><span class="line">    &#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Warning: Set affinity failed!&quot;</span>&lt;&lt;<span class="built_in">strerror</span>(rc)&lt;&lt;endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">cpu_set_t</span> get;</span><br><span class="line">        <span class="keyword">if</span>((rc = <span class="built_in">sched_getaffinity</span>(<span class="number">0</span>, <span class="built_in"><span class="keyword">sizeof</span></span>(get), &amp;get)))</span><br><span class="line">        &#123;</span><br><span class="line">             cout&lt;&lt;<span class="string">&quot;Waring: Could not get thread affinity.&quot;</span>&lt;&lt;endl;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">pid_t</span> pid = <span class="built_in">getpid</span>();</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Current PID: &quot;</span>&lt;&lt;pid&lt;&lt;endl;</span><br><span class="line">        <span class="keyword">size_t</span> i;</span><br><span class="line">        <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; <span class="built_in">sysconf</span>(_SC_NPROCESSORS_CONF); ++i)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">CPU_ISSUE</span>(i, &amp;get))</span><br><span class="line">                cout&lt;&lt;<span class="string">&quot;Running on processor: &quot;</span>&lt;&lt;i&lt;&lt;endl;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意：若使用到pthread，则需要将pthread.h放到sched.h之后，并在sched.h之前声明#define __USE_GNU，否则会出现undefined reference CPU_ZERO等错误。</p>
+</blockquote>
+<h2 id="屏蔽硬中断（硬盘、网卡）"><a href="#屏蔽硬中断（硬盘、网卡）" class="headerlink" title="屏蔽硬中断（硬盘、网卡）"></a>屏蔽硬中断（硬盘、网卡）</h2><p>中断源（IRQ）向CPU Core发送中断，CPU Core调用中断处理程序对中断进程处理。我们可以通过改写<code>/proc/irq/*/smp_affinity</code>文件，避免中断源（IRQ）向某些CPU Core发送中断。该方法对硬盘、网卡等设备引起的硬中断有效。</p>
+<h3 id="查看设备中断数据"><a href="#查看设备中断数据" class="headerlink" title="查看设备中断数据"></a>查看设备中断数据</h3><p>通过查看<code>/proc/interrupts</code>文件可查看设备中断数据：</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">           CPU0       CPU1       CPU2       CPU3       CPU4       CPU5       CPU6       CPU7       </span><br><span class="line">  0:         17          0          0          0          0          0          0          0   IO-APIC   2-edge      timer</span><br><span class="line">  8:          0          0          0          0          0          1          0          0   IO-APIC   8-edge      rtc0</span><br><span class="line">  9:       4058        258        157         14        464        454         34        134   IO-APIC   9-fasteoi   acpi</span><br><span class="line"> 16:     137153      19574      11430      10138      47072      27502      15934      10113   IO-APIC  16-fasteoi   ahci[0000:05:00.0], xhci-hcd:usb1, nvkm</span><br><span class="line"> 17:         16          3          1          9         35          2          2          1   IO-APIC  17-fasteoi   snd_hda_intel:card1</span><br><span class="line"> 18:      88952       2170       1592       1253       4255       5430       1790       1738   IO-APIC  18-fasteoi   wlp3s0</span><br><span class="line"> 22:     172111       2954       2515       1897       5000       3684       2479       2513   IO-APIC  22-fasteoi   snd_hda_intel:card0</span><br><span class="line">NMI:          0          0          0          0          0          0          0          0   Non-maskable interrupts</span><br><span class="line">LOC:     395090     279787     239243     235695     233918      90471      94234      90479   Local timer interrupts</span><br><span class="line">SPU:          0          0          0          0          0          0          0          0   Spurious interrupts</span><br><span class="line">PMI:          0          0          0          0          0          0          0          0   Performance monitoring interrupts</span><br><span class="line">IWI:          0          0          0          1          1          1          0          3   IRQ work interrupts</span><br><span class="line">RTR:          6          0          0          0          0          0          0          0   APIC ICR read retries</span><br><span class="line">RES:       7425       5663       4375       3801       3051       2825       1963       1787   Rescheduling interrupts</span><br><span class="line">CAL:         31         29         24         22         36         28         34         31   Function call interrupts</span><br><span class="line">TLB:      10387      11374      10758      11769       7566       8508       8799       7195   TLB shootdowns</span><br><span class="line">TRM:          2          2          2          2          2          2          2          2   Thermal event interrupts</span><br><span class="line">THR:          0          0          0          0          0          0          0          0   Threshold APIC interrupts</span><br><span class="line">MCE:          0          0          0          0          0          0          0          0   Machine check exceptions</span><br><span class="line">MCP:         17         17         17         17         17         17         17         17   Machine check polls</span><br><span class="line">ERR:          0</span><br><span class="line">MIS:          0</span><br><span class="line">PIN:          0          0          0          0          0          0          0          0   Posted-interrupt notification event</span><br><span class="line">PIW:          0          0          0          0          0          0          0          0   Posted-interrupt wakeup event</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>第一列是IRQ号</li>
+<li>第二列开始表示某CPU内核被多少次中断。</li>
+</ul>
+<h3 id="SMP-AFFINITY"><a href="#SMP-AFFINITY" class="headerlink" title="SMP_AFFINITY"></a>SMP_AFFINITY</h3><p>SMP，即symmetric multiprocessing（对称多处理器），通过多个处理器处理程序的方式。smp_affinity文件处理一个IRQ的中断亲和性。在smp_affinity文件结合每个IRQ号在<code>/proc/irq/&#123;IRQ_NUMBER&#125;/smp_affinity</code>文件。该文件的值是一个16进制掩码表示系统的所有CPU核。</p>
+<p>例如，Solarflare网卡的设备名为eth1，其中断如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep eth1 /proc/interrupts</span><br></pre></td></tr></table></figure>
+
+<p>输出如下：</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">64:    95218  168786727  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  IR-PCI-MSI-edge  eth1-0</span><br><span class="line">65:    38440  53649095   0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  IR-PCI-MSI-edge  eth1-1</span><br><span class="line">66:    6207   1011519    0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  IR-PCI-MSI-edge  eth1-ptp</span><br></pre></td></tr></table></figure>
+
+<p>可以看到eth1设备共有三个IRQ号：64,65,66，其相对应的smp_afffinity文件时：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/irq/64/smp_affinity</span><br><span class="line">cat /proc/irq/65/smp_affinity</span><br><span class="line">cat /proc/irq/66/smp_affinity</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0000,00000000,00000000,0000000f</span><br><span class="line">0000,00000000,00000000,0000000f</span><br><span class="line">0000,00000000,00000000,0000000f</span><br></pre></td></tr></table></figure>
+
+<p>smp_affinity是16进制表示，f就是二进制的1111，表示0-3这四个CPU Core都会参与处理中断。</p>
+<p>假设我们想要指定仅0-1这两个核心处理中断，则可以写入如下数据到smp_affinity：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 3 &gt; /proc/irq/64/smp_affinity</span><br><span class="line"><span class="built_in">echo</span> 3 &gt; /proc/irq/65/smp_affinity</span><br><span class="line"><span class="built_in">echo</span> 3 &gt; /proc/irq/66/smp_affinity</span><br></pre></td></tr></table></figure>
+
+<h2 id="屏蔽软中断（Work-queue）"><a href="#屏蔽软中断（Work-queue）" class="headerlink" title="屏蔽软中断（Work queue）"></a>屏蔽软中断（Work queue）</h2><p>workqueue是自kernel2.6引入的一种任务执行机制，和softirq，tasklet并称下半部（bottom half）三剑客。workqueue在进程上下文异步执行任务，能够进行睡眠。可以通过改写<code>/sys/devices/virtual/workqueue/*/cpumask</code>文件实现屏蔽Work queue的软中断。</p>
+<p><code>/sys/devices/virtual/workqueue/cpumask</code>文件中记录了全局的cpumask，可以影响所有的workqueue。文件内容格式与smp_affinity相同：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /sys/devices/virtual/workqueue/cpumask</span><br></pre></td></tr></table></figure>
+
+<p>输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0000,00000000,00000000,00000007</span><br></pre></td></tr></table></figure>
+
+<p>代表0-2这三个CPU Core用来处理work queue，我们可以通过写入”f”来仅让与核心进程无关的0-3这四个CPU Core参与work queue处理：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;f&#x27;</span> &gt; /sys/devices/virtual/workqueue/cpumask</span><br></pre></td></tr></table></figure>
+
+<h2 id="屏蔽软中断（Local-Timer-Interrupt）"><a href="#屏蔽软中断（Local-Timer-Interrupt）" class="headerlink" title="屏蔽软中断（Local Timer Interrupt）"></a>屏蔽软中断（Local Timer Interrupt）</h2><p>Linux的scheduler time slice是通过LOC实现的，如果我们让一个线程独占一个CPU Core，就不需要scheduler在这个CPU Core上切换进程。可以通过<code>isolcpus</code>系统启动选项隔离一些核，让他们只能被绑定的线程使用。同时，我们还可以启用“adaptive-ticks”模式，达到减少独占线程收到LOC频率的效果，这可以通过<code>nohz_full</code>和<code>rcu_nocbs</code>启动选项实现。</p>
+<p>假设令6-8三个核心屏蔽软中断，我们需要在系统启动选项中加入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohz=on nohz_full=6-8 rcu_nocbs=6-8</span><br></pre></td></tr></table></figure>
+
+<p>进入adaptive-ticks模式后，如果CPU Core上的running task只有一个时，系统向其发送的LOC频率会显著降低，但LOC不能被完全屏蔽，系统内核的一些操作比如计算CPU负载等仍然需要周期性的LOC。</p>
+<h2 id="更多"><a href="#更多" class="headerlink" title="更多"></a>更多</h2><p>中断和smp_affinity：</p>
+<p><a target="_blank" rel="noopener" href="https://huataihuang.gitbooks.io/cloud-atlas/content/os/linux/kernel/cpu/interrupt_and_smp_affinity.html">中断和smp_affinity</a></p>
+<p>SolarFlare资源汇总：</p>
+<p><a target="_blank" rel="noopener" href="https://williamlfang.github.io/shared/2019-12-20-solarflare%E8%B5%84%E6%BA%90%E6%B1%87%E6%80%BB/">SolarFlare资源汇总</a></p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\01\tcpheart\" rel="bookmark">Qt实现简易心跳包机制</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\12\当我谈线程池时我谈些什么\" rel="bookmark">当我谈线程池时我谈些什么</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\05\19\C++日期与时间编程\" rel="bookmark">C++日期与时间编程（C++11-C++17）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\04\22\C++并发编程\" rel="bookmark">C++并发编程</a></div>
+    </li>
+  </ul>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%E5%BF%83%E5%BE%97/" rel="tag"># 学习心得</a>
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E4%BD%8E%E5%BB%B6%E8%BF%9F%E7%B3%BB%E7%BB%9F/" rel="tag"># 低延迟系统</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/01/01/tcpheart/" rel="prev" title="Qt实现简易心跳包机制">
+      <i class="fa fa-chevron-left"></i> Qt实现简易心跳包机制
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E4%BD%8E%E5%BB%B6%E8%BF%9F%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B0%83%E4%BC%98"><span class="nav-number">1.</span> <span class="nav-text">Linux低延迟服务器调优</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%91%E5%AE%9A%E6%A0%B8%E5%BF%83"><span class="nav-number">1.2.</span> <span class="nav-text">绑定核心</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU-Affinity"><span class="nav-number">1.2.1.</span> <span class="nav-text">CPU Affinity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%BF%9B%E7%A8%8B%E5%88%86%E9%85%8D%E7%9A%84CPU-Core"><span class="nav-number">1.2.2.</span> <span class="nav-text">查看进程分配的CPU Core</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#taskset"><span class="nav-number">1.2.3.</span> <span class="nav-text">taskset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sched-setaffinity"><span class="nav-number">1.2.4.</span> <span class="nav-text">sched_setaffinity</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%8F%E8%94%BD%E7%A1%AC%E4%B8%AD%E6%96%AD%EF%BC%88%E7%A1%AC%E7%9B%98%E3%80%81%E7%BD%91%E5%8D%A1%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">屏蔽硬中断（硬盘、网卡）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E8%AE%BE%E5%A4%87%E4%B8%AD%E6%96%AD%E6%95%B0%E6%8D%AE"><span class="nav-number">1.3.1.</span> <span class="nav-text">查看设备中断数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SMP-AFFINITY"><span class="nav-number">1.3.2.</span> <span class="nav-text">SMP_AFFINITY</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%8F%E8%94%BD%E8%BD%AF%E4%B8%AD%E6%96%AD%EF%BC%88Work-queue%EF%BC%89"><span class="nav-number">1.4.</span> <span class="nav-text">屏蔽软中断（Work queue）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%8F%E8%94%BD%E8%BD%AF%E4%B8%AD%E6%96%AD%EF%BC%88Local-Timer-Interrupt%EF%BC%89"><span class="nav-number">1.5.</span> <span class="nav-text">屏蔽软中断（Local Timer Interrupt）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E5%A4%9A"><span class="nav-number">1.6.</span> <span class="nav-text">更多</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skykey"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Skykey</p>
+  <div class="site-description" itemprop="description">总有些惊奇的际遇，比方说当我遇见你。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skykeyjoker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zcxzxlc@163.com" title="E-Mail → mailto:zcxzxlc@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/skykeyjoker" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://t.me/Skykeyjoker" title="Telegram → https:&#x2F;&#x2F;t.me&#x2F;Skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-telegram fa-fw"></i>Telegram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skykey</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">125k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">1:54</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : '4RA0u9zgOezRXWIwxd4uXwHI-gzGzoHsz',
+      appKey     : 'BzFXxI5BoDejh1427SpPWReR',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+<div class="moon-menu">
+  <div class="moon-menu-items">
+    
+    <div id="moon-menu-item-back2bottom" class="moon-menu-item">
+      <i class='fas fa-chevron-down'></i>    </div>
+    
+    <div id="moon-menu-item-back2top" class="moon-menu-item">
+      <i class='fas fa-chevron-up'></i>    </div>
+    
+  </div>
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"></circle>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"></circle>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon"><i class='fas fa-ellipsis-v'></i></div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div><script src="/js/injector.js"></script>
+</body>
+</html>
