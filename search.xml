@@ -21,6 +21,59 @@
 ]]></content>
   </entry>
   <entry>
+    <title>关于std::thread的二三事</title>
+    <url>/2022/02/01/%E5%85%B3%E4%BA%8Estd_thread%E7%9A%84%E4%BA%8C%E4%B8%89%E4%BA%8B/</url>
+    <content><![CDATA[<h1 id="关于std-thread的二三事"><a href="#关于std-thread的二三事" class="headerlink" title="关于std::thread的二三事"></a>关于std::thread的二三事</h1><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>很早之前写过一篇关于线程池文章，《<a href="https://zhuanlan.zhihu.com/p/367309864">基于C++11实现线程池</a>》，一直被网友翻出来，对里面的一些细节实现提了许多问题。其实更推荐大家去阅读后来写的另外一篇关于线程池的文章，《<a href="https://zhuanlan.zhihu.com/p/444375447">当我谈线程池时我谈些什么——线程池学习笔记</a>》。原因很简单，写第一篇线程池文章的时候，自己属实是菜的不行（现在依旧是菜的不行），花了很长时间去学习一些里面用到的C++11的新语法，文章里面讲的重点也是涉及到的C++11语法。所以，更关心线程池本身的实现的话，更适合去看新文章《<a href="https://zhuanlan.zhihu.com/p/444375447">当我谈线程池时我谈些什么——线程池学习笔记</a>》，作为现代C++语法的新学者，想花更多精力在学习现代C++语法的话，适合去看老文章《<a href="https://zhuanlan.zhihu.com/p/367309864">基于C++11实现线程池</a>》。</p>
+<p>言归正传，在那篇老文章里有挺多网友提了一些<code>std::thread</code>相关的问题。今天看了会cppreference，写了点代码实践了下，集中回答了一些问题，顺便水篇文章算是学习笔记了。</p>
+<span id="more"></span>
+
+<h2 id="std-thread对象构建的新线程何时开始执行"><a href="#std-thread对象构建的新线程何时开始执行" class="headerlink" title="std::thread对象构建的新线程何时开始执行"></a>std::thread对象构建的新线程何时开始执行</h2><p>线程在构造关联的线程对象时立即开始执行，从提供给作为构造函数参数的顶层函数开始。</p>
+<p>有几点需要注意：</p>
+<ul>
+<li>顶层函数的返回值将被忽略，而且若它以抛异常终止，则调用<code>std::terminate</code>。在需要获取返回值时，顶层函数可以通过<code>std::promise</code>或者修改共享变量（可能需要锁机制进行线程同步）。</li>
+<li>当使用不带参数的默认构造函数<code>thread()</code>构造<code>std::thread</code>对象时，该对象不表示任何线程，也不会有新线程产生。</li>
+<li>当时用移动构造函数<code>thread(thread&amp;&amp;other)</code>构造<code>std::thread</code>对象时，该对象会被构造为表示曾为<code>other</code>所表示的执行线程的<code>std::thread</code>对象。此调用后<code>other</code>不再表示执行线程。</li>
+<li><code>std::thread</code>对象不可复制（复制构造函数已被删除）。没有两个<code>std::thread</code>对象会表示同一执行线程。</li>
+</ul>
+<h2 id="std-thread对象构建新线程时可以传入什么东西作为参数"><a href="#std-thread对象构建新线程时可以传入什么东西作为参数" class="headerlink" title="std::thread对象构建新线程时可以传入什么东西作为参数"></a>std::thread对象构建新线程时可以传入什么东西作为参数</h2><p><code>std::thread</code>常用的构造函数如下：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt; class Function, class... Args &gt;</span></span><br><span class="line"><span class="function"><span class="keyword">explicit</span> <span class="title">thread</span><span class="params">( Function&amp;&amp; f, Args&amp;&amp;... args )</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>f</code>为任意可调用对象（Callable），<code>args</code>为任意数目的作为可调用对象<code>f</code>的参数。</p>
+<p>可调用对象（Callable）是C++的一个具名要求，常见的函数、成员函数、仿函数（函数对象）都属于可调用对象。</p>
+<h3 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h3><p>传入函数的情况最常见也最简单，例如：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f1</span><span class="params">(<span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Thread 1 executing\n&quot;</span>;</span><br><span class="line">        ++n;</span><br><span class="line">        std::this_thread::<span class="built_in">sleep_for</span>(std::chrono::<span class="built_in">milliseconds</span>(<span class="number">10</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="keyword">int</span> n = <span class="number">0</span>;</span><br><span class="line">   <span class="function">std::thread <span class="title">t</span><span class="params">(f1, n + <span class="number">1</span>)</span></span>;</span><br><span class="line">   t.<span class="built_in">join</span>();</span><br><span class="line">   <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>仅需将函数名与函数参数分别传入即可。</p>
+<h3 id="成员函数"><a href="#成员函数" class="headerlink" title="成员函数"></a>成员函数</h3><p>当需要传入类时，有两种情况，第一种是比较复杂的情况，我们需要传入类的成员函数。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">foo</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">bar</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i) &#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">&quot;Thread 3 executing\n&quot;</span>;</span><br><span class="line">            ++n;</span><br><span class="line">            std::this_thread::<span class="built_in">sleep_for</span>(std::chrono::<span class="built_in">milliseconds</span>(<span class="number">10</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> n = <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = <span class="number">0</span>;</span><br><span class="line">    foo f;</span><br><span class="line">    <span class="function">std::thread <span class="title">t</span><span class="params">(&amp;foo::bar, &amp;f)</span></span>; <span class="comment">// t 在对象 f 上运行 foo::bar()</span></span><br><span class="line">   	t.<span class="built_in">join</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们需要以<code>std::thread(&amp;类名::成员函数名, &amp;类实例)</code>的格式传入新线程。</p>
+<h3 id="仿函数（函数对象）"><a href="#仿函数（函数对象）" class="headerlink" title="仿函数（函数对象）"></a>仿函数（函数对象）</h3><p>仿函数（或称函数对象）便是传入类的第二种情况，此时该类的工作比较简单（单一，并非指实际工作难度），例如标准库中的<code>std::function</code>, <code>std::bind</code>等，又例如第一篇文章中的<code>ThreadWorker</code>类。成为仿函数的类，一般来说需要**重载函数调用运算符()**。在<code>std::thread</code>对象构建新线程后，会自动进行INVOKE操作执行传入的可调用对象。INVOKE操作执行对象为仿函数时，会自动调用仿函数重载的函数调用运算符<code>operator()</code>。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">baz</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i) &#123;</span><br><span class="line">            std::cout &lt;&lt; <span class="string">&quot;Thread 4 executing\n&quot;</span>;</span><br><span class="line">            ++n;</span><br><span class="line">            std::this_thread::<span class="built_in">sleep_for</span>(std::chrono::<span class="built_in">milliseconds</span>(<span class="number">10</span>));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> n = <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">std::thread <span class="title">t</span><span class="params">(b)</span></span>; <span class="comment">// t 在对象 b 的副本上运行 baz::operator()</span></span><br><span class="line">    t.<span class="built_in">join</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，新线程运行的仿函数实际上是传入时指定的仿函数的副本，这同时也就要求该仿函数是可拷贝的。</p>
+<h3 id="函数参数传引用"><a href="#函数参数传引用" class="headerlink" title="函数参数传引用"></a>函数参数传引用</h3><p><code>std::thread</code>对象构造新线程时，会移动或按值复制线程函数的参数。若需要传递引用参数给线程函数，则必须包装它（例如用<code>std::ref</code>或<code>std::cref</code>）。例如：</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f2</span><span class="params">(<span class="keyword">int</span>&amp; n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">5</span>; ++i) &#123;</span><br><span class="line">        std::cout &lt;&lt; <span class="string">&quot;Thread 2 executing\n&quot;</span>;</span><br><span class="line">        ++n;</span><br><span class="line">        std::this_thread::<span class="built_in">sleep_for</span>(std::chrono::<span class="built_in">milliseconds</span>(<span class="number">10</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> n = <span class="number">0</span>;</span><br><span class="line">    <span class="function">std::thread <span class="title">t</span><span class="params">(f2, std::ref(n))</span></span>; <span class="comment">// 按引用传递</span></span><br><span class="line">    t.<span class="built_in">join</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>暂时就总结了这些，后续若有内容再更新。</p>
+<h2 id="更多"><a href="#更多" class="headerlink" title="更多"></a>更多</h2><p><a href="https://zh.cppreference.com/w/cpp/thread/thread">std::thread-cppreference.com</a></p>
+<p><a href="https://skykeyjoker.com/2021/04/22/C%2B%2B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">C++并发编程</a></p>
+<p><a href="https://paul.pub/cpp-memory-model/">C++内存模型</a></p>
+]]></content>
+      <categories>
+        <category>C++</category>
+      </categories>
+      <tags>
+        <tag>C++</tag>
+        <tag>C++11</tag>
+        <tag>C++17</tag>
+        <tag>学习心得</tag>
+        <tag>C++14</tag>
+        <tag>C++并发</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux低延迟服务器调优</title>
     <url>/2022/01/27/Linux%E4%BD%8E%E5%BB%B6%E8%BF%9F%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%B0%83%E4%BC%98/</url>
     <content><![CDATA[<h1 id="Linux低延迟服务器调优"><a href="#Linux低延迟服务器调优" class="headerlink" title="Linux低延迟服务器调优"></a>Linux低延迟服务器调优</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>本文基于饶萌大佬的《Linux低延迟服务器系统调优》一文总结整理，自行补充了一些细节。大佬博文指路：</p>
@@ -272,10 +325,10 @@
       <tags>
         <tag>C++</tag>
         <tag>C++11</tag>
-        <tag>C++14</tag>
         <tag>C++17</tag>
-        <tag>C++并发</tag>
         <tag>学习心得</tag>
+        <tag>C++14</tag>
+        <tag>C++并发</tag>
       </tags>
   </entry>
   <entry>
@@ -708,8 +761,8 @@
         <tag>C++</tag>
         <tag>C++11</tag>
         <tag>C++17</tag>
-        <tag>学习心得</tag>
         <tag>日期与时间编程</tag>
+        <tag>学习心得</tag>
       </tags>
   </entry>
   <entry>
@@ -1559,10 +1612,10 @@
       <tags>
         <tag>C++</tag>
         <tag>C++11</tag>
-        <tag>C++14</tag>
         <tag>C++17</tag>
-        <tag>C++并发</tag>
         <tag>学习心得</tag>
+        <tag>C++14</tag>
+        <tag>C++并发</tag>
       </tags>
   </entry>
   <entry>
