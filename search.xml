@@ -1741,8 +1741,8 @@
       </categories>
       <tags>
         <tag>Qt</tag>
-        <tag>Model/View</tag>
         <tag>Sql</tag>
+        <tag>Model/View</tag>
       </tags>
   </entry>
   <entry>
@@ -2176,9 +2176,9 @@
         <category>Linux</category>
       </categories>
       <tags>
+        <tag>转载</tag>
         <tag>linux</tag>
         <tag>cmake</tag>
-        <tag>转载</tag>
       </tags>
   </entry>
   <entry>
