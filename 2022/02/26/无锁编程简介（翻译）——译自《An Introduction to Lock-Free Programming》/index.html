@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"skykeyjoker.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》写在前面本文翻译自经典博文《An Introduction to Lock-Free Programming》，是一篇有关于无锁编程的经典文章。由于译者水平优先，如有谬误实所难免，还请指正。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》">
+<meta property="og:url" content="https://skykeyjoker.com/2022/02/26/%E6%97%A0%E9%94%81%E7%BC%96%E7%A8%8B%E7%AE%80%E4%BB%8B%EF%BC%88%E7%BF%BB%E8%AF%91%EF%BC%89%E2%80%94%E2%80%94%E8%AF%91%E8%87%AA%E3%80%8AAn%20Introduction%20to%20Lock-Free%20Programming%E3%80%8B/index.html">
+<meta property="og:site_name" content="Skykey&#39;s Home">
+<meta property="og:description" content="无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》写在前面本文翻译自经典博文《An Introduction to Lock-Free Programming》，是一篇有关于无锁编程的经典文章。由于译者水平优先，如有谬误实所难免，还请指正。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://preshing.com/images/its-lock-free.png">
+<meta property="og:image" content="https://preshing.com/images/techniques.png">
+<meta property="og:image" content="https://preshing.com/images/rmw-turnstile-2.png">
+<meta property="article:published_time" content="2022-02-26T08:10:00.000Z">
+<meta property="article:modified_time" content="2022-02-26T08:11:10.259Z">
+<meta property="article:author" content="Skykey">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="C++11">
+<meta property="article:tag" content="学习心得">
+<meta property="article:tag" content="C++并发">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://preshing.com/images/its-lock-free.png">
+
+<link rel="canonical" href="https://skykeyjoker.com/2022/02/26/%E6%97%A0%E9%94%81%E7%BC%96%E7%A8%8B%E7%AE%80%E4%BB%8B%EF%BC%88%E7%BF%BB%E8%AF%91%EF%BC%89%E2%80%94%E2%80%94%E8%AF%91%E8%87%AA%E3%80%8AAn%20Introduction%20to%20Lock-Free%20Programming%E3%80%8B/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
+  <title>无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》 | Skykey's Home</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skykey's Home</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Skykey的私人博客ᕕ( ᐛ )ᕗ</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>Links</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+  <a href="https://github.com/skykeyjoker" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skykeyjoker.com/2022/02/26/%E6%97%A0%E9%94%81%E7%BC%96%E7%A8%8B%E7%AE%80%E4%BB%8B%EF%BC%88%E7%BF%BB%E8%AF%91%EF%BC%89%E2%80%94%E2%80%94%E8%AF%91%E8%87%AA%E3%80%8AAn%20Introduction%20to%20Lock-Free%20Programming%E3%80%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Skykey">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skykey's Home">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-02-26 16:10:00 / 修改时间：16:11:10" itemprop="dateCreated datePublished" datetime="2022-02-26T16:10:00+08:00">2022-02-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/02/26/%E6%97%A0%E9%94%81%E7%BC%96%E7%A8%8B%E7%AE%80%E4%BB%8B%EF%BC%88%E7%BF%BB%E8%AF%91%EF%BC%89%E2%80%94%E2%80%94%E8%AF%91%E8%87%AA%E3%80%8AAn%20Introduction%20to%20Lock-Free%20Programming%E3%80%8B/" class="post-meta-item leancloud_visitors" data-flag-title="无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/02/26/%E6%97%A0%E9%94%81%E7%BC%96%E7%A8%8B%E7%AE%80%E4%BB%8B%EF%BC%88%E7%BF%BB%E8%AF%91%EF%BC%89%E2%80%94%E2%80%94%E8%AF%91%E8%87%AA%E3%80%8AAn%20Introduction%20to%20Lock-Free%20Programming%E3%80%8B/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/02/26/%E6%97%A0%E9%94%81%E7%BC%96%E7%A8%8B%E7%AE%80%E4%BB%8B%EF%BC%88%E7%BF%BB%E8%AF%91%EF%BC%89%E2%80%94%E2%80%94%E8%AF%91%E8%87%AA%E3%80%8AAn%20Introduction%20to%20Lock-Free%20Programming%E3%80%8B/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="无锁编程简介（翻译）——译自《An-Introduction-to-Lock-Free-Programming》"><a href="#无锁编程简介（翻译）——译自《An-Introduction-to-Lock-Free-Programming》" class="headerlink" title="无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》"></a>无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》</h1><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>本文翻译自经典博文<a target="_blank" rel="noopener" href="https://preshing.com/20120612/an-introduction-to-lock-free-programming/">《An Introduction to Lock-Free Programming》</a>，是一篇有关于无锁编程的经典文章。由于译者水平优先，如有谬误实所难免，还请指正。</p>
+<span id="more"></span>
+
+<h2 id="导入"><a href="#导入" class="headerlink" title="导入"></a>导入</h2><p>无锁编程是一个不小的挑战。它不仅难在实现这个任务本身的复杂度，还难在对这个任务自身的理解上。</p>
+<p>我很幸运第一次接触到无锁编程的介绍是Bruce Dawson写的博文——《<a target="_blank" rel="noopener" href="http://msdn.microsoft.com/en-us/library/windows/desktop/ee418650(v=vs.85).aspx">Lockless Programming Considerations</a>》（无锁编程的相关注意事项），这篇文章是一篇完美的读物，且通俗易懂。与其他人一样，我有很多机会将Bruce讲的建议应用到实际的开发和调试工作中，例如Xbox 360平台。</p>
+<p>从那时起，市面上陆续出现了许多关于无锁编程的优秀的资料，这些资料涉及了从抽象的理论和正确性的证明到实际的应用和硬件的细节。我也在文末列了一些参考文献。与此同时，我发现很多信息，在不同的资料中甚至会出现混淆的情况：例如，一些材料中假设了<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Sequential_consistency">顺序一致性</a>的情况，忽略了内存顺序的问题。然而顺序一致性带来的问题，反而是影响C/C++无锁编程的一些代表性问题。C++11标准带来的<a target="_blank" rel="noopener" href="http://en.cppreference.com/w/cpp/atomic">原子类型标准库</a>也给我们的无锁编程带来了新的挑战，甚至改变了我们许多人对无锁算法的理解。</p>
+<p>在这篇文章中，我将重新介绍无锁编程。首先，我会对无锁编程进行定义，然后我会对无锁编程提炼出几个关键的概念。我会利用流程图来展示这些概念之间的相互关系，然后一一对它们进行解释。在开始讲之前，我希望任何一个希望使用无锁编程的程序员都最好已经理解如何使用互斥锁和其他的高级同步工具（例如信号量和消息队列）来编写正确的多线程代码。</p>
+<h2 id="什么是无锁编程"><a href="#什么是无锁编程" class="headerlink" title="什么是无锁编程"></a>什么是无锁编程</h2><p>人们经常将无锁编程理解为没有互斥锁的编程方式。这是正确的，但是只说了一个方面。基于学术论文中被普遍接受的定义比这要全面一些。从它的本质来说，无锁编程描述的是代码的特性，并不涉及实际代码的编写。</p>
+<p>基本上，如果你程序的某一部分代码满足下图情况，则可以认为这部分代码是无锁的。相反，如果你的这部分代码并不满足这些情况，则说明这些代码不是无锁的。</p>
+<p align="center">
+<img src="https://preshing.com/images/its-lock-free.png" alt="its-lock-free"/>
+</p>
+
+<p>在这里，“锁”并不是简单地指互斥锁，而是代表使整个程序陷入锁住状态的可能性。引起这种情况的原因各种各样，例如死锁、活锁，甚至是你的死对头故意做了一些对你的程序不利的线程调度的决策。最后一种原因听起来很荒谬很可笑，但实际上是可能出现。在某种情况下，共享的互斥锁会被轻易攻破进而造成程序陷入锁住的状态：你的程序的某个线程获取到一个共享锁后，你的死对头可以仅仅再也不调度这个进程从而导致你的整个程序陷入锁住态。当然，这仅仅是我们的一个假想，实际上真正的操作系统并不会这样做。</p>
+<p>这里举一个没有互斥锁、但依旧不是无锁编程的例子。刚开始，<code>X=0</code>。作为对读者的一个锻炼，请你们思考一下两个线程怎么来调度使它们都不会退出这个循环。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (X == <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">    X = <span class="number">1</span> - X;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>没有人会期望一个大的应用程序是完全无锁的。一般来说，我们只是希望在整个基础代码中指出一些特殊的无锁操作集合。比如，在一个无锁队列中，它可能会有一个无锁的操作，比如<code>push</code>，<code>pop</code>,<code>isEmpty</code>等等。</p>
+<p>《<a target="_blank" rel="noopener" href="http://www.amazon.com/gp/product/0123973376/ref=as_li_ss_tl?ie=UTF8&tag=preshonprogr-20&linkCode=as2&camp=1789&creative=390957&creativeASIN=0123973376">The Art of Multiprocessor Programming</a>》（多处理器编程艺术）的作者Herlihy和Shavit，倾向于把这些操作表示为类的方法，然后得出了关于无锁的如下简介定义：在一个有限的执行中，一些方法的调用一定会有限的结束。换句话说，只要程序能够保持调用这些无锁的操作，结束的操作的数量不管怎样都能保持增加。在进行那些操作时，系统从算法角度来说是不可能把程序锁住的。</p>
+<p>无锁编程的一个重要意义是如果你中止了一个线程，它将不会阻止其他组内的线程的操作，因为它们有自己的无锁操作。这也表明了在编写中断处理程序和实时系统时无锁编程的价值，因为在这些情境下，无论系统处于什么状态，一定的任务一定能在一定的时间范围内完成。</p>
+<p>最后我们还需要纠正一个概念：被设计来阻塞线程的操作并不会降低算法的质量。比如说，一个队列的出队列操作在队列为空时可能会倾向于阻塞，但其他的代码分支同样可以认为是无锁的。</p>
+<h2 id="无锁编程技术"><a href="#无锁编程技术" class="headerlink" title="无锁编程技术"></a>无锁编程技术</h2><p>当你尝试在无锁编程中实现无阻塞，有一系列的技术可以实现，例如原子操作、内存屏障、避免ABA问题等。这也是无锁编程变得如此复杂的原因之一。</p>
+<p>那么这些技术之间有什么联系呢？为了展示它们的关系，我将它们都画在了下面的流程图中。然后我会详尽地介绍下面地的每一种技术。</p>
+<p align="center">
+<img src="https://preshing.com/images/techniques.png" alt="无锁编程技术"/>
+</p>
+
+<h2 id="原子RMD（Read-Modify-Write）操作"><a href="#原子RMD（Read-Modify-Write）操作" class="headerlink" title="原子RMD（Read-Modify-Write）操作"></a>原子RMD（Read-Modify-Write）操作</h2><p>原子操作是一种不可分割的对内存进行操作的方式——没有线程可以得到完成一半的操作。在现代处理器中，很多操作已经是原子的了，例如对简单数据类型的对齐的读写操作。</p>
+<p>RMW操作更进一步允许你去原子地进行更复杂地数据操作。如果一个无锁的算法需要多个写操作时，它们将显得更加有用。因为当多个线程同时在同一个内存地址中尝试RMW操作时，它们能很有效率地排成一队，并分时地执行这些操作。我已经在之前的博文中讨论过RMW操作的应用，例如<a target="_blank" rel="noopener" href="http://preshing.com/20120226/roll-your-own-lightweight-mutex">lightweight mutex</a>（轻量级互斥锁）， <a target="_blank" rel="noopener" href="http://preshing.com/20120305/implementing-a-recursive-mutex">recursive mutex</a>（递归互斥锁）和<a target="_blank" rel="noopener" href="http://preshing.com/20120522/lightweight-in-memory-logging">lightweight logging system</a>（轻量级的日志系统）。</p>
+<p align="center">
+<img src="https://preshing.com/images/rmw-turnstile-2.png" alt="RMW"/>
+</p>
+
+<p>RMW操作的例子包括Win32下的<a target="_blank" rel="noopener" href="http://msdn.microsoft.com/en-us/library/2ddez55b(v=vs.90).aspx"><code>_InterlockedIncrement</code></a>，IOS下的<a target="_blank" rel="noopener" href="http://developer.apple.com/library/ios/#DOCUMENTATION/System/Conceptual/ManPages_iPhoneOS/man3/OSAtomicAdd32.3.html"><code>OSAtomicAdd32</code></a>，和C++11下的<a target="_blank" rel="noopener" href="http://www.stdthread.co.uk/doc/headers/atomic/atomic/specializations/integral/fetch_add.html"><code>std::atomic::fetch_add</code></a>。需要我们注意的是，C++11中，原子操作标准并不保证这个操作在所有平台下都是无锁的，所以最好能够了解你使用的平台是否符合。你可以通过调用<a target="_blank" rel="noopener" href="http://www.stdthread.co.uk/doc/headers/atomic/atomic/specializations/integral/is_lock_free.html"><code>std::atomic&lt;&gt;::is_lock_free</code></a>来确认。</p>
+<p>不同的CPU家族有<a target="_blank" rel="noopener" href="https://jfdube.wordpress.com/2011/11/30/understanding-atomic-operations/">不同的方式</a>来支持RMW操作。像PowerPC和ARM这样的处理器有<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Load-link/store-conditional">load-link/store-conditional</a>指令，这将能有效的帮助你在底层实现自己的RMW操作，虽然它不是经常用到。同时，通用的RMW操作一般也是够用的。</p>
+<p>就像在流程图中展示的那样，即使在单核系统中，原子的RMW操作也是无锁编程的一个必要组成部分。没有原子性，一个线程可以在执行操作的中途被打断，而这可能会导致不一致的状态。</p>
+<h2 id="CAS（Compare-And-Swap）循环"><a href="#CAS（Compare-And-Swap）循环" class="headerlink" title="CAS（Compare-And-Swap）循环"></a>CAS（Compare-And-Swap）循环</h2><p>可能讨论最多的RMW操作就是<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Compare-and-swap">compare-and-swap</a>（CAS）。在Win32中，CAS通过一系列的内联函数来提供，比如<a target="_blank" rel="noopener" href="http://msdn.microsoft.com/en-us/library/ttk2z1ws.aspx"><code>_InterlockedCompareExchange</code></a>。通常，程序员在一个循环中使用CAS来重复尝试一个操作。这个模型典型的操作包括：将一个共享变量复制到一个局部变量中，进行一些特殊的操作，然后尝试使用CAS来修改该共享变量：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">LockFreeQueue::push</span><span class="params">(Node* newHead)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (;;)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// Copy a shared variable (m_Head) to a local.</span></span><br><span class="line">        Node* oldHead = m_Head;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Do some speculative work, not yet visible to other threads.</span></span><br><span class="line">        newHead-&gt;next = oldHead;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Next, attempt to publish our changes to the shared variable.</span></span><br><span class="line">        <span class="comment">// If the shared variable hasn&#x27;t changed, the CAS succeeds and we return.</span></span><br><span class="line">        <span class="comment">// Otherwise, repeat.</span></span><br><span class="line">        <span class="keyword">if</span> (_InterlockedCompareExchange(&amp;m_Head, newHead, oldHead) == oldHead)</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这些循环仍然被认为是无锁的，因为如果一个线程的测试失败了，这就意味着它一定在另一个线程中成功了——即使一些体系结构提供了一个差的CAS变体。当进行CAS循环时，特殊需要注意的地方使操作必须防止出现<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/ABA_problem">ABA问题</a>。</p>
+<h2 id="顺序一致性"><a href="#顺序一致性" class="headerlink" title="顺序一致性"></a>顺序一致性</h2><p>顺序一致性表示所有的线程都具有相同的内存操作顺序，同时这个顺序与程序源代码中的执行顺序保持一致。在顺序一致性的前提下，<a target="_blank" rel="noopener" href="http://preshing.com/20120515/memory-reordering-caught-in-the-act">之前博客</a>中出现的内存重新排序的情况就不会出现。</p>
+<p>一个简单但不切实际的实现顺序一致性的方法是关掉编译器优化，同时强制要求所有的线程跑在同一核中。在一个核中，即使线程先得到或者随意的线程调度的情况下也不会出现内存乱序的情况。</p>
+<p>一些编程语言即使在多核环境下也提供了包括顺序一致性的优化代码。在C++11中，你可以将共享变量声明为C++11中有默认内存顺序限制的原子类型。在Java中，你可以将共享变量声明为volatile类型。这里是用C++11的方式重写的<a target="_blank" rel="noopener" href="http://preshing.com/20120515/memory-reordering-caught-in-the-act">之前博客</a>的例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::atomic&lt;<span class="keyword">int</span>&gt; <span class="title">X</span><span class="params">(<span class="number">0</span>)</span>, <span class="title">Y</span><span class="params">(<span class="number">0</span>)</span></span>;</span><br><span class="line"><span class="keyword">int</span> r1, r2;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">thread1</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    X.<span class="built_in">store</span>(<span class="number">1</span>);</span><br><span class="line">    r1 = Y.<span class="built_in">load</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">thread2</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Y.<span class="built_in">store</span>(<span class="number">1</span>);</span><br><span class="line">    r2 = X.<span class="built_in">load</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为C++11的原子类型保证了顺序一致性，所以结果不可能为<code>r1=r2=0</code>。为了实现这种效果，编译器必须增加额外的指令——内存屏障和/或RMW操作。相比于那些程序员直接处理内存顺序来说，这些额外的指令让应用的执行效率更低。</p>
+<h2 id="内存顺序"><a href="#内存顺序" class="headerlink" title="内存顺序"></a>内存顺序</h2><p>就像在流程图中所建议的，任何时候你使用多核做无锁编程时，你的环境都不能保证顺序一致性，所以你必须考虑如何防止内存乱序。</p>
+<p>在当今的体系结构下，保证正确的内存顺序一般有三种方向，它们能同时防止<a target="_blank" rel="noopener" href="http://preshing.com/20120625/memory-ordering-at-compile-time">编译器乱序</a>和<a target="_blank" rel="noopener" href="http://preshing.com/20120710/memory-barriers-are-like-source-control-operations">处理器乱序</a>：</p>
+<ul>
+<li>一个轻量级的同步或者内存屏障指令，这个我会在<a target="_blank" rel="noopener" href="http://preshing.com/20120913/acquire-and-release-semantics">以后的博客</a>中解释；</li>
+<li>一个完整的内存屏障指令，我<a target="_blank" rel="noopener" href="http://preshing.com/20120522/lightweight-in-memory-logging">之前的博客</a>已经描述过了；</li>
+<li>提供Acquire或release semantics的内存操作。</li>
+</ul>
+<p>Acquire semantics能够防止操作指令后面的内存操作乱序，而release semantics能够防止操作指令前面的内存操作乱序。这些操作尤其适合出现生产者/消费者关系的情况，也就是一个线程修改一些信息而另一个线程获得信息。我将会在<a target="_blank" rel="noopener" href="http://preshing.com/20120913/acquire-and-release-semantics">以后的博客</a>里讨论这个问题。</p>
+<h2 id="不同的处理器有不同的内存模型"><a href="#不同的处理器有不同的内存模型" class="headerlink" title="不同的处理器有不同的内存模型"></a>不同的处理器有不同的内存模型</h2><p>当出现内存乱序时，<a target="_blank" rel="noopener" href="http://www.linuxjournal.com/node/8212/print">不同的CPU都有不同的习惯</a>。规则是由每一个CPU供应商制定的，同时该CPU在硬件上严格地服从这个规则。比如，PowerPC和ARM处理器自己可以改变和指令相关的内存存储的顺序，但是，通常X86/64系列的CPU从英特尔到AMD系列都不能实现。所以我们说前者的CPU应有一个更加<a target="_blank" rel="noopener" href="http://preshing.com/20120930/weak-vs-strong-memory-models">自由的内存模型</a>。</p>
+<p>这里有一些方案来抽象这些硬件平台相关的细节，尤其是C++11给我们一种标准的方法来写可移植的无所代码。但是现在，我认为大多数的无锁编程程序员都至少有些还在意平台的不同。如果这里有一个最重要的平台不同点需要被记住的话，那一定是在X86/64指令集中，每一次从内存中获得数据会产生一次Acquire semantics，每一次将数据存到内存会产生一次release semantics——至少对无SSE指令和没有写结合操作的内存操作来说如此。所以，以前的无锁代码可以很好的在X86/64平台上运行，但是<a target="_blank" rel="noopener" href="http://www.drdobbs.com/parallel/208801974">其他机器</a>中可能会失效。</p>
+<p>如果你对硬件怎么实现内存乱序和为什么要有内存乱序感兴趣的话，我建议你看一下附录C中提到的《<a target="_blank" rel="noopener" href="https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.2011.01.02a.pdf">Is Parallel Programming Hard, And, If So, What Can You Do About It?</a>》（并行编程难么？）这本书。另外你也应注意内存乱序也会由于编译器将指令乱序而出现。</p>
+<p>在过去，我很少讲无锁编程的实际应用层面：比如什么时候使用它？我们有多需要使用它？我也很少提到验证无锁代码有效性的重要性。然而，我希望读者们明白的是，这个介绍只是提供了一些基本的无锁编程的概念所以你需要阅读一些其他的资料来进行更加深入的研究。</p>
+<h2 id="附加资料"><a href="#附加资料" class="headerlink" title="附加资料"></a>附加资料</h2><ul>
+<li><a target="_blank" rel="noopener" href="http://www.justsoftwaresolutions.co.uk/blog/">Anthony Williams’ blog</a> and his book, <a target="_blank" rel="noopener" href="http://www.amazon.com/gp/product/1933988770/ref=as_li_ss_tl?ie=UTF8&tag=preshonprogr-20&linkCode=as2&camp=1789&creative=390957&creativeASIN=1933988770">C++ Concurrency in Action</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.1024cores.net/">Dmitriy V’jukov’s website</a> and various <a target="_blank" rel="noopener" href="https://groups.google.com/forum/?fromgroups#!forum/lock-free">forum discussions</a></li>
+<li><a target="_blank" rel="noopener" href="http://bartoszmilewski.com/">Bartosz Milewski’s blog</a></li>
+<li>Charles Bloom’s <a target="_blank" rel="noopener" href="http://cbloomrants.blogspot.ca/2012/06/06-12-12-another-threading-post-index.html">Low-Level Threading series</a> on his blog</li>
+<li>Doug Lea’s <a target="_blank" rel="noopener" href="http://g.oswego.edu/dl/jmm/cookbook.html">JSR-133 Cookbook</a></li>
+<li>Howells and McKenney’s <a target="_blank" rel="noopener" href="http://www.kernel.org/doc/Documentation/memory-barriers.txt">memory-barriers.txt</a> document</li>
+<li>Hans Boehm’s <a target="_blank" rel="noopener" href="http://www.hpl.hp.com/personal/Hans_Boehm/c++mm/">collection of links</a> about the C++11 memory model</li>
+<li>Herb Sutter’s <a target="_blank" rel="noopener" href="http://www.gotw.ca/publications/">Effective Concurrency</a> series</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\01\关于std_thread的二三事\" rel="bookmark">关于std::thread的二三事</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\12\当我谈线程池时我谈些什么\" rel="bookmark">当我谈线程池时我谈些什么</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\04\22\C++并发编程\" rel="bookmark">C++并发编程</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\05\19\C++日期与时间编程\" rel="bookmark">C++日期与时间编程（C++11-C++17）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\01\tcpheart\" rel="bookmark">Qt实现简易心跳包机制</a></div>
+    </li>
+  </ul>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+              <a href="/tags/C-11/" rel="tag"># C++11</a>
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%E5%BF%83%E5%BE%97/" rel="tag"># 学习心得</a>
+              <a href="/tags/C-%E5%B9%B6%E5%8F%91/" rel="tag"># C++并发</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/02/18/Never_Say_Goodbye/" rel="prev" title="Never Say Goodbye 写于2.18离珠海前夜">
+      <i class="fa fa-chevron-left"></i> Never Say Goodbye 写于2.18离珠海前夜
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%97%A0%E9%94%81%E7%BC%96%E7%A8%8B%E7%AE%80%E4%BB%8B%EF%BC%88%E7%BF%BB%E8%AF%91%EF%BC%89%E2%80%94%E2%80%94%E8%AF%91%E8%87%AA%E3%80%8AAn-Introduction-to-Lock-Free-Programming%E3%80%8B"><span class="nav-number">1.</span> <span class="nav-text">无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="nav-number">1.1.</span> <span class="nav-text">写在前面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5"><span class="nav-number">1.2.</span> <span class="nav-text">导入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%97%A0%E9%94%81%E7%BC%96%E7%A8%8B"><span class="nav-number">1.3.</span> <span class="nav-text">什么是无锁编程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A0%E9%94%81%E7%BC%96%E7%A8%8B%E6%8A%80%E6%9C%AF"><span class="nav-number">1.4.</span> <span class="nav-text">无锁编程技术</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90RMD%EF%BC%88Read-Modify-Write%EF%BC%89%E6%93%8D%E4%BD%9C"><span class="nav-number">1.5.</span> <span class="nav-text">原子RMD（Read-Modify-Write）操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CAS%EF%BC%88Compare-And-Swap%EF%BC%89%E5%BE%AA%E7%8E%AF"><span class="nav-number">1.6.</span> <span class="nav-text">CAS（Compare-And-Swap）循环</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">1.7.</span> <span class="nav-text">顺序一致性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.8.</span> <span class="nav-text">内存顺序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E6%9C%89%E4%B8%8D%E5%90%8C%E7%9A%84%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.9.</span> <span class="nav-text">不同的处理器有不同的内存模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%84%E5%8A%A0%E8%B5%84%E6%96%99"><span class="nav-number">1.10.</span> <span class="nav-text">附加资料</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skykey"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Skykey</p>
+  <div class="site-description" itemprop="description">总有些惊奇的际遇，比方说当我遇见你。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skykeyjoker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zcxzxlc@163.com" title="E-Mail → mailto:zcxzxlc@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/skykeyjoker" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://t.me/Skykeyjoker" title="Telegram → https:&#x2F;&#x2F;t.me&#x2F;Skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-telegram fa-fw"></i>Telegram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skykey</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">140k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:08</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : '4RA0u9zgOezRXWIwxd4uXwHI-gzGzoHsz',
+      appKey     : 'BzFXxI5BoDejh1427SpPWReR',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+<div class="moon-menu">
+  <div class="moon-menu-items">
+    
+    <div id="moon-menu-item-back2bottom" class="moon-menu-item">
+      <i class='fas fa-chevron-down'></i>    </div>
+    
+    <div id="moon-menu-item-back2top" class="moon-menu-item">
+      <i class='fas fa-chevron-up'></i>    </div>
+    
+  </div>
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"></circle>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"></circle>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon"><i class='fas fa-ellipsis-v'></i></div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div><script src="/js/injector.js"></script>
+</body>
+</html>
