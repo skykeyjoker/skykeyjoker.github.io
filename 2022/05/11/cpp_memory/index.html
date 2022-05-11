@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"skykeyjoker.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="C++类对象的内存分布写在前面C++类初始化成一个对象之后，该对象实例在内存中是如何分布的呢？ C++类对象的内存分布是面试的热点话题，几次C++研发岗的面试十有八九面试官都会问到类对象的内存分布问题。于是乎我整理了一下这阵子关于类对象内存分布的笔记，整理成一篇博客供大家参考。 本文将类对象的内存分布分为种情况：空类情况，含成员变量，不含成员函数的情况，带成员函数的情况，带虚函数的情况。在讨论内存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++类对象的内存分布">
+<meta property="og:url" content="https://skykeyjoker.com/2022/05/11/cpp_memory/index.html">
+<meta property="og:site_name" content="Skykey&#39;s Home">
+<meta property="og:description" content="C++类对象的内存分布写在前面C++类初始化成一个对象之后，该对象实例在内存中是如何分布的呢？ C++类对象的内存分布是面试的热点话题，几次C++研发岗的面试十有八九面试官都会问到类对象的内存分布问题。于是乎我整理了一下这阵子关于类对象内存分布的笔记，整理成一篇博客供大家参考。 本文将类对象的内存分布分为种情况：空类情况，含成员变量，不含成员函数的情况，带成员函数的情况，带虚函数的情况。在讨论内存">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://skykeyjoker.com/2022/05/11/cpp_memory/clangd.png">
+<meta property="og:image" content="https://skykeyjoker.com/2022/05/11/cpp_memory/inlayhint.png">
+<meta property="og:image" content="https://skykeyjoker.com/2022/05/11/cpp_memory/class1.png">
+<meta property="og:image" content="https://skykeyjoker.com/2022/05/11/cpp_memory/class2.png">
+<meta property="article:published_time" content="2022-05-11T08:02:00.000Z">
+<meta property="article:modified_time" content="2022-05-11T08:06:33.414Z">
+<meta property="article:author" content="Skykey">
+<meta property="article:tag" content="学习心得">
+<meta property="article:tag" content="C++">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://skykeyjoker.com/2022/05/11/cpp_memory/clangd.png">
+
+<link rel="canonical" href="https://skykeyjoker.com/2022/05/11/cpp_memory/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
+  <title>C++类对象的内存分布 | Skykey's Home</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skykey's Home</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Skykey的私人博客ᕕ( ᐛ )ᕗ</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>Links</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+  <a href="https://github.com/skykeyjoker" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skykeyjoker.com/2022/05/11/cpp_memory/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Skykey">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skykey's Home">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C++类对象的内存分布
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-05-11 16:02:00 / 修改时间：16:06:33" itemprop="dateCreated datePublished" datetime="2022-05-11T16:02:00+08:00">2022-05-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/05/11/cpp_memory/" class="post-meta-item leancloud_visitors" data-flag-title="C++类对象的内存分布" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/05/11/cpp_memory/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/05/11/cpp_memory/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="C-类对象的内存分布"><a href="#C-类对象的内存分布" class="headerlink" title="C++类对象的内存分布"></a>C++类对象的内存分布</h1><h2 id="写在前面"><a href="#写在前面" class="headerlink" title="写在前面"></a>写在前面</h2><p>C++类初始化成一个对象之后，该对象实例在内存中是如何分布的呢？</p>
+<p>C++类对象的内存分布是面试的热点话题，几次C++研发岗的面试十有八九面试官都会问到类对象的内存分布问题。于是乎我整理了一下这阵子关于类对象内存分布的笔记，整理成一篇博客供大家参考。</p>
+<p>本文将类对象的内存分布分为种情况：<strong>空类情况</strong>，<strong>含成员变量，不含成员函数的情况</strong>，<strong>带成员函数的情况</strong>，<strong>带虚函数的情况</strong>。在讨论内存分布时，我们也将探讨C++中一个极为重要的原则，<strong>内存对齐原则</strong>。</p>
+<span id="more"></span>
+
+<h2 id="空类情况"><a href="#空类情况" class="headerlink" title="空类情况"></a>空类情况</h2><p>如果实例化一个空类，这个对象会在内存中占用1个字节（标识作用）。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Em</span> &#123;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  cout &lt;&lt; <span class="built_in"><span class="keyword">sizeof</span></span>(Em) &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="含成员变量，不含成员函数的情况"><a href="#含成员变量，不含成员函数的情况" class="headerlink" title="含成员变量，不含成员函数的情况"></a>含成员变量，不含成员函数的情况</h2><p>首先我们给出一个例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> &#123;</span></span><br><span class="line">  <span class="keyword">char</span> a;</span><br><span class="line">  <span class="keyword">int</span> b;</span><br><span class="line">  <span class="keyword">double</span> c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> &#123;</span></span><br><span class="line">  <span class="keyword">char</span> a;</span><br><span class="line">  <span class="keyword">double</span> b;</span><br><span class="line">  <span class="keyword">int</span> c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  cout &lt;&lt; <span class="built_in"><span class="keyword">sizeof</span></span>(A) &lt;&lt; endl;</span><br><span class="line">  cout &lt;&lt; <span class="built_in"><span class="keyword">sizeof</span></span>(B) &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>假设我们处在64位系统下，char占用1字节，int占用4字节，double占用8字节。上面代码的结果会是什么呢？看起来A与B都包含相同数量、相同类型的成员变量。</p>
+<p>答案分别是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">16</span><br><span class="line">24</span><br></pre></td></tr></table></figure>
+
+<p>通过这个例子我们便可以猜到C++的类实例内存分布与<strong>成员变量的声明顺序</strong>有关。</p>
+<p>C++类成员变量的内存分布是：按照声明顺序，<strong>从上到下</strong>，按照<strong>内存对齐</strong>的原则进行分布的。</p>
+<p>这里引出了我们马上要谈论的重要内容，内存对齐。</p>
+<h3 id="内存对齐"><a href="#内存对齐" class="headerlink" title="内存对齐"></a>内存对齐</h3><p>内存对齐的原则如下：</p>
+<blockquote>
+<ol>
+<li>内存分配的顺序是按照声明的顺序。</li>
+<li>每个变量相对于起始位置的偏移量（offset）必须是该变量类型大小的整数倍，不是整数倍则空出内存（padding），直到偏移量为整数倍为止。</li>
+<li>最后整个类的大小必须是里面变量类型大小最大值的整数倍。</li>
+</ol>
+</blockquote>
+<p>根据上面的原则，我们便可以分别推断A类和B类的大小。</p>
+<p>A类的大小：</p>
+<ol>
+<li><code>char a</code>占1个字节，偏移值为0，目前A类占1字节。</li>
+<li><code>int b</code>占4个字节，根据内存对齐原则的第二条，b起始位置的偏移量应该4的整数倍，所以b要在a后面空3个字节，然后放入，因此偏移值为4，目前为止A类占用8个字节（3个padding）。</li>
+<li><code>double c</code>占8个字节，可以直接从b后的第一个字节开始放入，偏移值为8。此时A类占用16字节，符合内存对齐的第三条原则，整个类的大小（16）是成员变量类型大小最大值（8）的整数倍，因此不需要补齐。所以A类总共占用16字节。</li>
+</ol>
+<p>同理，B类的大小：</p>
+<ol>
+<li><code>char a</code>占1个字节，偏移值为0，目前B类占1字节。</li>
+<li><code>double b</code>占8个字节，根据第二条规则，b要在a后面空7个字节，然后开始放入，因此偏移值为8，目前为止B类占用16个字节（7个padding）。</li>
+<li><code>int c</code>占4个字节，可以直接从b后的第一个字节开始放入，偏移值为16，此时B类占用20个字节。根据内存对齐的第三条原则，整个类的大小应该是成员变量类型大小最大值（8）的整数倍，因此需要补齐3个字节到24字节。所以B类总共占用24字节。</li>
+</ol>
+<blockquote>
+<p>关于内存对齐的补充：</p>
+<ol>
+<li>除了类，结构体也是这样的对齐规则。</li>
+<li>对齐的原因：<ul>
+<li>平台原因：某些硬件平台只能在某些地址处取某些特定类型的数据，不能访问任意地址。</li>
+<li>性能原因：访问未对齐的内存，处理器需要作两次内存访问；而对齐的内存访问仅需要一次访问</li>
+</ul>
+</li>
+</ol>
+</blockquote>
+<h2 id="带成员函数的情况"><a href="#带成员函数的情况" class="headerlink" title="带成员函数的情况"></a>带成员函数的情况</h2><p>还是先给个例子：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> &#123;</span></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span></span>;</span><br><span class="line">  <span class="keyword">char</span> a;</span><br><span class="line">  <span class="keyword">int</span> b;</span><br><span class="line">  <span class="keyword">double</span> c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  cout &lt;&lt; <span class="built_in"><span class="keyword">sizeof</span></span>(C) &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">16</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，C类所占用的内存空间大小与A类相同。因为一个对象所占的空间大小只取决于该对象的数据成员所占的空间，而与成员函数无关（虚函数后面讨论）。</p>
+<p>用类取定义对象时，系统会为每一个对象分配储存空间。如果一个类包括了数据和函数，数据的内存分布如第二种情况所示，而函数是不占实例内存的，因为一个类的函数是公共的，一个类的函数只有一份。</p>
+<h2 id="带虚函数的情况"><a href="#带虚函数的情况" class="headerlink" title="带虚函数的情况"></a>带虚函数的情况</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">D</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">funA</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">char</span> a;</span><br><span class="line">  <span class="keyword">int</span> b;</span><br><span class="line">  <span class="keyword">double</span> c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    cout &lt;&lt; <span class="built_in"><span class="keyword">sizeof</span></span>(D) &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">24</span><br></pre></td></tr></table></figure>
+
+<p>上面刚刚讨论过带成员函数的类实例内存空间，成员函数并不会占用类实例的内存空间，那为什么虚函数还会占用类实例内存空间呢？答案与C++的运行时多态（虚函数）的实现有关。</p>
+<p>在类含有虚函数时，为了实现基类继承类之间虚函数的准确调用，使用了一个虚函数表来记录类实例的虚函数的实际地址，而该虚函数表并不位于类实例的内存空间中。相反的，在每个含有虚函数的类的内存空间首部，都会有一个<strong>虚函数表指针</strong>（vptr），指向对应的虚函数表。</p>
+<p>假设我们处于64位系统下，指针占用8个字节，那么很容易便能推出类D的内存空间：</p>
+<ol>
+<li><code>vptr</code>占8个字节，偏移值为0，目前D类占8字节</li>
+<li><code>char a</code>占1个字节，偏移值为8，目前D类占9字节</li>
+<li><code>int b</code>占4个字节，根据内存对齐原则的第二条，b起始位置的偏移量应该4的整数倍，所以b要在a后面空3个字节，然后放入，因此偏移值为12，目前为止D类占用16个字节（3个padding）。</li>
+<li><code>double c</code>占8个字节，可以直接从b后的第一个字节开始放入，偏移值为16。此时D类占用24字节，符合内存对齐的第三条原则，整个类的大小（24）是成员变量类型大小最大值（8）的整数倍，因此不需要补齐。所以D类总共占用16字节。</li>
+</ol>
+<h2 id="写在最后，推荐一个VS-Code插件"><a href="#写在最后，推荐一个VS-Code插件" class="headerlink" title="写在最后，推荐一个VS Code插件"></a>写在最后，推荐一个VS Code插件</h2><p>VS Code扩展市场里官方的C/CPP插件真心不好用，还容易造成卡顿。可以关闭C/CPP插件的语法检查功能，安装LLVM在扩展市场里提供的clangd插件。</p>
+<p><img src="clangd.png" alt="clangd"></p>
+<p>clangd插件与官方的C/CPP插件相比，自动补全速度稍慢一些，但是提示信息更加丰富，目前clangd插件也已经能搭配最新的clangd14用上inlay hints功能。</p>
+<p><img src="inlayhint.png" alt="inlay hint"></p>
+<p>当然，在这篇文章种特别推荐clangd插件，还是因为它对查看类内存布局的支持：</p>
+<p><img src="class1.png" alt="整个类的内存布局"></p>
+<p><img src="class2.png" alt="类成员变量的offset与padding"></p>
+<p>简直不要太便利！</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\26\无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》\" rel="bookmark">无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\01\关于std_thread的二三事\" rel="bookmark">关于std::thread的二三事</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\01\01\tcpheart\" rel="bookmark">Qt实现简易心跳包机制</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\12\当我谈线程池时我谈些什么\" rel="bookmark">当我谈线程池时我谈些什么</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\05\19\C++日期与时间编程\" rel="bookmark">C++日期与时间编程（C++11-C++17）</a></div>
+    </li>
+  </ul>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%E5%BF%83%E5%BE%97/" rel="tag"># 学习心得</a>
+              <a href="/tags/C/" rel="tag"># C++</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/02/26/%E6%97%A0%E9%94%81%E7%BC%96%E7%A8%8B%E7%AE%80%E4%BB%8B%EF%BC%88%E7%BF%BB%E8%AF%91%EF%BC%89%E2%80%94%E2%80%94%E8%AF%91%E8%87%AA%E3%80%8AAn%20Introduction%20to%20Lock-Free%20Programming%E3%80%8B/" rel="prev" title="无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》">
+      <i class="fa fa-chevron-left"></i> 无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#C-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83"><span class="nav-number">1.</span> <span class="nav-text">C++类对象的内存分布</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E5%89%8D%E9%9D%A2"><span class="nav-number">1.1.</span> <span class="nav-text">写在前面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A9%BA%E7%B1%BB%E6%83%85%E5%86%B5"><span class="nav-number">1.2.</span> <span class="nav-text">空类情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AB%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%EF%BC%8C%E4%B8%8D%E5%90%AB%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">1.3.</span> <span class="nav-text">含成员变量，不含成员函数的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90"><span class="nav-number">1.3.1.</span> <span class="nav-text">内存对齐</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%A6%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">1.4.</span> <span class="nav-text">带成员函数的情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%A6%E8%99%9A%E5%87%BD%E6%95%B0%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">1.5.</span> <span class="nav-text">带虚函数的情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E6%9C%80%E5%90%8E%EF%BC%8C%E6%8E%A8%E8%8D%90%E4%B8%80%E4%B8%AAVS-Code%E6%8F%92%E4%BB%B6"><span class="nav-number">1.6.</span> <span class="nav-text">写在最后，推荐一个VS Code插件</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skykey"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Skykey</p>
+  <div class="site-description" itemprop="description">总有些惊奇的际遇，比方说当我遇见你。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skykeyjoker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zcxzxlc@163.com" title="E-Mail → mailto:zcxzxlc@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/skykeyjoker" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://t.me/Skykeyjoker" title="Telegram → https:&#x2F;&#x2F;t.me&#x2F;Skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-telegram fa-fw"></i>Telegram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skykey</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">143k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:10</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : '4RA0u9zgOezRXWIwxd4uXwHI-gzGzoHsz',
+      appKey     : 'BzFXxI5BoDejh1427SpPWReR',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+<div class="moon-menu">
+  <div class="moon-menu-items">
+    
+    <div id="moon-menu-item-back2bottom" class="moon-menu-item">
+      <i class='fas fa-chevron-down'></i>    </div>
+    
+    <div id="moon-menu-item-back2top" class="moon-menu-item">
+      <i class='fas fa-chevron-up'></i>    </div>
+    
+  </div>
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"></circle>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"></circle>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon"><i class='fas fa-ellipsis-v'></i></div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div><script src="/js/injector.js"></script>
+</body>
+</html>
