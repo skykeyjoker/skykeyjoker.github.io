@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"skykeyjoker.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="C++&#x2F;QT PC客户端面试题整理记录一些春招时面试字节跳动&#x2F;阿里云 C++&#x2F;Qt PC客户端相关岗位的面试题，包含面试中遇到后整理的题目和面试前准备的资料。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++&#x2F;QT PC客户端面试题">
+<meta property="og:url" content="https://skykeyjoker.com/2022/06/20/C++%E9%9D%A2%E8%AF%95/index.html">
+<meta property="og:site_name" content="Skykey&#39;s Home">
+<meta property="og:description" content="C++&#x2F;QT PC客户端面试题整理记录一些春招时面试字节跳动&#x2F;阿里云 C++&#x2F;Qt PC客户端相关岗位的面试题，包含面试中遇到后整理的题目和面试前准备的资料。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://images2018.cnblogs.com/blog/1192097/201807/1192097-20180718181338035-1670765431.png">
+<meta property="og:image" content="https://segmentfault.com/img/remote/1460000039165596">
+<meta property="og:image" content="https://segmentfault.com/img/remote/1460000039165594">
+<meta property="og:image" content="https://segmentfault.com/img/remote/1460000039165595">
+<meta property="og:image" content="https://segmentfault.com/img/remote/1460000038256036">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-5f56cd0402e7ca767f864a07dfb57f8c_720w.jpg">
+<meta property="og:image" content="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/coroutine-user-kernel-thread.png?x-oss-process=image/resize,w_800">
+<meta property="og:image" content="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2c06b4e5d90e49529f818807edeb3e8e~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/9/167935399f11a321~tplv-t2oaga2asx-zoom-in-crop-mark:1304:0:0:0.awebp">
+<meta property="og:image" content="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/9/1679353acd247280~tplv-t2oaga2asx-zoom-in-crop-mark:1304:0:0:0.awebp">
+<meta property="og:image" content="https://pic4.zhimg.com/80/v2-29412691dc6685a8a7ac558c37494dc3_720w.jpg">
+<meta property="og:image" content="https://pic002.cnblogs.com/images/2012/426620/2012072014171977.jpg">
+<meta property="og:image" content="https://pic002.cnblogs.com/images/2012/426620/2012072014223353.jpg">
+<meta property="og:image" content="https://pic002.cnblogs.com/images/2012/426620/2012072014393253.jpg">
+<meta property="og:image" content="https://pic002.cnblogs.com/images/2012/426620/2012072014460755.jpg">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/db0745b0bb634a62847e3eb2b18bb6d0.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4OTczNzEw,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2022-06-20T02:04:00.000Z">
+<meta property="article:modified_time" content="2022-06-20T02:05:44.900Z">
+<meta property="article:author" content="Skykey">
+<meta property="article:tag" content="C++">
+<meta property="article:tag" content="C++11">
+<meta property="article:tag" content="C++17">
+<meta property="article:tag" content="学习心得">
+<meta property="article:tag" content="Qt">
+<meta property="article:tag" content="面试">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://images2018.cnblogs.com/blog/1192097/201807/1192097-20180718181338035-1670765431.png">
+
+<link rel="canonical" href="https://skykeyjoker.com/2022/06/20/C++%E9%9D%A2%E8%AF%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" type="text/css" href="/css/injector/main.css" /><link rel="preload" as="style" href="/css/injector/light.css" /><link rel="preload" as="style" href="/css/injector/dark.css" />
+  <title>C++/QT PC客户端面试题 | Skykey's Home</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Skykey's Home</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Skykey的私人博客ᕕ( ᐛ )ᕗ</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-links">
+
+    <a href="/links/" rel="section"><i class="fa fa-link fa-fw"></i>Links</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+
+  <a href="https://github.com/skykeyjoker" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://skykeyjoker.com/2022/06/20/C++%E9%9D%A2%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Skykey">
+      <meta itemprop="description" content="总有些惊奇的际遇，比方说当我遇见你。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Skykey's Home">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C++/QT PC客户端面试题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-06-20 10:04:00 / 修改时间：10:05:44" itemprop="dateCreated datePublished" datetime="2022-06-20T10:04:00+08:00">2022-06-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index"><span itemprop="name">C++</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/2022/06/20/C++%E9%9D%A2%E8%AF%95/" class="post-meta-item leancloud_visitors" data-flag-title="C++/QT PC客户端面试题" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2022/06/20/C++%E9%9D%A2%E8%AF%95/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2022/06/20/C++%E9%9D%A2%E8%AF%95/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>31k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>29 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="C-QT-PC客户端面试题"><a href="#C-QT-PC客户端面试题" class="headerlink" title="C++/QT PC客户端面试题"></a>C++/QT PC客户端面试题</h1><p>整理记录一些春招时面试字节跳动/阿里云 C++/Qt PC客户端相关岗位的面试题，包含面试中遇到后整理的题目和面试前准备的资料。</p>
+<span id="more"></span>
+
+<h2 id="父子继承时候，它构造函数和析构函数的顺序？析构时候，如何让父子类里所有的析构都调用一遍？"><a href="#父子继承时候，它构造函数和析构函数的顺序？析构时候，如何让父子类里所有的析构都调用一遍？" class="headerlink" title="父子继承时候，它构造函数和析构函数的顺序？析构时候，如何让父子类里所有的析构都调用一遍？"></a>父子继承时候，它构造函数和析构函数的顺序？析构时候，如何让父子类里所有的析构都调用一遍？</h2><p>构造时，先调用父类的构造函数，再调用派生类的构造函数。建楼从地基开始。</p>
+<p>析构时，先调用子类的析构函数，再调用父类的析构函数。拆楼从最高层开始拆。</p>
+<p>若使用父类指针指向子类对象，delete该对象时，只会调用父类的析构函数，此时可将父类的析构函数设置为虚函数。若使用子类指针指向父类对象，delete该对象时，会先调用子类析构函数，再调用父类析构函数。</p>
+<h2 id="一个函数，如何让它在main函数之前执行？"><a href="#一个函数，如何让它在main函数之前执行？" class="headerlink" title="一个函数，如何让它在main函数之前执行？"></a>一个函数，如何让它在main函数之前执行？</h2><ol>
+<li><p>全局对象的构造函数，main之前声明一个全局对象。</p>
+</li>
+<li><p>全局变量、对象和静态变量、对象的空间分配和赋初值。</p>
+</li>
+<li><p>进程启动后，要执行一些初始化代码，然后跳转到main函数执行。main函数执行完毕后，返回到入口函数，入口函数进行清理工作，包括全局变量的析构、堆销毁、关闭I/O等，然后等待系统关闭进程。</p>
+</li>
+<li><p>使用关键字<code>__attribute__</code>，让一个函数在主函数之前运行，进行一些数据初始化、模块加载验证等。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello world\n&quot;</span>);</span><br><span class="line">    <span class="comment">//exit(0);</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">__attribute__((constructor))<span class="function"><span class="keyword">void</span> <span class="title">before</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;before\n&quot;</span>);</span><br><span class="line">    <span class="built_in">func</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">__attribute__((destructor))<span class="function"><span class="keyword">void</span> <span class="title">after</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;after\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;main\n&quot;</span>); <span class="comment">//从运行结果来看，并没有执行main函数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="可以在C-的成员函数里调用delete-this吗"><a href="#可以在C-的成员函数里调用delete-this吗" class="headerlink" title="可以在C++的成员函数里调用delete this吗?"></a>可以在C++的成员函数里调用delete this吗?</h2><p>能够调用。在调用后还可以调用该对象的其他方法，但是前提是：被调用的方法不涉及这个对象的数据成员和虚函数。</p>
+<p><strong>根本原因</strong>在于delete操作符的功能和类对象的内存模型。在类对象的内存空间中，只有数据成员和虚函数表指针，并不包含代码内容，类的成员函数单独放在代码段中。</p>
+<p>在类的析构函数中调用delete this会导致堆栈溢出。delete的本质是为将被释放的内存调用一个或多个析构函数，而析构函数中又调用delete this，形成无限递归，造成堆栈溢出。</p>
+<h2 id="class-A-Class-B-A-a-能不能允许？"><a href="#class-A-Class-B-A-a-能不能允许？" class="headerlink" title="class A; Class B{ A a; };能不能允许？"></a><code>class A; Class B&#123; A a; &#125;;</code>能不能允许？</h2><p>不能。class A未定义，为不完整的类型，不允许。</p>
+<h2 id="C-的类型转换有哪些"><a href="#C-的类型转换有哪些" class="headerlink" title="C++的类型转换有哪些"></a>C++的类型转换有哪些</h2><ol>
+<li>C风格的强制类型转换。(typename)Var；</li>
+<li>四种新类型转换：<ul>
+<li><strong>static_cast<newType>(data)</strong> ：<ul>
+<li>近似类型转换，如int转double，const转非const，向上转型</li>
+<li>void*指针与具体类型指针之间的转换，如void*转int*</li>
+<li>有转换构造函数或者类型转换函数的类与其他类型之间的转换</li>
+</ul>
+</li>
+<li>**const_cast<newType>(data) **：<ul>
+<li>用来将const/volatile 类型转换为非 const/volatile 类型。</li>
+</ul>
+</li>
+<li>**reinterpret_cast<newType>(data)**：<ul>
+<li>可以认为是 static_cast 的一种补充，一些 static_cast 不能完成的转换，就可以用 reinterpret_cast 来完成，例如<strong>两个具体类型指针之间的转换</strong>、<strong>int和指针之间的转换。非常简单粗暴，但是风险很高。</strong></li>
+</ul>
+</li>
+<li>**dynamic_cast<newType>(data)**：<ul>
+<li>用于在类的继承层次之间进行类型转换，它既允许向上转型（Upcasting），就是把继承类指针转换为基类指针；也允许向下转型（Downcasting）。向上转型是无条件的，不会进行任何检测，所以都能成功；向下转型的前提必须是安全的，要借助RTTI进行检测，所有只有一部分能成功。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="C-有哪些智能指针"><a href="#C-有哪些智能指针" class="headerlink" title="C++有哪些智能指针"></a>C++有哪些智能指针</h2><p>share_ptr, unique_ptr, weak_ptr。</p>
+<p><strong>它们三者有什么区别？</strong></p>
+<p>shared_ptr,unique_ptr,weak_ptr。第一个实现原理是同一个内存空间每多一个指针指向就计数加1，如果计数变为0就释放内存空间。第二个是计数只能为1，第三个只能指向该内存空间而没有所有权。主要用于辅助第一个指针，防止出现互锁。Shared_ptr当用普通指针初始化的时候，只能使用一次普通指针。它还可以自定义释放函数。Unique_ptr没有拷贝构造函数。借助 weak_ptr 类型指针， 我们可以获取 shared_ptr 指针的一些状态信息，比如有多少指向相同的 shared_ptr 指针、shared_ptr 指针指向的堆内存是否已经被释放等等。在构建 weak_ptr 指针对象时，可经常利用已有的 shared_ptr 指针为其初始化。</p>
+<p><strong>为什么需要智能指针？它在实际工程中有什么作用？</strong></p>
+<p>为了防止内存泄漏，设置的自动回收机制。</p>
+<p><strong>说一下shared_ptr的底层实现？</strong></p>
+<p>引用计数，每多一个智能指向同一个内存，就把计数加1，当计数减到0的时候就释放该指针。当该指针作为形参传递的时候，计数会加1，当他出该函数时会自动减一。</p>
+<p><strong>Weak_ptr的作用？</strong></p>
+<p>获取 shared_ptr 指针的一些状态信息，比如有多少指向相同的 shared_ptr 指针、shared_ptr 指针指向的堆内存是否已经被释放等等。另外防止循环引用。</p>
+<p><strong>你刚才说到循环引用，那你口述一个循环引用的实例。</strong></p>
+<p>比如说A、B两个类，两个类里面分别定义了一个对方类的智能指针，然后在主函数里面首先定义两个类的智能指针，然后分别把两个指针分别赋予对方的成员指针里，这样就形成了循环引用。</p>
+<p>循环引用的问题是：一旦b出作用域，引用计数减一，导致b里面的a永远不会减一，导致a智能指针空间永远释放不掉，然后a出作用域时，a引用计数减一，a最终没释放，它里面的b也就不可能释放掉，最后a b都是1无法释放。</p>
+<h2 id="装饰器模式"><a href="#装饰器模式" class="headerlink" title="装饰器模式"></a>装饰器模式</h2><p><img src="https://images2018.cnblogs.com/blog/1192097/201807/1192097-20180718181338035-1670765431.png" alt="img"></p>
+<h2 id="C-多线程死锁"><a href="#C-多线程死锁" class="headerlink" title="C++多线程死锁"></a>C++多线程死锁</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include &lt;thread&gt;</span><br><span class="line">#include &lt;mutex&gt;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="function"><span class="title">work1</span>(<span class="params">std::mutex&amp; mylock1, std::mutex&amp; mylock2</span>)</span> &#123;</span><br><span class="line">	<span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; i++) &#123;</span><br><span class="line">		mylock1.lock();</span><br><span class="line">		mylock2.lock();</span><br><span class="line">		std::cout &lt;&lt; <span class="string">&quot;work1 : &quot;</span> &lt;&lt; i &lt;&lt; std::endl;</span><br><span class="line">		mylock2.unlock();</span><br><span class="line">		mylock1.unlock();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="function"><span class="title">work2</span>(<span class="params">std::mutex&amp; mylock1, std::mutex&amp; mylock2</span>)</span> &#123;</span><br><span class="line">	<span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; i++) &#123;</span><br><span class="line">		mylock2.lock();</span><br><span class="line">		mylock1.lock();</span><br><span class="line">		std::cout &lt;&lt; <span class="string">&quot;work2 : &quot;</span> &lt;&lt; i &lt;&lt; std::endl;</span><br><span class="line">		mylock1.unlock();</span><br><span class="line">		mylock2.unlock();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int <span class="function"><span class="title">main</span>(<span class="params"></span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="attr">std</span>::mutex mylock1, mylock2;</span><br><span class="line">	int ans = <span class="number">0</span>;</span><br><span class="line">	std::thread t1(work1, <span class="attr">std</span>::ref(mylock1), <span class="attr">std</span>::ref(mylock2));</span><br><span class="line">	std::thread t2(work2, <span class="attr">std</span>::ref(mylock1), <span class="attr">std</span>::ref(mylock2));</span><br><span class="line">	t1.join();</span><br><span class="line">	t2.join();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>由于==交叉加锁==，使得两个锁都在等待对方解锁而造成的死锁，运行结果如下图所示：</strong></p>
+<p><strong>解决这个死锁的问题只是把加锁的顺序改过来就可以了，然后也可以用std::lock函数来创建多个互斥锁，用法也很简单，首先创建两个互斥锁lock1和lock2，那么std::lock(lock1,lock2)这句代码就相当于lock1.lock();lock2.lock();，最后不要忘了对两个锁的unlock，其实也可以搭配lock_guard()来使用，因为lock_guard内部就有析构函数来unlock，所以在lock_guard中引用std::adopt_lock参数（作用是告诉编译器我已经lock过了，不需要再重复lock了）就可以实现省去后面的unlock语句了。代码如下：</strong></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include &lt;thread&gt;</span><br><span class="line">#include &lt;mutex&gt;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="function"><span class="title">work1</span>(<span class="params">std::mutex&amp; mylock1, std::mutex&amp; mylock2</span>)</span> &#123;</span><br><span class="line">	<span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; i++) &#123;</span><br><span class="line">		<span class="attr">std</span>::lock(mylock1, mylock2);</span><br><span class="line">		std::lock_guard&lt;std::mutex&gt; lock1(mylock1, <span class="attr">std</span>::adopt_lock);</span><br><span class="line">		std::lock_guard&lt;std::mutex&gt; lock2(mylock2, <span class="attr">std</span>::adopt_lock);</span><br><span class="line">		std::cout &lt;&lt; <span class="string">&quot;work1 : &quot;</span> &lt;&lt; i &lt;&lt; std::endl;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="function"><span class="title">work2</span>(<span class="params">std::mutex&amp; mylock1, std::mutex&amp; mylock2</span>)</span> &#123;</span><br><span class="line">	<span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; <span class="number">100000</span>; i++) &#123;</span><br><span class="line">		<span class="attr">std</span>::lock(mylock1, mylock2);</span><br><span class="line">		std::lock_guard&lt;std::mutex&gt; lock1(mylock1, <span class="attr">std</span>::adopt_lock);</span><br><span class="line">		std::lock_guard&lt;std::mutex&gt; lock2(mylock2, <span class="attr">std</span>::adopt_lock);</span><br><span class="line">		std::cout &lt;&lt; <span class="string">&quot;work2 : &quot;</span> &lt;&lt; i &lt;&lt; std::endl;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int <span class="function"><span class="title">main</span>(<span class="params"></span>)</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="attr">std</span>::mutex mylock1, mylock2;</span><br><span class="line">	int ans = <span class="number">0</span>;</span><br><span class="line">	std::thread t1(work1, <span class="attr">std</span>::ref(mylock1), <span class="attr">std</span>::ref(mylock2));</span><br><span class="line">	std::thread t2(work2, <span class="attr">std</span>::ref(mylock1), <span class="attr">std</span>::ref(mylock2));</span><br><span class="line">	t1.join();</span><br><span class="line">	t2.join();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="TCP三次握手和四次挥手"><a href="#TCP三次握手和四次挥手" class="headerlink" title="TCP三次握手和四次挥手"></a>TCP三次握手和四次挥手</h2><h3 id="TCP与UDP"><a href="#TCP与UDP" class="headerlink" title="TCP与UDP"></a>TCP与UDP</h3><p><strong>用户数据报协议 UDP</strong>（User Datagram Protocol）：</p>
+<ul>
+<li><strong>UDP 在传送数据之前不需要先建立连接</strong>，远程主机在收到 UDP 报文后，不需要给出任何确认。</li>
+<li>虽然 UDP <strong>不提供可靠交付</strong>，但在某些情况下 UDP 确是一种最有效的工作方式（一般用于即时通信），比如： QQ 语音、 QQ 视频 、直播等等</li>
+</ul>
+<p><strong>传输控制协议 TCP</strong>（Transmission Control Protocol）：</p>
+<ul>
+<li>TCP 提供<strong>面向连接</strong>的服务。在传送数据之前必须先建立连接，数据传送结束后要释放连接。</li>
+<li>TCP 不提供广播或多播服务。由于 TCP 要提供<strong>可靠</strong>的，面向连接的传输服务（TCP的可靠体现在TCP在传递数据之前，会有三次握手来建立连接，而且在数据传递时，有确认、窗口、重传、流量控制、拥塞控制机制，在数据传完后，还会四次挥手断开连接用来节约系统资源），这不仅使协议数据单元的首部增大很多，还要占用许多处理机资源。</li>
+<li>TCP <strong>一般用于文件传输、发送和接收邮件、远程登录等场景</strong>。</li>
+</ul>
+<h3 id="TCP报文格式"><a href="#TCP报文格式" class="headerlink" title="TCP报文格式"></a>TCP报文格式</h3><p><img src="https://segmentfault.com/img/remote/1460000039165596" alt="img"></p>
+<p>首部固定部分各字段意义如下：</p>
+<ul>
+<li><p>1 - <strong>源端口和目的端口</strong>：各占 2 个字节，分别写入源端口和目的端口。IP 地址 + 端口号就可以确定一个进程地址</p>
+</li>
+<li><p>2 - <strong>序号/序列号（Sequense Number，SN）</strong>：在一个 TCP 连接中传送的字节流中的每一个字节都按顺序编号。该字段表示本报文段所发送的数据的第一个字节的序号。</p>
+<p>初始序号称为 Init Sequense Number, ISN</p>
+<p>（序号/序列号这个字段很重要，大家留个印象，下文会详细讲解）</p>
+<p>例如，一报文段的序号是 101，共有 100 字节的数据。这就表明：本报文段的数据的第一个字节的序号是 101，最后一个字节的序号是 200。显然，下一个报文段的数据序号应当从 201 开始，即下一个报文段的序号字段值应为 201。</p>
+</li>
+<li><p>3 - <strong>确认号 ack</strong>：期望收到对方下一个报文段的第一个数据字节的序号。若确认号为 N，则表明：到序号 N-1 为止的所有数据都已正确收到。</p>
+</li>
+<li><p>4 - <strong>数据偏移</strong>（首部长度）：它指出 TCP 报文段的数据起始处距离 TCP 报文段的起始处有多远。这个字段实际上是指出TCP报文段的首部长度。</p>
+</li>
+<li><p>5 - <strong>保留</strong>：占 6 位，应置为 0，保留为今后使用。</p>
+</li>
+</ul>
+<p>保留位的右边还有 6 个控制位（重要），这是TCP 用来说明该报文段性质的：</p>
+<ul>
+<li><p><strong>紧急位 URG</strong>：当 URG = 1 时，表明此报文段中有紧急数据，是高优先级的数据，应尽快发送，不用在缓存中排队。该控制位需配合紧急指针使用（紧急指针指出本报文段中紧急数据的字节数）</p>
+<p>举个例子：我们需要取消一个已经发送了很长程序的运行，因此用户从键盘发出中断命令。如果不使用紧急数据，那么这个指令将存储在接收 TCP 的缓存末尾，只有在所有的数据被处理完毕后这两个字符才被交付接收方的应用进程，这样做就无法实现立即中断。</p>
+</li>
+<li><p><strong>确认 ACK</strong>：仅当 ACK = 1 时确认号字段才有效，当 ACK = 0 时确认号无效。<strong>TCP 规定，在连接建立后所有传送的报文段都必须把 ACK 置为 1。</strong></p>
+</li>
+<li><p><strong>推送 PSH</strong>：当两个应用进程进行交互式的通信时，有时在一端的应用进程希望在键入一个命令后立即就能收到对方的响应。在这种情况下，TCP 就可以使用推送（push）操作。这时，发送方 TCP 把 PSH 置为 1，并立即创建一个报文段发送出去。接收方 TCP 收到 PSH = 1 的报文段，就尽快地交付接收应用进程。而不用等到整个缓存都填满了后再向上交付。</p>
+</li>
+<li><p><strong>复位 RST</strong>：当 RST = 1 时，表明 TCP 连接中出现了严重错误（如由于主机崩溃或其他原因），必须释放连接，然后再重新建立传输连接。</p>
+</li>
+<li><p><strong>同步 SYN</strong>：SYN = 1 表示这是一个连接请求或连接接受报文。</p>
+<p>当 SYN = 1 而 ACK = 0 时，表明这是一个连接请求报文段。对方若同意建立连接，则应在响应的报文段中使 SYN = 1 且 ACK = 1。</p>
+</li>
+<li><p><strong>终止 FIN</strong>：用来释放一个连接。当 FIN = 1时，表明此报文段的发送发的数据已发送完毕，并要求释放运输连接。</p>
+</li>
+</ul>
+<h3 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h3><p>主要作用就是为了确认双方的接收能力和发送能力是否正常、指定自己的**初始化序列号(Init Sequense Number, <code>ISN</code>)**为后面的可靠性传输做准备。</p>
+<p><img src="https://segmentfault.com/img/remote/1460000039165594" alt="img"></p>
+<p>只有经过三次握手才能确认双发的收发功能都正常，缺一不可：</p>
+<ul>
+<li><p>第一次握手（客户端发送 SYN 报文给服务器，服务器接收该报文）：客户端什么都不能确认；服务器确认了对方发送正常，自己接收正常</p>
+</li>
+<li><p>第二次握手（服务器响应 SYN 报文给客户端，客户端接收该报文）：</p>
+<p>客户端确认了：自己发送、接收正常，对方发送、接收正常；</p>
+<p>服务器确认了：对方发送正常，自己接收正常</p>
+</li>
+<li><p>第三次握手（客户端发送 ACK 报文给服务器）：</p>
+<p>客户端确认了：自己发送、接收正常，对方发送、接收正常；</p>
+<p>服务器确认了：自己发送、接收正常，对方发送、接收正常</p>
+</li>
+</ul>
+<h4 id="三次握手过程中可以携带数据吗"><a href="#三次握手过程中可以携带数据吗" class="headerlink" title="三次握手过程中可以携带数据吗"></a>三次握手过程中可以携带数据吗</h4><p>第三次握手的时候，是可以携带数据的。但是，<strong>第一次、第二次握手绝对不可以携带数据</strong>，<strong>简单的记忆就是，请求连接/接收 即 <code>SYN = 1</code> 的时候不能携带数据</strong></p>
+<h3 id="TCP四次挥手"><a href="#TCP四次挥手" class="headerlink" title="TCP四次挥手"></a>TCP四次挥手</h3><p><img src="https://segmentfault.com/img/remote/1460000039165595" alt="img"></p>
+<h4 id="为什么要四次挥手"><a href="#为什么要四次挥手" class="headerlink" title="为什么要四次挥手"></a>为什么要四次挥手</h4><p>由于 TCP 的<strong>半关闭</strong>（half-close）特性，TCP 提供了连接的一端在结束它的发送后还能接收来自另一端数据的能力。</p>
+<p>任何一方都可以在数据传送结束后发出连接释放的通知，待对方确认后进入<strong>半关闭状态</strong>。当另一方也没有数据再发送的时候，则发出连接释放通知，对方确认后就<strong>完全关闭</strong>了TCP连接。</p>
+<p>参考连接：<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000039165592">https://segmentfault.com/a/1190000039165592</a></p>
+<h2 id="进程和线程的概念、区别"><a href="#进程和线程的概念、区别" class="headerlink" title="进程和线程的概念、区别"></a>进程和线程的概念、区别</h2><p>概念：</p>
+<ol>
+<li>进程是运行时程序的封装，是<strong>系统进行资源调度和分配的基本单位，实现了操作系统的并发</strong>。</li>
+<li>线程是进程的子任务，是<strong>CPU调度和分派的基本单位，用于保证程序的实时性，实现进程内部的并发；线程是操作系统可识别的最小执行和调度单位</strong>。每个线程都独占一个<strong>虚拟处理器</strong>：独自的<strong>寄存器组</strong>，<strong>指令计数器</strong>和<strong>处理器状态</strong>。每个线程共享同一地址空间，打开的文件队列和其他内核资源。</li>
+</ol>
+<p>区别：</p>
+<ol>
+<li>一个线程只能属于一个进程，而一个进程可以有多个线程；</li>
+<li>进程在执行过程中拥有独立的内存单元，而多个线程共享进程的内存</li>
+<li>进程是资源分配的最小单位，线程是CPU调度的最小单位</li>
+<li>系统开销：进程切换的开销也远大于线程切换的开销</li>
+</ol>
+<h2 id="进程线程间通信"><a href="#进程线程间通信" class="headerlink" title="进程线程间通信"></a>进程线程间通信</h2><p>进程间通信主要包括<strong>管道</strong>、<strong>系统IPC</strong>（<strong>消息队列</strong>、<strong>信号量</strong>、<strong>信号</strong>、<strong>共享内存</strong>）以及<strong>套接字socket</strong>。</p>
+<p>socket也是一种进程间通信机制，与其他通信机制不同的是，它可用于不同主机之间的进程通信。</p>
+<p>线程间通信的方式: </p>
+<ol>
+<li>临界区：通过多线程的串行化来访问公共资源或一段代码，速度快，适合控制数据访问；</li>
+<li>互斥量Synchronized/Lock：采用互斥对象机制，只有拥有互斥对象的线程才有访问公共资源的权限。因为互斥对象只有一个，所以可以保证公共资源不会被多个线程同时访问 </li>
+<li>信号量Semphare：为控制具有有限数量的用户资源而设计的，它允许多个线程在同一时刻去访问同一个资源，但一般需要限制同一时刻访问此资源的最大线程数目。 </li>
+<li>事件(信号)，Wait/Notify：通过通知操作的方式来保持多线程同步，还可以方便的实现多线程优先级的比较操作</li>
+</ol>
+<h2 id="关系型数据库和非关系型数据库"><a href="#关系型数据库和非关系型数据库" class="headerlink" title="关系型数据库和非关系型数据库"></a>关系型数据库和非关系型数据库</h2><h3 id="关系型数据库"><a href="#关系型数据库" class="headerlink" title="关系型数据库"></a>关系型数据库</h3><ol>
+<li><p><strong>概念</strong>：关系型数据库是指采用了关系模型来组织数据的数据库。简单来说，关系模式就是二维表格模型。</p>
+<p>主要代表：SQL Server，Oracle,Mysql,PostgreSQL。</p>
+</li>
+<li><p><strong>优点</strong>：</p>
+<ol>
+<li>容易理解，二维表的结构非常贴近现实世界，二维表格，容易理解。</li>
+<li>使用方便，通用的sql语句使得操作关系型数据库非常方便。</li>
+<li>易于维护，数据库的ACID属性，大大降低了数据冗余和数据不一致的概率。</li>
+</ol>
+</li>
+<li><p><strong>瓶颈</strong>：</p>
+<ol>
+<li>海量数据的读写效率。对于网站的并发量高，往往达到每秒上万次的请求，对于传统关系型数据库来说，硬盘I/o是一个很大的挑战。</li>
+<li>高扩展性和可用性。在基于web的结构中，数据库是最难以横向拓展的，当一个应用系统的用户量和访问量与日俱增的时候，数据库没有办法像web Server那样简单的通过添加更多的硬件和服务节点来拓展性能和负载能力。</li>
+</ol>
+</li>
+</ol>
+<h3 id="非关系型数据库"><a href="#非关系型数据库" class="headerlink" title="非关系型数据库"></a>非关系型数据库</h3><ol>
+<li><strong>概念</strong>：NoSQL非关系型数据库，主要指那些非关系型的、分布式的，且一般不保证ACID的数据存储系统，主要代表MongoDB，Redis、CouchDB。NoSQL提出了另一种理念，以键值来存储，且结构不稳定，每一个元组都可以有不一样的字段，这种就不会局限于固定的结构，可以减少一些时间和空间的开销。使用这种方式，为了获取用户的不同信息，不需要像关系型数据库中，需要进行多表查询。仅仅需要根据key来取出对应的value值即可。</li>
+<li><strong>分类</strong>：非关系数据库大部分是开源的，实现比较简单，大都是针对一些特性的应用需求出现的。根据结构化方法和应用场景的不同，分为以下几类。<ol>
+<li>面向高性能并发读写的key-value数据库。主要特点是具有极高的并发读写性能，例如Redis、Tokyo Cabint等。</li>
+<li>面向海量数据访问的面向文档数据库。特点是，可以在海量的数据库快速的查询数据。例如MongoDB以及CouchDB。</li>
+<li>面向可拓展的分布式数据库。解决的主要问题是传统数据库的扩展性上的缺陷。</li>
+</ol>
+</li>
+<li><strong>缺点</strong>：但是由于Nosql约束少，所以也不能够像sql那样提供where字段属性的查询。因此适合存储较为简单的数据。有一些不能够持久化数据，所以需要和关系型数据库结合。</li>
+</ol>
+<h2 id="虚拟内存"><a href="#虚拟内存" class="headerlink" title="虚拟内存"></a>虚拟内存</h2><p>虚拟内存可以让程序拥有超过系统物理内存大小的可用内存空间。<strong>虚拟内存为每一个进程提供了一个一致的、私有的地址空间，它让每个进程产生了一种自己在独享储存的错觉（每个内存拥有一片连续完整的内存空间）</strong>。</p>
+<p>虚拟内存的重要意义是它定义了一个连续的虚拟地址空间，并把内存扩展到硬盘空间。</p>
+<h2 id="互斥锁、可重入锁、读写锁与自旋锁"><a href="#互斥锁、可重入锁、读写锁与自旋锁" class="headerlink" title="互斥锁、可重入锁、读写锁与自旋锁"></a>互斥锁、可重入锁、读写锁与自旋锁</h2><h3 id="mutex-互斥量"><a href="#mutex-互斥量" class="headerlink" title="mutex 互斥量"></a>mutex 互斥量</h3><p>mutex是睡眠等待类型的锁，当线程抢互斥锁失败的时候，线程会陷入休眠。优点就是节省CPU资源，缺点就是休眠唤醒会消耗一点时间。</p>
+<p>依据同一线程是否能多次加锁，把互斥量又分为如下两类：</p>
+<ul>
+<li>是：递归互斥量recursive mutex，也称<strong>可重入锁</strong>，reentrant lock</li>
+<li>否：非递归互斥量non-recursive mutex，也称<strong>不可重入锁</strong>，non-reentrant mutex</li>
+</ul>
+<h3 id="read-write-lock-读写锁"><a href="#read-write-lock-读写锁" class="headerlink" title="read-write lock 读写锁"></a>read-write lock 读写锁</h3><p>又称“共享-独占锁”，对于临界区区分读和写，读共享，写独占。</p>
+<p>读写锁的特性：</p>
+<ul>
+<li>当读写锁被加了写锁时，其他线程对该锁加读锁或者写锁都会<strong>阻塞</strong>。</li>
+<li>当读写锁被加了读锁时，其他线程对该锁加写锁会<strong>阻塞</strong>，加读锁会成功。</li>
+</ul>
+<p>适用于多读少写的场景。</p>
+<h3 id="spinlock-自旋锁"><a href="#spinlock-自旋锁" class="headerlink" title="spinlock 自旋锁"></a>spinlock 自旋锁</h3><p><strong>自旋，更通俗的一个词时“忙等待”（busy waiting）。最通俗的一个理解，其实就是死循环。</strong></p>
+<p>自旋锁不会引起线程休眠。当共享资源的状态不满足时，自旋锁会不停地<strong>循环检测状态</strong>(==循环检测状态利用了CPU提供的原语Compare&amp;Exchange来保证原子性==)。因为不会陷入休眠，而是忙等待的方式也就不需要条件变量。不休眠就不会引起上下文切换，但是会比较浪费CPU。</p>
+<h2 id="Java的垃圾回收机制（GC）"><a href="#Java的垃圾回收机制（GC）" class="headerlink" title="Java的垃圾回收机制（GC）"></a>Java的垃圾回收机制（GC）</h2><p><img src="https://segmentfault.com/img/remote/1460000038256036" alt="GC讨论内容"></p>
+<h3 id="垃圾的定义"><a href="#垃圾的定义" class="headerlink" title="垃圾的定义"></a>垃圾的定义</h3><h4 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h4><p>对象被创建之后，系统会给这个对象初始化一个引用计数器。被引用了则+1，引用失效后-1，直到计数器为0，意味该对象不再被使用，可以被回收。</p>
+<p>引用计数法无法避免循环引用。</p>
+<h4 id="根搜索算法"><a href="#根搜索算法" class="headerlink" title="根搜索算法"></a>根搜索算法</h4><p>解决了循环引用问题。从某一些指定的根对象出发，一步步遍历找到和这个根对象具有引用关系的对象，然后再从这些对象开始继续寻找，从而形成一个个的引用链，然后不在这些引用链上面的对象便被表示为引用不可达对象，这些对象需要被回收掉。</p>
+<p>根对象，一般有如下几种：</p>
+<ul>
+<li>虚拟机栈中引用的对象</li>
+<li>方法区中常量引用的对象</li>
+<li>方法区中静态属性引用的对象</li>
+<li>本地方法栈中JNI引用的对象</li>
+<li>活跃线程</li>
+</ul>
+<h3 id="回收算法"><a href="#回收算法" class="headerlink" title="回收算法"></a>回收算法</h3><p>常用的回收算法一般有：<strong>标记-清除算法</strong>、<strong>标记-整理算法</strong>、<strong>复制算法</strong>，以及系统自动进行判定使用的<strong>适应性算法</strong>。</p>
+<h4 id="标记-清除算法"><a href="#标记-清除算法" class="headerlink" title="标记-清除算法"></a>标记-清除算法</h4><p>根据<strong>根搜索算法</strong>标记的不可达对象，标记所有代回收的垃圾对象之后，<strong>统一清除</strong>。</p>
+<p>内存块变得不连续，==产生内存碎片==。</p>
+<h4 id="标记-整理算法"><a href="#标记-整理算法" class="headerlink" title="标记-整理算法"></a>标记-整理算法</h4><p>标记完后，让所有的对象都向一端移动，然后将端边界以外的内存全部清理掉。</p>
+<p>==不再产生内存碎片==。</p>
+<h4 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h4><p>内存区域划分为两块，每次创建对象只使用其中一块区域，当该区域使用完后，将S0上存活的对象全部复制到S1上去，之后将S0全部清理掉。</p>
+<p>可用的内存减小一半。</p>
+<p>所以复制算法一般会用与对象存活时间比较短的区域，例如年轻代。老年代一般会用标记-整理算法。</p>
+<h4 id="适应性算法"><a href="#适应性算法" class="headerlink" title="适应性算法"></a>适应性算法</h4><p>智能选择回收算法。</p>
+<h4 id="分代回收"><a href="#分代回收" class="headerlink" title="分代回收"></a>分代回收</h4><p>年轻代复制算法，老年代标记整理算法。</p>
+<h2 id="HTTPS的加密连接过程"><a href="#HTTPS的加密连接过程" class="headerlink" title="HTTPS的加密连接过程"></a>HTTPS的加密连接过程</h2><ol>
+<li>客户端（发送者）提交HTTPS请求</li>
+<li>服务器（接收者）响应客户，并把信息通过证书公钥加密后发给客户端（此时产生了公钥和私钥，只把公钥给客户端）</li>
+<li>客户端验证证书公钥的有效性</li>
+<li>有效后，会生成一个会话密钥</li>
+<li>用证书公钥加密这个会话密钥后，发给服务器</li>
+<li>服务器收到证书公钥加密的会话密钥后，用证书密钥的私钥解密，获取会话密钥</li>
+<li>客户端与服务器双方利用这个会话密钥加密要传输的数据进行通信</li>
+</ol>
+<p><strong>前期是非对称加密，利用公开密钥加密技术传送复杂密钥，后期利用密钥进行对称加密</strong>。</p>
+<p><img src="https://pic1.zhimg.com/80/v2-5f56cd0402e7ca767f864a07dfb57f8c_720w.jpg" alt="img"></p>
+<h2 id="协程"><a href="#协程" class="headerlink" title="协程"></a>协程</h2><p>线程分为内核态线程、用户态线程两种。</p>
+<p><strong>协程的本质就是处理自身挂起和恢复的用户态线程</strong>。</p>
+<p><img src="https://chuquan-public-r-001.oss-cn-shanghai.aliyuncs.com/sketch-images/coroutine-user-kernel-thread.png?x-oss-process=image/resize,w_800" alt="img"></p>
+<p>协程的切换比线程的切换速度更快，在<strong>IO密集型任务</strong>情境下更适合。IO密集型任务的特点是CPU消耗少，其大部分时间都是在等待IO操作完成，对于这样的场景，一个线程足矣，因此适合采用协程。</p>
+<h3 id="挂起-恢复"><a href="#挂起-恢复" class="headerlink" title="挂起/恢复"></a>挂起/恢复</h3><p>相比于函数，协程最大的特点就是支持<strong>挂起/恢复</strong>。</p>
+<h3 id="协程分类"><a href="#协程分类" class="headerlink" title="协程分类"></a>协程分类</h3><p><strong>按照是否开辟相应的调用栈</strong>，我们可以将协程分为两类：</p>
+<ul>
+<li><strong>有栈协程</strong>（Stackful Coroutine）：每个协程都有自己的调用栈，类似于线程的调用栈。</li>
+<li><strong>无栈协程</strong>（Stackless Coroutine）：协程没有自己的调用栈，挂起点的状态通过状态机或闭包等语法来实现。</li>
+</ul>
+<h4 id="有栈协程"><a href="#有栈协程" class="headerlink" title="有栈协程"></a>有栈协程</h4><p><strong>有栈协程会改变函数调用栈</strong>。</p>
+<p>有栈协程：在内存中给每个协程开辟一个栈内存（存在堆中），当协程挂起时会将它的运行时上下文（即栈空间）从系统栈中保存至所分配的栈内存中，当协程恢复时会将其运行时上下文从栈内存中恢复至系统栈中。</p>
+<p>它可以在<strong>任意函数调用层级的位置进行挂起</strong>，并转移调度权。</p>
+<h4 id="无栈协程"><a href="#无栈协程" class="headerlink" title="无栈协程"></a>无栈协程</h4><p>无栈协程不会为各个协程开辟相应的调用栈，无栈协程通常是<strong>基于状态机或闭包</strong>来实现。</p>
+<p>基于状态机的解决方案一般是通过状态机，记录上次协程挂起时的位置，并基于此决定协程恢复时开始执行的位置。这个状态必须存储在栈以外的地方，从而避免状态与栈一同销毁。</p>
+<p>相比于有栈协程，无栈协程不需要修改调用栈，也无需额外的内存来保存调用栈，因此它的开小会更小。但是相比于保存运行时上下文这种实现方式，无栈协程的实现还是存在比较多的限制，最大的缺点就是，它无法实现在任意函数调用层级的位置进行挂起。</p>
+<h2 id="右值、右值引用，std-move"><a href="#右值、右值引用，std-move" class="headerlink" title="右值、右值引用，std::move"></a>右值、右值引用，std::move</h2><h3 id="左值、右值"><a href="#左值、右值" class="headerlink" title="左值、右值"></a>左值、右值</h3><p>左值<strong>可以取地址、位于等号左边</strong>，而右值<strong>没法取地址，位于等号右边</strong>。</p>
+<p>有地址的变量就是左值，没有地址的字面值、临时值就是右值。</p>
+<h3 id="左值引用"><a href="#左值引用" class="headerlink" title="左值引用"></a>左值引用</h3><p><strong>能指向左值，不能指向右值的就是左值引用</strong>，<strong>引用是变量的别名，由于右值没有地址，没法被修改，所以左值引用无法指向右值</strong>。</p>
+<p>但是，const左值引用是可以指向右值的。因为const左值引用不会修改指向值。</p>
+<h3 id="右值引用"><a href="#右值引用" class="headerlink" title="右值引用"></a>右值引用</h3><p>右值引用<strong>可以指向右值，不能指向左值</strong>。</p>
+<p>右值使用<code>std::move</code>可以指向左值。**<code>std::move</code>并不会进行移动，唯一的功能是把左值强制转化为右值<strong>，其实现等同于一个类型转换<code>static_cast&lt;T&amp;&amp;&gt;(lvalue)</code>。所以，</strong>单纯的<code>std::move</code>并不会有性能提升**。</p>
+<p>右值引用能够指向右值，本质上也是把右值提升为一个左值，并定义一个右值引用通过<code>std::move</code>指向该左值：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> &amp;&amp;ref_a = <span class="number">5</span>;</span><br><span class="line">ref_a = <span class="number">6</span>;  </span><br><span class="line">等同于以下代码：</span><br><span class="line"><span class="keyword">int</span> temp = <span class="number">5</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;&amp;ref_a = std::<span class="built_in">move</span>(temp);</span><br><span class="line">ref_a = <span class="number">6</span>;</span><br></pre></td></tr></table></figure>
+
+<p><strong>被声明出来的左、右值都是左值</strong>。因为被声明出的左右值引用是有地址的，也位于等号左边。</p>
+<p><strong>右值引用既可以是左值也是右值，如果有名称则是左值，否则是右值</strong>，也可以说，<strong>作为函数返回值的&amp;&amp;是右值，直接声明出来的&amp;&amp;是左值</strong>。</p>
+<p>结论：</p>
+<ol>
+<li>从性能上讲，左右值引用没有区别，传参使用左右值引用都可以避免拷贝。</li>
+<li>右值引用可以直接指向右值，也可以通过std::move指向左值；而左值引用只能指向左值（const左值引用也能指向右值）。</li>
+<li>作为函数形参时，右值引用更灵活。虽然const左值引用可以做到左右值都接受，但它无法修改，有一定局限性。</li>
+</ol>
+<h3 id="右值引用与std-move的应用场景"><a href="#右值引用与std-move的应用场景" class="headerlink" title="右值引用与std::move的应用场景"></a>右值引用与std::move的应用场景</h3><ol>
+<li><strong>实现移动语义</strong>，避免拷贝，从而提升程序性能。</li>
+<li><strong>vector::push_back使用std::move提升性能</strong>。</li>
+</ol>
+<h2 id="RAII"><a href="#RAII" class="headerlink" title="RAII"></a>RAII</h2><p>==资源获取即初始化==（==R==esource ==A==cquisition ==I==s ==I==nitialization），或称 <strong>RAII</strong>，将必须在使用前请求的资源的生命周期绑定与一个对象的生存期相绑定。这些资源可以是数据库的连接、锁定的互斥体、打开的文件等。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">std::mutex m;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">bad</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    m.<span class="built_in">lock</span>();                    <span class="comment">// 请求互斥体</span></span><br><span class="line">    <span class="built_in">f</span>();                         <span class="comment">// 如果 f() 抛出异常，那么互斥体永远不会被释放</span></span><br><span class="line">    <span class="keyword">if</span>(!<span class="built_in">everything_ok</span>()) <span class="keyword">return</span>; <span class="comment">// 提早返回，互斥体永远不会被释放</span></span><br><span class="line">    m.<span class="built_in">unlock</span>();                  <span class="comment">// 只有 bad() 抵达此语句，互斥体才会被释放</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">good</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">std::lock_guard&lt;std::mutex&gt; <span class="title">lk</span><span class="params">(m)</span></span>; <span class="comment">// RAII类：互斥体的请求即是初始化</span></span><br><span class="line">    <span class="built_in">f</span>();                               <span class="comment">// 如果 f() 抛出异常，那么就会释放互斥体</span></span><br><span class="line">    <span class="keyword">if</span>(!<span class="built_in">everything_ok</span>()) <span class="keyword">return</span>;       <span class="comment">// 提早返回也会释放互斥体</span></span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="IO多路复用"><a href="#IO多路复用" class="headerlink" title="IO多路复用"></a>IO多路复用</h2><h3 id="什么是IO多路复用"><a href="#什么是IO多路复用" class="headerlink" title="什么是IO多路复用"></a>什么是IO多路复用</h3><ul>
+<li>IO多路复用是一种同步IO模型，实现==一个线程==可以监视==多个文件句柄==；</li>
+<li>一旦某个文件句柄就绪，就能够通知应用程序进行相应的读写操作；</li>
+<li>没有文件句柄就绪就会==阻塞==应用程序，交出CPU</li>
+</ul>
+<h3 id="IO多路复用-1"><a href="#IO多路复用-1" class="headerlink" title="IO多路复用"></a>IO多路复用</h3><p>服务器采用多线程通过<code>select/poll/epoll</code>等系统调用获取fd列表，遍历有事件的fd进行<code>accept/recv/send</code>，使其能支持更多的并发连接请求。</p>
+<h3 id="IO多路复用的三种实现"><a href="#IO多路复用的三种实现" class="headerlink" title="IO多路复用的三种实现"></a>IO多路复用的三种实现</h3><ul>
+<li><strong>select</strong></li>
+<li><strong>poll</strong></li>
+<li><strong>epoll</strong></li>
+</ul>
+<h3 id="select"><a href="#select" class="headerlink" title="select"></a>select</h3><p>仅仅知道有IO事件发生，不知道是哪几个流，需要==无差别查询==所有流，<strong>select具有O(N)的无差别轮询复杂度</strong>。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2c06b4e5d90e49529f818807edeb3e8e~tplv-k3u1fbpfcp-zoom-in-crop-mark:1304:0:0:0.awebp" alt="image.png"></p>
+<ol>
+<li><p>使用copy_from_user从用户空间拷贝fd_set到内核空间</p>
+</li>
+<li><p>注册回调函数__pollwait</p>
+</li>
+<li><p>遍历所有fd，调用其对应的poll方法（对于socket，这个poll方法是sock_poll，sock_poll根据情况会调用到tcp_poll,udp_poll或者datagram_poll）</p>
+</li>
+<li><p>以tcp_poll为例，其核心实现就是__pollwait，也就是上面注册的回调函数。</p>
+</li>
+<li><p>__pollwait的主要工作就是把current（当前进程）挂到设备的等待队列中，不同的设备有不同的等待队列，对于tcp_poll来说，其等待队列是sk-&gt;sk_sleep（注意把进程挂到等待队列中并不代表进程已经睡眠了）。在设备收到一条消息（网络设备）或填写完文件数据（磁盘设备）后，会唤醒设备等待队列上睡眠的进程，这时current便被唤醒了。</p>
+</li>
+<li><p>poll方法返回时会返回一个描述读写操作是否就绪的mask掩码，根据这个mask掩码给fd_set赋值。</p>
+</li>
+<li><p>如果遍历完所有的fd，还没有返回一个可读写的mask掩码，则会调用schedule_timeout是调用select的进程（也就是current）进入睡眠。当设备驱动发生自身资源可读写后，会唤醒其等待队列上睡眠的进程。如果超过一定的超时时间（schedule_timeout指定），还是没人唤醒，则调用select的进程会重新被唤醒获得CPU，进而重新遍历fd，判断有没有就绪的fd。</p>
+</li>
+<li><p>把fd_set从内核空间拷贝到用户空间。</p>
+</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/select.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/time.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FD_SETSIZE 1024</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NFDBITS (8 * sizeof(unsigned long))</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __FDSET_LONGS (FD_SETSIZE/NFDBITS)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 数据结构 (bitmap)</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> fds_bits[__FDSET_LONGS];</span><br><span class="line">&#125; fd_set;</span><br><span class="line"></span><br><span class="line"><span class="comment">// API</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">select</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="keyword">int</span> max_fd, </span></span></span><br><span class="line"><span class="params"><span class="function">    fd_set *readset, </span></span></span><br><span class="line"><span class="params"><span class="function">    fd_set *writeset, </span></span></span><br><span class="line"><span class="params"><span class="function">    fd_set *exceptset, </span></span></span><br><span class="line"><span class="params"><span class="function">    struct timeval *timeout</span></span></span><br><span class="line"><span class="params"><span class="function">)</span>                              <span class="comment">// 返回值就绪描述符的数目</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">FD_ZERO</span><span class="params">(<span class="keyword">int</span> fd, fd_set* fds)</span>   <span class="comment">// 清空集合</span></span></span><br><span class="line"><span class="function"><span class="title">FD_SET</span><span class="params">(<span class="keyword">int</span> fd, fd_set* fds)</span>    <span class="comment">// 将给定的描述符加入集合</span></span></span><br><span class="line"><span class="function"><span class="title">FD_ISSET</span><span class="params">(<span class="keyword">int</span> fd, fd_set* fds)</span>  <span class="comment">// 判断指定描述符是否在集合中 </span></span></span><br><span class="line"><span class="function"><span class="title">FD_CLR</span><span class="params">(<span class="keyword">int</span> fd, fd_set* fds)</span>    <span class="comment">// 将给定的描述符从文件中删除  </span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * 这里进行一些初始化的设置，</span></span><br><span class="line"><span class="comment">   * 包括socket建立，地址的设置等,</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"></span><br><span class="line">  fd_set read_fs, write_fs;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">timeout</span>;</span></span><br><span class="line">  <span class="keyword">int</span> max = <span class="number">0</span>;  <span class="comment">// 用于记录最大的fd，在轮询中时刻更新即可</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 初始化比特位</span></span><br><span class="line">  <span class="built_in">FD_ZERO</span>(&amp;read_fs);</span><br><span class="line">  <span class="built_in">FD_ZERO</span>(&amp;write_fs);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> nfds = <span class="number">0</span>; <span class="comment">// 记录就绪的事件，可以减少遍历的次数</span></span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">// 阻塞获取</span></span><br><span class="line">    <span class="comment">// 每次需要把fd从用户态拷贝到内核态</span></span><br><span class="line">    nfds = <span class="built_in">select</span>(max + <span class="number">1</span>, &amp;read_fd, &amp;write_fd, <span class="literal">NULL</span>, &amp;timeout);</span><br><span class="line">    <span class="comment">// 每次需要遍历所有fd，判断有无读写事件发生</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= max &amp;&amp; nfds; ++i) &#123;</span><br><span class="line">      <span class="keyword">if</span> (i == listenfd) &#123;</span><br><span class="line">         --nfds;</span><br><span class="line">         <span class="comment">// 这里处理accept事件</span></span><br><span class="line">         <span class="built_in">FD_SET</span>(i, &amp;read_fd);<span class="comment">//将客户端socket加入到集合中</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">FD_ISSET</span>(i, &amp;read_fd)) &#123;</span><br><span class="line">        --nfds;</span><br><span class="line">        <span class="comment">// 这里处理read事件</span></span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">FD_ISSET</span>(i, &amp;write_fd)) &#123;</span><br><span class="line">         --nfds;</span><br><span class="line">        <span class="comment">// 这里处理write事件</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>select缺点</strong>：</p>
+<ul>
+<li>单个进程所打开的FD是有限制的，通过<code>FD_SETSIZE</code>设置，默认1024；</li>
+<li>每次调用select，都需要把fd集合从用户态拷贝到内核态，这个开销在fd很多时会很大；</li>
+<li>对socket扫描是线性扫描，采用轮询的方法，效率较低</li>
+</ul>
+<h3 id="poll"><a href="#poll" class="headerlink" title="poll"></a>poll</h3><p>poll本质上与select没有区别，但是基于==链表==来储存，因此<strong>没有最大连接数的限制</strong>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;poll.h&gt;</span></span></span><br><span class="line"><span class="comment">// 数据结构</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pollfd</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> fd;                         <span class="comment">// 需要监视的文件描述符</span></span><br><span class="line">    <span class="keyword">short</span> events;                   <span class="comment">// 需要内核监视的事件</span></span><br><span class="line">    <span class="keyword">short</span> revents;                  <span class="comment">// 实际发生的事件</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// API</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">poll</span><span class="params">(struct pollfd fds[], <span class="keyword">nfds_t</span> nfds, <span class="keyword">int</span> timeout)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 先宏定义长度</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_POLLFD_LEN 4096  </span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * 在这里进行一些初始化的操作，</span></span><br><span class="line"><span class="comment">   * 比如初始化数据和socket等。</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> nfds = <span class="number">0</span>;</span><br><span class="line">  pollfd fds[MAX_POLLFD_LEN];</span><br><span class="line">  <span class="built_in">memset</span>(fds, <span class="number">0</span>, <span class="built_in"><span class="keyword">sizeof</span></span>(fds));</span><br><span class="line">  fds[<span class="number">0</span>].fd = listenfd;</span><br><span class="line">  fds[<span class="number">0</span>].events = POLLRDNORM;</span><br><span class="line">  <span class="keyword">int</span> max  = <span class="number">0</span>;  <span class="comment">// 队列的实际长度，是一个随时更新的，也可以自定义其他的</span></span><br><span class="line">  <span class="keyword">int</span> timeout = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> current_size = max;</span><br><span class="line">  <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="comment">// 阻塞获取</span></span><br><span class="line">    <span class="comment">// 每次需要把fd从用户态拷贝到内核态</span></span><br><span class="line">    nfds = <span class="built_in">poll</span>(fds, max+<span class="number">1</span>, timeout);</span><br><span class="line">    <span class="keyword">if</span> (fds[<span class="number">0</span>].revents &amp; POLLRDNORM) &#123;</span><br><span class="line">        <span class="comment">// 这里处理accept事件</span></span><br><span class="line">        connfd = <span class="built_in">accept</span>(listenfd);</span><br><span class="line">        <span class="comment">//将新的描述符添加到读描述符集合中</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 每次需要遍历所有fd，判断有无读写事件发生</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; max; ++i) &#123;     </span><br><span class="line">      <span class="keyword">if</span> (fds[i].revents &amp; POLLRDNORM) &#123; </span><br><span class="line">         sockfd = fds[i].fd</span><br><span class="line">         <span class="keyword">if</span> ((n = <span class="built_in">read</span>(sockfd, buf, MAXLINE)) &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 这里处理read事件</span></span><br><span class="line">            <span class="keyword">if</span> (n == <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="built_in">close</span>(sockfd);</span><br><span class="line">                fds[i].fd = <span class="number">-1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">         &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">             <span class="comment">// 这里处理write事件     </span></span><br><span class="line">         &#125;</span><br><span class="line">         <span class="keyword">if</span> (--nfds &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">break</span>;       </span><br><span class="line">         &#125;   </span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>缺点同上。</p>
+<h3 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h3><p><strong>epoll可以理解为event poll</strong>，不同于忙轮询和无差别轮询，epoll会把哪个流发生了怎么样的IO事件通知我们。所以说epoll实际上是<strong>事件驱动（每个事件关联上fd）</strong>的，此时我们对这些流的操作都是有意义的。（复杂度降到了O(1)）</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/epoll.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 数据结构</span></span><br><span class="line"><span class="comment">// 每一个epoll对象都有一个独立的eventpoll结构体</span></span><br><span class="line"><span class="comment">// 用于存放通过epoll_ctl方法向epoll对象中添加进来的事件</span></span><br><span class="line"><span class="comment">// epoll_wait检查是否有事件发生时，只需要检查eventpoll对象中的rdlist双链表中是否有epitem元素即可</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">eventpoll</span> &#123;</span></span><br><span class="line">    <span class="comment">/*红黑树的根节点，这颗树中存储着所有添加到epoll中的需要监控的事件*/</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rb_root</span>  <span class="title">rbr</span>;</span></span><br><span class="line">    <span class="comment">/*双链表中则存放着将要通过epoll_wait返回给用户的满足条件的事件*/</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">rdlist</span>;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// API</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_create</span><span class="params">(<span class="keyword">int</span> size)</span></span>; <span class="comment">// 内核中间加一个 ep 对象，把所有需要监听的 socket 都放到 ep 对象中</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_ctl</span><span class="params">(<span class="keyword">int</span> epfd, <span class="keyword">int</span> op, <span class="keyword">int</span> fd, struct epoll_event *event)</span></span>; <span class="comment">// epoll_ctl 负责把 socket 增加、删除到内核红黑树</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="keyword">int</span> epfd, struct epoll_event * events, <span class="keyword">int</span> maxevents, <span class="keyword">int</span> timeout)</span></span>;<span class="comment">// epoll_wait 负责检测可读队列，没有可读 socket 则阻塞进程</span></span><br></pre></td></tr></table></figure>
+
+<p>每个epoll对象都有一个独立的eventpoll结构体，用于存放通过epoll_ctl方法向epoll对象中添加进来的事件。这些事件都会挂载在红黑树中。</p>
+<p>而所有添加到epoll中的事件都会与设备（网卡）驱动程序建立回调关系，也就是说，当相应的事件发生时会调用这个回调方法。这个回调方法在内核中叫ep_poll_callback，它会将发生的事件添加到rdlist双链表中。</p>
+<p>在epoll中，对于每一个事件，都会建立一个epitem结构体，如下所示：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">epitem</span>&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">rb_node</span>  <span class="title">rbn</span>;</span><span class="comment">//红黑树节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>    <span class="title">rdllink</span>;</span><span class="comment">//双向链表节点</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_filefd</span>  <span class="title">ffd</span>;</span>  <span class="comment">//事件句柄信息</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">eventpoll</span> *<span class="title">ep</span>;</span>    <span class="comment">//指向其所属的eventpoll对象</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">epoll_event</span> <span class="title">event</span>;</span> <span class="comment">//期待发生的事件类型</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>通过红黑树和双链表数据结构，并结合回调机制，造就了epoll的高效</strong>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="comment">/*</span></span><br><span class="line"><span class="comment">   * 在这里进行一些初始化的操作，</span></span><br><span class="line"><span class="comment">   * 比如初始化数据和socket等。</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 内核中创建ep对象</span></span><br><span class="line">    epfd=<span class="built_in">epoll_create</span>(<span class="number">256</span>);</span><br><span class="line">    <span class="comment">// 需要监听的socket放到ep中</span></span><br><span class="line">    <span class="built_in">epoll_ctl</span>(epfd,EPOLL_CTL_ADD,listenfd,&amp;ev);</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">while</span>(<span class="number">1</span>) &#123;</span><br><span class="line">      <span class="comment">// 阻塞获取</span></span><br><span class="line">      nfds = <span class="built_in">epoll_wait</span>(epfd,events,<span class="number">20</span>,<span class="number">0</span>);</span><br><span class="line">      <span class="keyword">for</span>(i=<span class="number">0</span>;i&lt;nfds;++i) &#123;</span><br><span class="line">          <span class="keyword">if</span>(events[i].data.fd==listenfd) &#123;</span><br><span class="line">              <span class="comment">// 这里处理accept事件</span></span><br><span class="line">              connfd = <span class="built_in">accept</span>(listenfd);</span><br><span class="line">              <span class="comment">// 接收新连接写到内核对象中</span></span><br><span class="line">              <span class="built_in">epoll_ctl</span>(epfd,EPOLL_CTL_ADD,connfd,&amp;ev);</span><br><span class="line">          &#125; <span class="keyword">else</span> <span class="keyword">if</span> (events[i].events&amp;EPOLLIN) &#123;</span><br><span class="line">              <span class="comment">// 这里处理read事件</span></span><br><span class="line">              <span class="built_in">read</span>(sockfd, BUF, MAXLINE);</span><br><span class="line">              <span class="comment">//读完后准备写</span></span><br><span class="line">              <span class="built_in">epoll_ctl</span>(epfd,EPOLL_CTL_MOD,sockfd,&amp;ev);</span><br><span class="line">          &#125; <span class="keyword">else</span> <span class="keyword">if</span>(events[i].events&amp;EPOLLOUT) &#123;</span><br><span class="line">              <span class="comment">// 这里处理write事件</span></span><br><span class="line">              <span class="built_in">write</span>(sockfd, BUF, n);</span><br><span class="line">              <span class="comment">//写完后准备读</span></span><br><span class="line">              <span class="built_in">epoll_ctl</span>(epfd,EPOLL_CTL_MOD,sockfd,&amp;ev);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>epoll的优点</strong>：</p>
+<ul>
+<li>没有最大并发连接的限制，能打开的FD的上线远大于1024；</li>
+<li>效率提升，不是轮询的方式，不会随着FD的数目的增加效率下降。只有活跃可用的FD才会调用callback函数；</li>
+<li>内存拷贝，利用mmap()文件映射内存加速与内核空间的消息传递，即epoll使用mmap减少复制开销；</li>
+</ul>
+<h3 id="select-poll-epoll之间的区别"><a href="#select-poll-epoll之间的区别" class="headerlink" title="select/poll/epoll之间的区别"></a>select/poll/epoll之间的区别</h3><p>select，pollm，epoll都是IO多路复用的机制。IO多路复用通过一种机制，可以监视多个描述符，一旦某个描述符就绪（一般是读就绪或者写就绪），能够通知程序进行相应的读写操作。<strong>但select，poll，epoll本质上都是同步IO，因为它们都需要在读写事件就绪后自己负责进行读写，也就是说这个读写过程是阻塞的</strong>。</p>
+<p>epoll是Linux目前大规模网络并发程序开发的首选模型。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>select</th>
+<th>poll</th>
+<th>epoll</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>操作方式</td>
+<td>遍历</td>
+<td>遍历</td>
+<td>回调</td>
+</tr>
+<tr>
+<td>数据结构</td>
+<td>bitmap</td>
+<td>数组</td>
+<td>红黑树</td>
+</tr>
+<tr>
+<td>最大连接数</td>
+<td>1024（x86）或2048（64）</td>
+<td>无上限</td>
+<td>无上限</td>
+</tr>
+<tr>
+<td>最大支持文件描述符数</td>
+<td>一般有最大值限制</td>
+<td>65535</td>
+<td>65535</td>
+</tr>
+<tr>
+<td>fd拷贝</td>
+<td>每次调用select，都需要把fd集合从用户态拷贝到内核态</td>
+<td>每次调用poll，都需要把fd集合从用户态拷贝到内核态</td>
+<td>fd每次调用epoll_ctl拷贝，每次调用epoll_wait不拷贝</td>
+</tr>
+<tr>
+<td>工作模式</td>
+<td>LT</td>
+<td>LT</td>
+<td>支持ET高效模式</td>
+</tr>
+<tr>
+<td>工作效率</td>
+<td>每次调用都进行线性遍历，时间复杂度为O(N)</td>
+<td>每次调用都进行线性遍历，时间复杂度为O(N)</td>
+<td>事件通知方式，每当fd就绪，系统注册的回调函数就会被调用，将就绪fd放到readylist里面，时间复杂度O(1)</td>
+</tr>
+</tbody></table>
+<h2 id="程序的编译、链接、装载与运行"><a href="#程序的编译、链接、装载与运行" class="headerlink" title="程序的编译、链接、装载与运行"></a>程序的编译、链接、装载与运行</h2><p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/9/167935399f11a321~tplv-t2oaga2asx-zoom-in-crop-mark:1304:0:0:0.awebp" alt="img"></p>
+<h3 id="程序编译的过程"><a href="#程序编译的过程" class="headerlink" title="程序编译的过程"></a>程序编译的过程</h3><ol>
+<li><strong>预处理</strong><ul>
+<li>删除所有注释信息</li>
+<li>展开宏定义</li>
+<li>展开include</li>
+</ul>
+</li>
+<li><strong>编译</strong><ul>
+<li>词法分析、语法分析、语义分析并优化后生成相对应的汇编文件</li>
+</ul>
+</li>
+<li><strong>汇编</strong><ul>
+<li>汇编代码转为机械指令，生成<strong>目标文件</strong></li>
+</ul>
+</li>
+<li><strong>链接</strong><ul>
+<li>多合并不同目标文件中的同类型的段</li>
+<li>对于目标文件中的符号引用，在其他的目标文件中找到可以引用的符号</li>
+<li>对目标文件中的变量地址进行重定位</li>
+</ul>
+</li>
+</ol>
+<h3 id="目标文件"><a href="#目标文件" class="headerlink" title="目标文件"></a>目标文件</h3><p><img src="https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2018/12/9/1679353acd247280~tplv-t2oaga2asx-zoom-in-crop-mark:1304:0:0:0.awebp" alt="img"></p>
+<p><strong>分段的好处</strong>：</p>
+<ul>
+<li>方便区分，代码（指令）存到<code>.text</code>，初始化好的数据存到<code>.data</code>，只读数据存到<code>.rdata</code>等</li>
+<li>便于给段设置读写权限，某些段只需要设置只读权限即可</li>
+<li>方便CPU缓存的生效</li>
+<li>利于节省内存，例如程序有多个副本的情况下，此时只需要一份代码段即可</li>
+</ul>
+<h3 id="链接"><a href="#链接" class="headerlink" title="链接"></a>链接</h3><p><strong>静态链接过程</strong>：</p>
+<ol>
+<li>扫描所有的目标文件，获取它们的每个段的长度、位置和属性，并将每个目标文件中的符号表的符号定义和符号引用收集起来放在一个全局符号表中，建立起可执行文件到目标文件的段映射关系</li>
+<li>读取目标文件中的段数据，并解析符号表信息，根据符号表信息进行重定位、调整代码段中的地址等操作</li>
+</ol>
+<h3 id="重定位表"><a href="#重定位表" class="headerlink" title="重定位表"></a>重定位表</h3><p>编译器把所有需要重定位的数据存在重定位表中，这样连接器就能够知道该目标文件中哪些数据是需要被重定位的。</p>
+<h3 id="符号表"><a href="#符号表" class="headerlink" title="符号表"></a>符号表</h3><p>目标文件中的某些部分是在链接时被使用到的“粘合剂”，这些部分被称为“符号”，符号就保存在符号表中。符号表中保存的符号很多，其中最重要的就是定义在本目标文件中的可以被其他目标文件引用的符号和在本目标文件中引用的全局符号，这两个符号呈现互补的关系。</p>
+<p><strong>重定位表与符号表之间的关系</strong>：</p>
+<p>他们之间是相互合作的关系，链接器首先要根据重定位表找到该目标文件中需要被重定位的符号，之后再根据符号表去其他的目标文件中找到可以相匹配的符号，最后对本目标文件中的符号进行重定位。</p>
+<h3 id="装载"><a href="#装载" class="headerlink" title="装载"></a>装载</h3><p>所以可执行文件被加载到内存中的数据可以分为两类：<strong>可读不可写</strong>和<strong>可读可写</strong>。</p>
+<p>由于现代操作系统均采用<strong>分页</strong>的方式来管理内存，所以操作系统只需要读取可执行文件的<strong>文件头</strong>，之后建立起可执行文件到虚拟内存的映射关系，而不需要真正的将程序载入内存。在程序的运行过程中，CPU发现有些内存页在物理内存中并不存在并因此触发<strong>缺页异</strong>常，此时CPU将控制权限转交给操作系统的<strong>异常处理函数</strong>，操作系统负责将此内存页的数据从磁盘上读取到物理内存中。数据读取完毕之后，操作系统让CPU jmp到触发了缺页异常的那条指令处继续执行，此时指令执行就不会再有缺页异常了。</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903734191849480">https://juejin.cn/post/6844903734191849480</a></p>
+<h2 id="std-shared-ptr实现细节"><a href="#std-shared-ptr实现细节" class="headerlink" title="std::shared_ptr实现细节"></a><code>std::shared_ptr</code>实现细节</h2><p>典型实现种，<code>std::shared_ptr</code>只<strong>保留两个指针</strong>：</p>
+<ul>
+<li>get()所返回的指针</li>
+<li>指向==控制块==的指针</li>
+</ul>
+<p>控制块是一个动态分配的对象，其中包括：</p>
+<ul>
+<li>指向被管理对象的指针或者被管理对象本身</li>
+<li>删除器</li>
+<li>分配器</li>
+<li>占有被管理对象的shared_ptr数量</li>
+<li>涉及被管理对象的==weak_ptr==数量</li>
+</ul>
+<p>指向同一被管理对象内存的shared_ptr共享控制块。</p>
+<p>强弱引用分别计数，shared_ptr计数器减至零，控制块调用被管理对象的析构函数。但控制块本身知道weak_ptr计数器同样归零时才会释放。</p>
+<h2 id="Qt-deleteLater与delete对比"><a href="#Qt-deleteLater与delete对比" class="headerlink" title="Qt deleteLater与delete对比"></a>Qt deleteLater与delete对比</h2><p><code>delete</code>是C++标准关键字，作用是调用析构函数后释放该对象的内存。</p>
+<p><code>deleteLater</code>是Qt的新方法，所有==继承自QObject==的对象都有此方法。</p>
+<ul>
+<li>deleteLater依赖于Qt的<strong>event loop</strong>机制</li>
+<li>==可以多次调用此函数==</li>
+</ul>
+<p><strong>deleteLater原理</strong>：</p>
+<ul>
+<li>函数被调用后，向QCoreApplication发送一个QDeferredDeleteEvent</li>
+<li>主线程将QDeferredDeleteEvent列入事件队列，需要时将该事件分发给该对象</li>
+<li>该对象继续运行，直到收到QDeferredDeleteEvent，==delete自身==。</li>
+<li>收到QDeferredDeleteEvent后，此对象将从event loop中被移除</li>
+</ul>
+<h2 id="Qt信号槽"><a href="#Qt信号槽" class="headerlink" title="Qt信号槽"></a>Qt信号槽</h2><p><strong>信号-槽的使用方法</strong>：在普通函数声明之前，加上signal、slot标记，然后通过connect函数把信号槽连接起来。</p>
+<p><img src="https://pic4.zhimg.com/80/v2-29412691dc6685a8a7ac558c37494dc3_720w.jpg" alt="img"></p>
+<p><strong>信号-槽分两种</strong>：</p>
+<ul>
+<li>==同一线程==内的信号槽，相当于函数调用，直接调用或列入事件循环。</li>
+<li>==不同线程==的信号槽，信号触发时，发送者线程将槽函数的调用转化成了一次“调用事件”，放入事件循环中。接收者线程执行到下一次事件处理时，处理“调用事件”，调用相应的函数。</li>
+</ul>
+<p><strong>信号-槽的实现：元对象编译器MOC</strong>。</p>
+<p>元对象编译器MOC负责解析signals、slot、emit等标准C++不存在的关键字，以及处理Q_OBJECT、Q_PROPERTY、Q_INVOKABLE等相关的宏，生成moc_xxx.cpp的C++文件（使用黑魔法来变现语法糖）。比如信号函数只要声明、不需要自己写实现，就是在这个moc_xxx.cpp文件中自动生成的。</p>
+<p><strong>moc的本质就是反射器</strong>。</p>
+<p><strong>信号槽的调用流程</strong>：</p>
+<ul>
+<li>MOC查找头文件中的signal与slots，标记出信号槽。将信号槽信息储存到类静态变量staticMetaObject中，并按照声明的顺序进行存放，建立索引。</li>
+<li>connect链接，将信号槽的索引信息放到一个双向链表中，彼此配对。</li>
+<li>emit被调用，调用信号函数，且传递发送信号的对象指针，元对象指针，信号索引，参数列表到active函数。</li>
+<li>active函数在双向链表中找到所有与信号对应的槽索引，根据槽索引找到槽函数，执行槽函数。</li>
+</ul>
+<h2 id="Qt-MOC机制"><a href="#Qt-MOC机制" class="headerlink" title="Qt MOC机制"></a>Qt MOC机制</h2><p><strong>Qt程序编译顺序</strong>：MOC-预编译-编译-汇编-链接</p>
+<p>元对象编译器MOC负责解析signals、slot、emit等标准C++不存在的关键字，以及处理Q_OBJECT、Q_PROPERTY、Q_INVOKABLE等相关的宏，生成moc_xxx.cpp的C++文件（使用黑魔法来变现语法糖）。比如信号函数只要声明、不需要自己写实现，就是在这个moc_xxx.cpp文件中自动生成的。</p>
+<p>MOC一个重要作用是展开Q_OBJECT宏：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Q_OBJECT \public: \</span></span><br><span class="line"><span class="meta">    QT_WARNING_PUSH \</span></span><br><span class="line"><span class="meta">    Q_OBJECT_NO_OVERRIDE_WARNING \</span></span><br><span class="line"><span class="meta">    static const QMetaObject staticMetaObject; \</span></span><br><span class="line"><span class="meta">    virtual const QMetaObject *metaObject() const; \</span></span><br><span class="line"><span class="meta">    virtual void *qt_metacast(const char *); \</span></span><br><span class="line"><span class="meta">    virtual int qt_metacall(QMetaObject::Call, int, void **); \</span></span><br><span class="line"><span class="meta">    QT_TR_FUNCTIONS \private: \</span></span><br><span class="line"><span class="meta">    Q_OBJECT_NO_ATTRIBUTES_WARNING \</span></span><br><span class="line"><span class="meta">    Q_DECL_HIDDEN_STATIC_METACALL static void qt_static_metacall(QObject *, QMetaObject::Call, int, void **); \</span></span><br><span class="line"><span class="meta">    QT_WARNING_POP \</span></span><br><span class="line"><span class="meta">    struct QPrivateSignal &#123;&#125;; \</span></span><br><span class="line"><span class="meta">    QT_ANNOTATE_CLASS(qt_qobject, <span class="meta-string">&quot;&quot;</span>)</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="static-const-QMetaObject-staticMetaObject"><a href="#static-const-QMetaObject-staticMetaObject" class="headerlink" title="static const QMetaObject staticMetaObject"></a>static const QMetaObject staticMetaObject</h3><p>QMetaObject包含QObject中所谓的==元数据==，也就是QObject的一些描述信息：signal、slot、类型信息。</p>
+<p><code>QObject::metaObject()</code>返回==重载==后的QObject的metaObject对象。</p>
+<p>Qt的元对象系统：信号槽，属性系统，运行时类信息都储存在静态对象staticMetaObject中。</p>
+<h3 id="类信息"><a href="#类信息" class="headerlink" title="类信息"></a>类信息</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//存储类中的函数及参数信息</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">qt_meta_stringdata_test_t</span> &#123;</span></span><br><span class="line">    QByteArrayData data[<span class="number">7</span>];<span class="comment">//函数加参数一共7个</span></span><br><span class="line">    <span class="keyword">char</span> stringdata0[<span class="number">60</span>];<span class="comment">//总字符串长60个字节</span></span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="comment">//切分字符串</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> QT_MOC_LITERAL(idx, ofs, len) \</span></span><br><span class="line"><span class="meta">    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \</span></span><br><span class="line"><span class="meta">    qptrdiff(offsetof(qt_meta_stringdata_test_t, stringdata0) + ofs \</span></span><br><span class="line"><span class="meta">        - idx * sizeof(QByteArrayData)) \</span></span><br><span class="line"><span class="meta">    )</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">//初始化qt_meta_stringdata_test ，并且将所有函数拼接成字符串，中间用\0分开</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">qt_meta_stringdata_test_t</span> qt_meta_stringdata_test = &#123;</span><br><span class="line">    &#123;</span><br><span class="line"><span class="built_in">QT_MOC_LITERAL</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">4</span>), <span class="comment">// &quot;test&quot;    //类名 索引，偏移量，偏移长度)，类名</span></span><br><span class="line"><span class="built_in">QT_MOC_LITERAL</span>(<span class="number">1</span>, <span class="number">5</span>, <span class="number">12</span>), <span class="comment">// &quot;signal_test1&quot;    </span></span><br><span class="line"><span class="built_in">QT_MOC_LITERAL</span>(<span class="number">2</span>, <span class="number">18</span>, <span class="number">0</span>), <span class="comment">// &quot;&quot;</span></span><br><span class="line"><span class="built_in">QT_MOC_LITERAL</span>(<span class="number">3</span>, <span class="number">19</span>, <span class="number">12</span>), <span class="comment">// &quot;signal_test2&quot;</span></span><br><span class="line"><span class="built_in">QT_MOC_LITERAL</span>(<span class="number">4</span>, <span class="number">32</span>, <span class="number">5</span>), <span class="comment">// &quot;index&quot;   //信号的参数名</span></span><br><span class="line"><span class="built_in">QT_MOC_LITERAL</span>(<span class="number">5</span>, <span class="number">38</span>, <span class="number">10</span>), <span class="comment">// &quot;slot_test1&quot;</span></span><br><span class="line"><span class="built_in">QT_MOC_LITERAL</span>(<span class="number">6</span>, <span class="number">49</span>, <span class="number">10</span>) <span class="comment">// &quot;slot_test2&quot;</span></span><br><span class="line"> </span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;test\0signal_test1\0\0signal_test2\0index\0&quot;</span></span><br><span class="line">    <span class="string">&quot;slot_test1\0slot_test2&quot;</span>          <span class="comment">//以上两行为字符串</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span> QT_MOC_LITERAL</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">//存储元对象信息，包括信号和槽机制、运行时类型信息和动态属性系统</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> uint qt_meta_data_test[] = &#123;</span><br><span class="line"> </span><br><span class="line"> <span class="comment">// content:</span></span><br><span class="line">       <span class="number">7</span>,       <span class="comment">// revision</span></span><br><span class="line">       <span class="number">0</span>,       <span class="comment">// classname</span></span><br><span class="line">       <span class="number">0</span>,    <span class="number">0</span>, <span class="comment">// classinfo</span></span><br><span class="line">       <span class="number">4</span>,   <span class="number">14</span>, <span class="comment">// methods</span></span><br><span class="line">       <span class="number">0</span>,    <span class="number">0</span>, <span class="comment">// properties</span></span><br><span class="line">       <span class="number">0</span>,    <span class="number">0</span>, <span class="comment">// enums/sets</span></span><br><span class="line">       <span class="number">0</span>,    <span class="number">0</span>, <span class="comment">// constructors</span></span><br><span class="line">       <span class="number">0</span>,       <span class="comment">// flags</span></span><br><span class="line">       <span class="number">2</span>,       <span class="comment">// signalCount</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> 信号 第一列是信号的索引1，3;对应第一列</span></span><br><span class="line"><span class="comment">QT_MOC_LITERAL(1, 5, 12), // &quot;signal_test1&quot;    </span></span><br><span class="line"><span class="comment">QT_MOC_LITERAL(2, 18, 0), // &quot;&quot;</span></span><br><span class="line"><span class="comment">QT_MOC_LITERAL(3, 19, 12), // &quot;signal_test2&quot;</span></span><br><span class="line"><span class="comment">      第二列是参数个数</span></span><br><span class="line"><span class="comment">      第三列是？暂未明白</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"> <span class="comment">// signals: name, argc, parameters, tag, flags </span></span><br><span class="line">       <span class="number">1</span>,    <span class="number">0</span>,   <span class="number">34</span>,    <span class="number">2</span>, <span class="number">0x06</span> <span class="comment">/* Public */</span>,</span><br><span class="line">       <span class="number">3</span>,    <span class="number">1</span>,   <span class="number">35</span>,    <span class="number">2</span>, <span class="number">0x06</span> <span class="comment">/* Public */</span>,</span><br><span class="line"> </span><br><span class="line"> <span class="comment">// slots: name, argc, parameters, tag, flags</span></span><br><span class="line">       <span class="number">5</span>,    <span class="number">0</span>,   <span class="number">38</span>,    <span class="number">2</span>, <span class="number">0x0a</span> <span class="comment">/* Public */</span>,</span><br><span class="line">       <span class="number">6</span>,    <span class="number">1</span>,   <span class="number">39</span>,    <span class="number">2</span>, <span class="number">0x0a</span> <span class="comment">/* Public */</span>,</span><br><span class="line"> </span><br><span class="line"> <span class="comment">// signals: parameters</span></span><br><span class="line">    QMetaType::Void,</span><br><span class="line">    QMetaType::Void, QMetaType::Int,    <span class="number">4</span>,</span><br><span class="line"> </span><br><span class="line"> <span class="comment">// slots: parameters</span></span><br><span class="line">    QMetaType::Void,</span><br><span class="line">    QMetaType::Void, QMetaType::Int,    <span class="number">4</span>,</span><br><span class="line"> </span><br><span class="line">       <span class="number">0</span>        <span class="comment">// eod</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>参考链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/LIJIWEI0611/article/details/115056153">https://blog.csdn.net/LIJIWEI0611/article/details/115056153</a></p>
+<h2 id="Qt反射机制"><a href="#Qt反射机制" class="headerlink" title="Qt反射机制"></a>Qt反射机制</h2><ul>
+<li>继承自QObject，使用Q_OBJECT宏</li>
+<li>使用<code>Q_PROPERTY(&#123;type&#125; &#123;name&#125; READ &#123;func1&#125; WRITE &#123;func2&#125; NOTIFY &#123;sig1&#125;)</code>宏注册属性</li>
+<li>使用<code>Q_INVOKABLE fun1(args...)</code>宏注册类的成员函数</li>
+</ul>
+<p>参考链接：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/55883889">https://zhuanlan.zhihu.com/p/55883889</a></p>
+<h2 id="TCP连接的断开"><a href="#TCP连接的断开" class="headerlink" title="TCP连接的断开"></a>TCP连接的断开</h2><p>除正常情况的==四次挥手==断开连接外，TCP断开连接有如下规则：</p>
+<ul>
+<li><p>TCP连接断开的==挥手==，在进程崩溃时，会由操作系统内核代劳</p>
+</li>
+<li><p>当TCP连接建立后，如果某一方断电或断网，如果此时刚好<strong>正在发送数据</strong>，TCP数据包发送失败后会==重试==，重试达到上限时也会直接断开连接</p>
+<ul>
+<li><blockquote>
+<p>Linux下：</p>
+<p>最小重传时间为==200ms==</p>
+<p>最大重传时间为==120s==</p>
+<p>重传次数为==15==</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><p>当TCP连接建立后，如果某一方断电或断网，且这条连接<strong>没有数据传输时</strong>：</p>
+<ul>
+<li>如果开启了==KeepAlive==机制，则会在一定心跳检测后断开连接，这个默认检测时间大概==2个多小时==，比较久</li>
+<li>如果未开启KeepAlive机制，则连接<strong>永远存在</strong></li>
+</ul>
+</li>
+<li><p>如果一方发送==RST包==给另一方，也是会强制对方断开连接的（断电/断网后某端重启再恢复，便会发送RST）</p>
+</li>
+</ul>
+<p>参考链接：<a target="_blank" rel="noopener" href="https://blog.51cto.com/u_15067225/4334375">https://blog.51cto.com/u_15067225/4334375</a></p>
+<h2 id="C-函数调用过程"><a href="#C-函数调用过程" class="headerlink" title="C++函数调用过程"></a>C++函数调用过程</h2><p>在堆栈中变量分布是从高地址到低地址分布，EBP是指向栈底的指针，<strong>在调用过程中不变</strong>，又称为==帧指针==。ESP指向栈顶，程序执行时移动，ESP减小分配空间，ESP增大释放空间，ESP又称为==栈指针==。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> param1 ,<span class="keyword">int</span> param2,<span class="keyword">int</span> param3)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> var1 = param1;</span><br><span class="line">        <span class="keyword">int</span> var2 = param2;</span><br><span class="line">        <span class="keyword">int</span> var3 = param3;</span><br><span class="line"></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;var1=%d,var2=%d,var3=%d&quot;</span>,var1,var2,var3);</span><br><span class="line">        <span class="keyword">return</span> var1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> result = <span class="built_in">func</span>(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>函数main执行，main各个参数<strong>从右向左逐步压入栈中，最后压入返回地址</strong>。</p>
+</li>
+<li><p>执行第15行，3个参数从左向右的顺序压入堆栈，栈内分布如下图：<br><img src="https://pic002.cnblogs.com/images/2012/426620/2012072014171977.jpg" alt="img"></p>
+</li>
+<li><p><strong>返回地址入栈</strong>，栈内分布如下：<br><img src="https://pic002.cnblogs.com/images/2012/426620/2012072014223353.jpg" alt="img"></p>
+</li>
+<li><p>函数调用，通过跳转指令进入函数，<strong>函数地址入栈后，EBP入栈，然后把当前ESP的值给EBP</strong>，对应的汇编指令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">push ebp</span><br><span class="line">mov ebp esp</span><br></pre></td></tr></table></figure>
+
+<p>此时栈顶和栈底指向同一位置，栈内分布如下：</p>
+<p><img src="https://pic002.cnblogs.com/images/2012/426620/2012072014393253.jpg" alt="img"></p>
+</li>
+<li><p>执行函数内容。按申明顺序依次储存。</p>
+<p><img src="https://pic002.cnblogs.com/images/2012/426620/2012072014460755.jpg" alt="img"></p>
+</li>
+<li><p>输出结果。<strong>通过eax寄存器保存函数的返回值</strong>。</p>
+</li>
+<li><p>调用执行函数完毕，局部变量var3，var2，var3依次出栈，EBP恢复原值，返回地址出栈，找到原执行地址，param1，param2，param3依次出栈，函数调用执行完毕。</p>
+</li>
+</ol>
+<h2 id="在堆上分配内存快还是栈上分配内存更快？"><a href="#在堆上分配内存快还是栈上分配内存更快？" class="headerlink" title="在堆上分配内存快还是栈上分配内存更快？"></a>在堆上分配内存快还是栈上分配内存更快？</h2><p><strong>在栈上分配释放内存更快</strong>。</p>
+<p>栈是程序启动时，系统分配好了的。</p>
+<p>堆是用的时候向系统申请，用了还回去，申请和交还的过程开销就比较大了。</p>
+<h2 id="内存碎片"><a href="#内存碎片" class="headerlink" title="内存碎片"></a>内存碎片</h2><p>内存碎片的产生有两方面的原因：</p>
+<ol>
+<li><p><strong>动态内存分配的问题</strong>：</p>
+<p>内存碎片即“碎片的内存”，描述一个系统中所有不可用的空闲内存，这些碎片之所以不能被使用，是因为负责<strong>动态分配内存的分配算法使得这些空闲的内存无法使用</strong>。空闲内存以小且不连续的方式出现在不同的位置。</p>
+<p>空闲内存碎片有两种：<strong>a.内部碎片；b.外部碎片</strong></p>
+<p><strong>内部碎片的产生</strong>：==所有内存分配必须起始于可被4、8或16整除的地址==，内存分配算法仅能把预定大小的内存块分配给永固，此时可能产生多余空间即内部碎片。</p>
+<p><strong>外部碎片的产生</strong>：<strong>频繁的分配与回收物理界面导致大量的、连续且小的页面夹在已经分配的页面中间，就会产生外部碎片。</strong></p>
+</li>
+<li><p><strong>系统内存回收机制问题</strong>：</p>
+<p>内存碎片是一个系统问题，反复的malloc和free，free后的内存又不能马上被系统回收利用，这个与系统对内存的回收机制有关。</p>
+</li>
+</ol>
+<h2 id="静态链接与动态链接"><a href="#静态链接与动态链接" class="headerlink" title="静态链接与动态链接"></a>静态链接与动态链接</h2><p>静态链接与动态链接最大的区别就在于<strong>链接的时机不一样</strong>，静态链接是在形成可执行程序前，动态链接的进行则是在程序执行时。</p>
+<h3 id="静态链接"><a href="#静态链接" class="headerlink" title="静态链接"></a>静态链接</h3><p>目标文件合成可执行文件，编译时进行重定位。</p>
+<p>优点：</p>
+<p>执行速度快。</p>
+<p>缺点：</p>
+<ol>
+<li>浪费空间。</li>
+<li>更新困难，需要重新编译链接。</li>
+</ol>
+<h3 id="动态链接"><a href="#动态链接" class="headerlink" title="动态链接"></a>动态链接</h3><p>程序按照模块拆分成各个相对独立的部分，在程序运行时才将它们链接在一起形成一个完整的程序。运行时执行重定位。</p>
+<p>优点：</p>
+<ol>
+<li>不会有多个库的副本。</li>
+<li>更新方便</li>
+</ol>
+<p>缺点：</p>
+<p>运行时进行链接，性能略微损失。</p>
+<h2 id="STL的内存分配原理"><a href="#STL的内存分配原理" class="headerlink" title="STL的内存分配原理"></a>STL的内存分配原理</h2><p>STL的默认allocator是一个==两级分配器==构成的内存管理器：</p>
+<ul>
+<li>当申请的内存大于128byte时，启动第一级分配器通过malloc直接向系统的堆空间申请分配内存</li>
+<li>当申请的内存小于128byte时，启动第二级分配器，从一个 <strong>预先分配好</strong>的==内存池==中取一块内存交付给用户。这个内存池由16个大小不同（8的倍数，8~128byte）的空闲列表组成，allocator会根据申请内存的大小（将这个大小round up成8的倍数）从对应的空闲块列表取表头块给用户。</li>
+</ul>
+<p>优点：==小对象==</p>
+<ul>
+<li>小对象的快速分配。</li>
+<li>避免了内存碎片的产生。</li>
+</ul>
+<h2 id="Qt-connect的第五个参数（信号槽连接方式）"><a href="#Qt-connect的第五个参数（信号槽连接方式）" class="headerlink" title="Qt connect的第五个参数（信号槽连接方式）"></a>Qt connect的第五个参数（信号槽连接方式）</h2><ol>
+<li><code>Qt::AutoConnection</code>： 默认值，使用这个值则连接类型会在信号发送时决定。如果接收者和发送者在同一个线程，则自动使用Qt::DirectConnection类型。如果接收者和发送者不在一个线程，则自动使用Qt::QueuedConnection类型。</li>
+<li><code>Qt::DirectConnection</code>：槽函数会在信号发送的时候直接被调用，槽函数运行于信号发送者所在线程。效果看上去就像是直接在信号发送位置调用了槽函数。这个在多线程环境下比较危险，可能会造成奔溃。</li>
+<li><code>Qt::QueuedConnection</code>：槽函数在控制回到接收者所在线程的事件循环时被调用，槽函数运行于信号接收者所在线程。发送信号之后，槽函数不会立刻被调用，等到接收者的当前函数执行完，进入事件循环之后，槽函数才会被调用。多线程环境下一般用这个。</li>
+<li><code>Qt::BlockingQueuedConnection</code>：槽函数的调用时机与Qt::QueuedConnection一致，不过发送完信号后发送者所在线程会阻塞，直到槽函数运行完。接收者和发送者绝对不能在一个线程，否则程序会死锁。在多线程间需要同步的场合可能需要这个。</li>
+<li><code>Qt::UniqueConnection</code>：这个flag可以通过按位或（|）与以上四个结合在一起使用。当这个flag设置时，当某个信号和槽已经连接时，再进行重复的连接就会失败。也就是避免了重复连接。</li>
+</ol>
+<h2 id="HTTP的方法"><a href="#HTTP的方法" class="headerlink" title="HTTP的方法"></a>HTTP的方法</h2><p>超文本传输协议（HTTP）的设计目的是保证客户端于服务器之间的通信。</p>
+<p>HTTP的工作方式是客户端与服务器之间的请求-应答协议。</p>
+<ul>
+<li><p><strong>GET</strong>：从指定的资源==请求数据==</p>
+<p><strong>查询字符串（名称/值对）是在GET请求的URL中发送的</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/test/demo_form.php?name1=value1&amp;name2=value2</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>GET请求可被缓存</li>
+<li>GET请求保留在浏览器历史记录中</li>
+<li>GET请求可被收藏为书签</li>
+<li>GET请求不应再处理敏感数据时使用</li>
+<li>GET请求有长度限制</li>
+<li>GET请求只应当用于取回数据</li>
+</ul>
+</li>
+<li><p><strong>POST</strong>：向指定的资源==提交==要被处理的数据：</p>
+<p><strong>查询字符串（名称/值对）时在POST请求的HTTP消息主体中发送的</strong>：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/test/demo_form.php</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>runoob.com</span><br><span class="line">name1=value1&amp;name2=value2</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>POST请求不会被缓存</li>
+<li>POST请求不会保存在浏览器历史记录中</li>
+<li>POST不能被收藏为书签</li>
+<li>POST请求对数据长度没有要求</li>
+</ul>
+</li>
+<li><p>HEAD：与GET相同，但只返回HTTP报头，不返回文档主体</p>
+</li>
+<li><p>PUT：上传指定的URL表示</p>
+</li>
+<li><p>DELETE：删除指定资源</p>
+</li>
+<li><p>OPTIONS：返回服务器支持的HTTP方法</p>
+</li>
+<li><p>CONNECT：把请求连接转换到透明的TCP/IP通道</p>
+</li>
+</ul>
+<h2 id="C-类对象的内存分布（内存对齐）"><a href="#C-类对象的内存分布（内存对齐）" class="headerlink" title="C++类对象的内存分布（内存对齐）"></a>C++类对象的内存分布（内存对齐）</h2><p>C++类初始化为一个对象后，该对象实例在内存中的分布情况：</p>
+<h3 id="空类"><a href="#空类" class="headerlink" title="空类"></a>空类</h3><p>实例化一个空类，会在内存中占用1个字节，表示为类实例。</p>
+<h3 id="只含基本数据，不含函数"><a href="#只含基本数据，不含函数" class="headerlink" title="只含基本数据，不含函数"></a>只含基本数据，不含函数</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>&#123;</span></span><br><span class="line">	<span class="keyword">char</span> a;</span><br><span class="line">	<span class="keyword">int</span> b;</span><br><span class="line">	<span class="keyword">char</span> c;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span>&#123;</span></span><br><span class="line">	<span class="keyword">char</span> a;</span><br><span class="line">	<span class="keyword">char</span> c;</span><br><span class="line">	<span class="keyword">int</span> b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">	cout&lt;&lt;<span class="built_in"><span class="keyword">sizeof</span></span>(A)&lt;&lt;endl;</span><br><span class="line">	cout&lt;&lt;<span class="built_in"><span class="keyword">sizeof</span></span>(B)&lt;&lt;endl;	</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>答案分别是：</p>
+<p>12</p>
+<p>8</p>
+<p>原因在于C++类成员变量的内存分布式<strong>从上到下</strong>，按照<strong>内存对齐</strong>原则进行分布的。</p>
+<p><strong>内存对齐原则</strong>：</p>
+<blockquote>
+<ol>
+<li>==分配内存的顺序是按照声明的顺序。==</li>
+<li>==每个变量相对于起始位置的偏移量必须是该变量类型大小的整数倍，不是整数倍空出内存，直到偏移量是整数倍位置。==</li>
+<li>==最后整个类的大小必须是<strong>变量类型最大值</strong>的整数倍。==</li>
+</ol>
+</blockquote>
+<p><strong>为什么要进行内存对齐：</strong></p>
+<ol>
+<li>平台原因（移植原因）：某些硬件平台只能在某些地址处取某些特定类型的数据，不能访问任意地址。</li>
+<li>性能原因：访问未对其的内存，处理器需要作两次内存访问；而对齐的内存访问仅需要一次访问。</li>
+</ol>
+<h3 id="带成员函数的类"><a href="#带成员函数的类" class="headerlink" title="带成员函数的类"></a>带成员函数的类</h3><p>函数不占实例内存，一个类的函数时公共的，一个类的函数只有一份。</p>
+<p>类的成员函数存放与具体编译器有关，有的放在只读区，有的存放在代码区。</p>
+<h3 id="带虚函数的类"><a href="#带虚函数的类" class="headerlink" title="带虚函数的类"></a>带虚函数的类</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">E</span> &#123;</span></span><br><span class="line">  <span class="function"><span class="keyword">virtual</span> <span class="keyword">int</span> <span class="title">func1</span><span class="params">()</span> </span>&#123; cout &lt;&lt; <span class="string">&quot;虚函数&quot;</span> &lt;&lt; endl; &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">char</span> a;</span><br><span class="line">  <span class="keyword">int</span> b;</span><br><span class="line">  <span class="keyword">char</span> c;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">int</span> <span class="title">func</span><span class="params">()</span> </span>&#123; cout &lt;&lt; <span class="string">&quot;成员函数&quot;</span> &lt;&lt; endl; &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>24</p>
+<p>虚函数表指针占用了前8位。</p>
+<h2 id="C-数据类型"><a href="#C-数据类型" class="headerlink" title="C++数据类型"></a>C++数据类型</h2><table>
+<thead>
+<tr>
+<th align="left">类型名称</th>
+<th align="left">字节</th>
+<th align="left">其他名称</th>
+<th align="left">值的范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong><code>int</code></strong></td>
+<td align="left">4</td>
+<td align="left"><strong><code>signed</code></strong></td>
+<td align="left">-2,147,483,648 到 2,147,483,647</td>
+</tr>
+<tr>
+<td align="left"><strong><code>unsigned int</code></strong></td>
+<td align="left">4</td>
+<td align="left"><strong><code>unsigned</code></strong></td>
+<td align="left">0 到 4,294,967,295</td>
+</tr>
+<tr>
+<td align="left"><strong><code>__int8</code></strong></td>
+<td align="left">1</td>
+<td align="left"><strong><code>char</code></strong></td>
+<td align="left">-128 到 127</td>
+</tr>
+<tr>
+<td align="left"><strong><code>unsigned __int8</code></strong></td>
+<td align="left">1</td>
+<td align="left"><strong><code>unsigned char</code></strong></td>
+<td align="left">0 到 255</td>
+</tr>
+<tr>
+<td align="left"><strong><code>__int16</code></strong></td>
+<td align="left">2</td>
+<td align="left"><strong><code>short</code></strong>, <strong><code>short int</code></strong>, <strong><code>signed short int</code></strong></td>
+<td align="left">-32,768 到 32,767</td>
+</tr>
+<tr>
+<td align="left"><strong><code>unsigned __int16</code></strong></td>
+<td align="left">2</td>
+<td align="left"><strong><code>unsigned short</code></strong>, <strong><code>unsigned short int</code></strong></td>
+<td align="left">0 到 65,535</td>
+</tr>
+<tr>
+<td align="left"><strong><code>__int32</code></strong></td>
+<td align="left">4</td>
+<td align="left"><strong><code>signed</code></strong>, <strong><code>signed int</code></strong>, <strong><code>int</code></strong></td>
+<td align="left">-2,147,483,648 到 2,147,483,647</td>
+</tr>
+<tr>
+<td align="left"><strong><code>unsigned __int32</code></strong></td>
+<td align="left">4</td>
+<td align="left"><strong><code>unsigned</code></strong>, <strong><code>unsigned int</code></strong></td>
+<td align="left">0 到 4,294,967,295</td>
+</tr>
+<tr>
+<td align="left"><strong><code>__int64</code></strong></td>
+<td align="left">8</td>
+<td align="left"><strong><code>long long</code></strong>, <strong><code>signed long long</code></strong></td>
+<td align="left">-9,223,372,036,854,775,808 到 9,223,372,036,854,775,807</td>
+</tr>
+<tr>
+<td align="left"><strong><code>unsigned __int64</code></strong></td>
+<td align="left">8</td>
+<td align="left"><strong><code>unsigned long long</code></strong></td>
+<td align="left">0 到 18,446,744,073,709,551,615</td>
+</tr>
+<tr>
+<td align="left"><strong><code>bool</code></strong></td>
+<td align="left">1</td>
+<td align="left">无</td>
+<td align="left"><strong><code>false</code></strong> 或 <strong><code>true</code></strong></td>
+</tr>
+<tr>
+<td align="left"><strong><code>char</code></strong></td>
+<td align="left">1</td>
+<td align="left">无</td>
+<td align="left">-128 到 127 默认  0 to 255 when compiled by using <a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/cpp/build/reference/j-default-char-type-is-unsigned?view=msvc-170"><code>/J</code></a></td>
+</tr>
+<tr>
+<td align="left"><strong><code>signed char</code></strong></td>
+<td align="left">1</td>
+<td align="left">无</td>
+<td align="left">-128 到 127</td>
+</tr>
+<tr>
+<td align="left"><strong><code>unsigned char</code></strong></td>
+<td align="left">1</td>
+<td align="left">无</td>
+<td align="left">0 到 255</td>
+</tr>
+<tr>
+<td align="left"><strong><code>short</code></strong></td>
+<td align="left">2</td>
+<td align="left"><strong><code>short int</code></strong>, <strong><code>signed short int</code></strong></td>
+<td align="left">-32,768 到 32,767</td>
+</tr>
+<tr>
+<td align="left"><strong><code>unsigned short</code></strong></td>
+<td align="left">2</td>
+<td align="left"><strong><code>unsigned short int</code></strong></td>
+<td align="left">0 到 65,535</td>
+</tr>
+<tr>
+<td align="left"><strong><code>long</code></strong></td>
+<td align="left">4</td>
+<td align="left"><strong><code>long int</code></strong>, <strong><code>signed long int</code></strong></td>
+<td align="left">-2,147,483,648 到 2,147,483,647</td>
+</tr>
+<tr>
+<td align="left"><strong><code>unsigned long</code></strong></td>
+<td align="left">4</td>
+<td align="left"><strong><code>unsigned long int</code></strong></td>
+<td align="left">0 到 4,294,967,295</td>
+</tr>
+<tr>
+<td align="left"><strong><code>long long</code></strong></td>
+<td align="left">8</td>
+<td align="left">无 (，但等效于 <strong><code>__int64</code></strong>)</td>
+<td align="left">-9,223,372,036,854,775,808 到 9,223,372,036,854,775,807</td>
+</tr>
+<tr>
+<td align="left"><strong><code>unsigned long long</code></strong></td>
+<td align="left">8</td>
+<td align="left">无 (，但等效于 <strong><code>unsigned __int64</code></strong>)</td>
+<td align="left">0 到 18,446,744,073,709,551,615</td>
+</tr>
+<tr>
+<td align="left"><strong><code>enum</code></strong></td>
+<td align="left">多种多样</td>
+<td align="left">无</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><strong><code>float</code></strong></td>
+<td align="left">4</td>
+<td align="left">无</td>
+<td align="left">3.4E +/- 38（7 位数）</td>
+</tr>
+<tr>
+<td align="left"><strong><code>double</code></strong></td>
+<td align="left">8</td>
+<td align="left">无</td>
+<td align="left">1.7E +/- 308（15 位数）</td>
+</tr>
+<tr>
+<td align="left"><strong><code>long double</code></strong></td>
+<td align="left">与 <strong><code>double</code></strong></td>
+<td align="left">无</td>
+<td align="left">与 <strong><code>double</code></strong> 相同</td>
+</tr>
+<tr>
+<td align="left"><strong><code>wchar_t</code></strong></td>
+<td align="left">2</td>
+<td align="left"><strong><code>__wchar_t</code></strong></td>
+<td align="left">0 到 65,535</td>
+</tr>
+</tbody></table>
+<h2 id="指针和引用的区别是什么？"><a href="#指针和引用的区别是什么？" class="headerlink" title="指针和引用的区别是什么？"></a>指针和引用的区别是什么？</h2><ol>
+<li>引用必须定义时<strong>初始化</strong>，不能像指针一样仅<code>int* a;</code>这样定义，必须<code>int &amp;b=a;</code>。</li>
+<li><code>int &amp; const r = a</code>这样写错误，因为引用本身就不能改变指向，<strong>添加const多次一举。</strong></li>
+<li>指针可以有多级<strong>但引用只能有一级</strong>。</li>
+<li>指针的++，–代表下一个数据，<strong>引用的++，–代表数据本身的加减。</strong></li>
+<li>sizeof引用得到的是所指向的变量（对象）的大小，而sizeof指针得到的是指针本身的大小；</li>
+<li>当指针和引用作为函数参数的时候，指针传递参数会生成一个临时变量，引用传递的参数不会生成一个临时变量。</li>
+</ol>
+<p>指针传递的本质是值传递复制实参的地址到函数的栈中，然后在形参中对地址取值操作。而引用的形参是给实参起了一个别名，可以直接操控实参从而实现对实参的控制。</p>
+<p>参考链接：<a href="https://link.zhihu.com/?target=https://www.cnblogs.com/dingxiaoqiang/p/8012578.html">C++ 值传递、指针传递、引用传递详解</a></p>
+<p>题外话：</p>
+<p>引用的本质就是指针，它的出现是为了书写方便，不要动不动有<code>*a=10</code>。</p>
+<p><code>int &amp;b=a;</code>这里&amp;a，&amp;b取址相同，并不代表引用b不占用内存，而是系统自动将&amp;b转换成对b中内容的读取。而b里面保存的是a的地址。后台实际运行时，<code>int *b=&amp;a;b=12</code>就是<code>*b=12</code>。</p>
+<h2 id="C-程序运行时进程的内存分布情况"><a href="#C-程序运行时进程的内存分布情况" class="headerlink" title="C++程序运行时进程的内存分布情况"></a>C++程序运行时进程的内存分布情况</h2><p><img src="https://img-blog.csdnimg.cn/db0745b0bb634a62847e3eb2b18bb6d0.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM4OTczNzEw,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<p>内存分为5部分，从高地址到低地址为：</p>
+<ul>
+<li><strong>栈</strong>：空间向下</li>
+<li><strong>堆</strong>：空间向上</li>
+<li><strong>未初始化的数据段</strong>（==bss==）：该段数据在程序开始之前由操作系统内核初始化为0，包含所有==初始化为0==和==没有显式初始化==的==全局变量==和==静态变量==</li>
+<li><strong>初始化的数据段</strong>（==data==）：==初始化==的==全局变量==和==静态变量==</li>
+<li><strong>代码段</strong>（==text==）：存放程序的二进制代码</li>
+</ul>
+<h2 id="C-变量的内存分配"><a href="#C-变量的内存分配" class="headerlink" title="C++变量的内存分配"></a>C++变量的内存分配</h2><p>C的储存区分为：</p>
+<ul>
+<li><strong>栈</strong>：编译器自动分配释放</li>
+<li><strong>堆</strong>：程序员分配释放</li>
+<li><strong>全局区（静态区）</strong>：全局变量与静态变量存放在一起，初始化与未初始化的全局变量和静态变量分别存放在两块相邻的区域。-程序结束释放</li>
+<li><strong>常量区</strong>：程序结束释放</li>
+</ul>
+<p>C++的储存区分为：</p>
+<ul>
+<li><strong>栈</strong>：由编译器在需要的时候分配，在不需要的时候自动清除的变量的存储区。里面的变量通常是局部变脸、函数参数等。</li>
+<li><strong>堆</strong>：==new==分配的内存块，他们的释放由程序员负责。若程序员没有释放掉，程序结束后操作系统会自动回收。</li>
+<li><strong>自由存储区</strong>：==malloc==分配的内存块，他和堆是十分相似的，区别是用free来结束自己的声明。</li>
+<li><strong>全局/静态存储区</strong>：全局变量和静态变量被分配到同一块内存中，在C语言中，全局变量和静态变量分为初始化的和未初始化的，在C++中无区分，共同占用同一块内存区</li>
+<li><strong>常量存储区</strong>：里面存放常量</li>
+</ul>
+<p>判断规则：</p>
+<ul>
+<li>函数体中定义的变量通常是在==栈==上</li>
+<li>用malloc，new等分配内存的函数分配得到的在==堆==上</li>
+<li>全局变量存在==全局区==</li>
+<li>所有静态变量存在==全局区==</li>
+<li>“abcd”字符串常量存放在==常量区==</li>
+</ul>
+<blockquote>
+<p><code>char s[] = &quot;hello&quot;</code>，s为全局变量，存放在==数据段==（简称“==数据段==”）的==读写区域==；</p>
+<p><code>char *ss = &quot;world&quot;</code>，ss为全局变量，存放在==数据段==的==只读部分==</p>
+</blockquote>
+<h2 id="C-的多态"><a href="#C-的多态" class="headerlink" title="C++的多态"></a>C++的多态</h2><p>面向对象的三大特征：<strong>封装</strong>、<strong>继承</strong>和<strong>多态</strong>。</p>
+<p>多态分为<strong>编译时的多态</strong>与<strong>运行时的多态</strong>。</p>
+<p>编译时的多态就是==函数重载==，包括==运算符重载==，编译时根据实参决定调用哪个函数。</p>
+<p>运行时的多态与==继承==、==虚函数==有关。</p>
+<h2 id="一次完整的HTTP请求"><a href="#一次完整的HTTP请求" class="headerlink" title="一次完整的HTTP请求"></a>一次完整的HTTP请求</h2><p>当我们在web浏览器的地址栏输入<a href="http://www.baidu.com时，简单来说发生了下述行为：">www.baidu.com时，简单来说发生了下述行为：</a></p>
+<p><strong>概述</strong>：</p>
+<ol>
+<li>对<a target="_blank" rel="noopener" href="http://www.baidu.com这个网址进行dns域名解析,得到对应的ip地址./">www.baidu.com这个网址进行DNS域名解析，得到对应的IP地址。</a></li>
+<li>根据这个IP，找到对应的服务器，发起TCP的三次握手。</li>
+<li>建立TCP连接后发起HTTP请求。</li>
+<li>服务器相应HTTP请求，浏览器获得HTML代码。</li>
+<li>浏览器解析HTML代码，并请求HTML代码中的资源（如JS、CSS、图片等）（==先得到HTML代码，才能去找这些资源==）。</li>
+<li>浏览器对页面进行渲染呈现给用户。</li>
+<li>服务器关闭TCP连接。</li>
+</ol>
+<p>注：</p>
+<ol>
+<li><p>DNS怎么找到域名？</p>
+<blockquote>
+<p>DNS域名解析采用的是递归查询的方式，过程是，先去找DNS缓存-&gt;缓存找不到就去根域名服务器-&gt;根域名又会去找下一级，这样递归查找之后，找到了，给我们的web浏览器</p>
+</blockquote>
+</li>
+<li><p>为什么HTTP协议要基于TCP来实现？</p>
+<blockquote>
+<p>TCP是一个端到端的可靠的面向连接的协议，HTTP基于传输层TCP协议不用担心数据传输的各种问题（当发生错误时，会重传）</p>
+</blockquote>
+</li>
+<li><p>最后一步浏览器是如何对页面进行渲染的？</p>
+<blockquote>
+<p>a) 解析HTML文件形成DOM树</p>
+<p>b) 解析CSS文件构成渲染树</p>
+<p>c) 边解析，边渲染</p>
+<p>d) JS单线程运行，JS有可能修改DOM结构，意味着JS执行完成前，后续所有资源的下载是没有必要的，所以JS是单线程，会阻塞后续资源下载。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="服务器关闭TCP连接"><a href="#服务器关闭TCP连接" class="headerlink" title="服务器关闭TCP连接"></a>服务器关闭TCP连接</h3><p>一般情况下，一旦Web服务器向浏览器发送了请求数据，它就要关闭TCP连接，然后如果浏览器或者服务器在其头信息加入了这行代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Connection:keep-alive </span><br></pre></td></tr></table></figure>
+
+<p>TCP连接在发送后将仍然保持打开状态，于是，浏览器可以继续通过相同的连接发送请求。保持连接节省了为每个请求新连接所需的时间，还节约了网络带宽。</p>
+<h2 id="QCoreApplication，QGuiApplication，QApplication之间的关系"><a href="#QCoreApplication，QGuiApplication，QApplication之间的关系" class="headerlink" title="QCoreApplication，QGuiApplication，QApplication之间的关系"></a>QCoreApplication，QGuiApplication，QApplication之间的关系</h2><p><code>QObject</code>-&gt;<code>QCoreApplication</code>-&gt;<code>QGuiApplication</code>-&gt;<code>QApplication</code></p>
+<p>使用QWidget时应使用<code>QApplication</code>。</p>
+<h2 id="Qt的D指针（d-ptr）与Q指针（q-ptr）"><a href="#Qt的D指针（d-ptr）与Q指针（q-ptr）" class="headerlink" title="Qt的D指针（d_ptr）与Q指针（q_ptr）"></a>Qt的D指针（<code>d_ptr</code>）与Q指针（<code>q_ptr</code>）</h2><h3 id="D指针"><a href="#D指针" class="headerlink" title="D指针"></a>D指针</h3><p>==PIMPL==模式，指向一个包含所有数据的私有数据结构体。</p>
+<ul>
+<li>私有的结构体可以随意改变，而不需要重新编译整个工程项目</li>
+<li>隐藏实现细节</li>
+<li>头文件中没有任何实现细节，可以作为API使用</li>
+<li>原本在头文件的实现部分转移到乐源文件，所以编译速度有所提高</li>
+</ul>
+<h3 id="Q指针"><a href="#Q指针" class="headerlink" title="Q指针"></a>Q指针</h3><p>私有的结构体中储存一个指向公有类的Q指针。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
+<li>Qt中的一个类常用一个PrivateXXX类来处理内部逻辑，使得内部逻辑与外部接口分开，这个PrivateXXX对象通过D指针来访问；在PrivateXXX中有需要引用Owner的内容，通过Q指针来访问。</li>
+<li>由于D和Q指针是从基类继承下来的，子类中由于继承导致类型发生变化，需要通过<code>static_cast</code>类型转化，所以<code>DPTR()</code>与<code>QPTR()</code>宏定义实现了转换。</li>
+</ul>
+<h2 id="Qt的智能指针"><a href="#Qt的智能指针" class="headerlink" title="Qt的智能指针"></a>Qt的智能指针</h2><p>Qt的智能指针包括：</p>
+<ul>
+<li>QSharedPointer</li>
+<li>QScopedPointer</li>
+<li>QScopedArrayPointer</li>
+<li>QWeakPointer</li>
+<li>QPointer</li>
+<li>QSharedDataPointer</li>
+</ul>
+<h3 id="QSharedPointer"><a href="#QSharedPointer" class="headerlink" title="QSharedPointer"></a>QSharedPointer</h3><p>相当于<code>std::shared_ptr</code>，内部维持着对拥有的内存资源的引用计数，引用计数下降到0时，这个内存资源就被释放了。</p>
+<p>QSharedPointer是==线程安全==的，多个线程同时修改QSharedPointer对象也不需要加锁，但是QSharedPointer指向的内存区域不一定是线程安全的，所以多个线程同时修改QSharedPointer指向的数据时还要考虑加锁。</p>
+<h3 id="QWeakPointer"><a href="#QWeakPointer" class="headerlink" title="QWeakPointer"></a>QWeakPointer</h3><p>类似于<code>std::weak_ptr</code>。</p>
+<h3 id="QScopedPointer"><a href="#QScopedPointer" class="headerlink" title="QScopedPointer"></a>QScopedPointer</h3><p>相当于<code>std::unique_ptr</code>，内存数据只在一处被使用。</p>
+<h3 id="QScopedArrayPointer"><a href="#QScopedArrayPointer" class="headerlink" title="QScopedArrayPointer"></a>QScopedArrayPointer</h3><p>类似于QScopedPointer，用于指向的内存数据是一个数组时的场景。</p>
+<h3 id="QPointer"><a href="#QPointer" class="headerlink" title="QPointer"></a>QPointer</h3><p>QPointer只能用于指向==QObject及派生类的对象==。当一个QObject或派生类对象被删除后，QPointer能自动将其内部的指针设置为0，这样在使用QPointer之前就可以判断一下是否有效乐。</p>
+<p><strong>QPointer对象超出作用域时，并不会删除它指向的内存对象。</strong></p>
+<h3 id="QSharedPointer-1"><a href="#QSharedPointer-1" class="headerlink" title="QSharedPointer"></a>QSharedPointer</h3><p>用于实现数据的隐式共享。Qt中大量使用了隐式共享与写时拷贝技术，例如：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">QString str1 = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">QString str2 = str1;</span><br><span class="line">str2[<span class="number">2</span>] = <span class="string">&quot;X&quot;</span>; </span><br></pre></td></tr></table></figure>
+
+<p>第二行执行完后，str2和str1指向同一片内存数据。第三句执行时，Qt会为str2的内部数据重新分配内存。这样做的好处是可以有效地减少大片数据拷贝的次数，提高程序的运行效率。</p>
+<p>Qt中隐式共享和写时拷贝就是利用QSharedDataPointer和QSharedData这两个类实现的。</p>
+<h2 id="std-string的写时拷贝与内存共享"><a href="#std-string的写时拷贝与内存共享" class="headerlink" title="std::string的写时拷贝与内存共享"></a>std::string的写时拷贝与内存共享</h2><p>std::string实现了内存共享与写时拷贝。共享的内存何时析构是利用引用计数实现的。</p>
+
+    </div>
+
+    
+    
+    
+      
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\01\关于std_thread的二三事\" rel="bookmark">关于std::thread的二三事</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\12\12\当我谈线程池时我谈些什么\" rel="bookmark">当我谈线程池时我谈些什么</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\05\19\C++日期与时间编程\" rel="bookmark">C++日期与时间编程（C++11-C++17）</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2021\04\22\C++并发编程\" rel="bookmark">C++并发编程</a></div>
+    </li>
+    <li class="popular-posts-item">
+      <div class="popular-posts-title"><a href="\2022\02\26\无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》\" rel="bookmark">无锁编程简介（翻译）——译自《An Introduction to Lock-Free Programming》</a></div>
+    </li>
+  </ul>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C++</a>
+              <a href="/tags/C-11/" rel="tag"># C++11</a>
+              <a href="/tags/C-17/" rel="tag"># C++17</a>
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%E5%BF%83%E5%BE%97/" rel="tag"># 学习心得</a>
+              <a href="/tags/Qt/" rel="tag"># Qt</a>
+              <a href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/05/11/cpp_memory/" rel="prev" title="C++类对象的内存分布">
+      <i class="fa fa-chevron-left"></i> C++类对象的内存分布
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#C-QT-PC%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="nav-number">1.</span> <span class="nav-text">C++&#x2F;QT PC客户端面试题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%88%B6%E5%AD%90%E7%BB%A7%E6%89%BF%E6%97%B6%E5%80%99%EF%BC%8C%E5%AE%83%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E5%92%8C%E6%9E%90%E6%9E%84%E5%87%BD%E6%95%B0%E7%9A%84%E9%A1%BA%E5%BA%8F%EF%BC%9F%E6%9E%90%E6%9E%84%E6%97%B6%E5%80%99%EF%BC%8C%E5%A6%82%E4%BD%95%E8%AE%A9%E7%88%B6%E5%AD%90%E7%B1%BB%E9%87%8C%E6%89%80%E6%9C%89%E7%9A%84%E6%9E%90%E6%9E%84%E9%83%BD%E8%B0%83%E7%94%A8%E4%B8%80%E9%81%8D%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">父子继承时候，它构造函数和析构函数的顺序？析构时候，如何让父子类里所有的析构都调用一遍？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E5%87%BD%E6%95%B0%EF%BC%8C%E5%A6%82%E4%BD%95%E8%AE%A9%E5%AE%83%E5%9C%A8main%E5%87%BD%E6%95%B0%E4%B9%8B%E5%89%8D%E6%89%A7%E8%A1%8C%EF%BC%9F"><span class="nav-number">1.2.</span> <span class="nav-text">一个函数，如何让它在main函数之前执行？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E4%BB%A5%E5%9C%A8C-%E7%9A%84%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E9%87%8C%E8%B0%83%E7%94%A8delete-this%E5%90%97"><span class="nav-number">1.3.</span> <span class="nav-text">可以在C++的成员函数里调用delete this吗?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#class-A-Class-B-A-a-%E8%83%BD%E4%B8%8D%E8%83%BD%E5%85%81%E8%AE%B8%EF%BC%9F"><span class="nav-number">1.4.</span> <span class="nav-text">class A; Class B{ A a; };能不能允许？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E7%9A%84%E7%B1%BB%E5%9E%8B%E8%BD%AC%E6%8D%A2%E6%9C%89%E5%93%AA%E4%BA%9B"><span class="nav-number">1.5.</span> <span class="nav-text">C++的类型转换有哪些</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E6%9C%89%E5%93%AA%E4%BA%9B%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88"><span class="nav-number">1.6.</span> <span class="nav-text">C++有哪些智能指针</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.7.</span> <span class="nav-text">装饰器模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%AD%BB%E9%94%81"><span class="nav-number">1.8.</span> <span class="nav-text">C++多线程死锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%92%8C%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">1.9.</span> <span class="nav-text">TCP三次握手和四次挥手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP%E4%B8%8EUDP"><span class="nav-number">1.9.1.</span> <span class="nav-text">TCP与UDP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP%E6%8A%A5%E6%96%87%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.9.2.</span> <span class="nav-text">TCP报文格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">1.9.3.</span> <span class="nav-text">三次握手</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E8%BF%87%E7%A8%8B%E4%B8%AD%E5%8F%AF%E4%BB%A5%E6%90%BA%E5%B8%A6%E6%95%B0%E6%8D%AE%E5%90%97"><span class="nav-number">1.9.3.1.</span> <span class="nav-text">三次握手过程中可以携带数据吗</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">1.9.4.</span> <span class="nav-text">TCP四次挥手</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">1.9.4.1.</span> <span class="nav-text">为什么要四次挥手</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%92%8C%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%A6%82%E5%BF%B5%E3%80%81%E5%8C%BA%E5%88%AB"><span class="nav-number">1.10.</span> <span class="nav-text">进程和线程的概念、区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-number">1.11.</span> <span class="nav-text">进程线程间通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E5%92%8C%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">1.12.</span> <span class="nav-text">关系型数据库和非关系型数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">1.12.1.</span> <span class="nav-text">关系型数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">1.12.2.</span> <span class="nav-text">非关系型数据库</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-number">1.13.</span> <span class="nav-text">虚拟内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%92%E6%96%A5%E9%94%81%E3%80%81%E5%8F%AF%E9%87%8D%E5%85%A5%E9%94%81%E3%80%81%E8%AF%BB%E5%86%99%E9%94%81%E4%B8%8E%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-number">1.14.</span> <span class="nav-text">互斥锁、可重入锁、读写锁与自旋锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mutex-%E4%BA%92%E6%96%A5%E9%87%8F"><span class="nav-number">1.14.1.</span> <span class="nav-text">mutex 互斥量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#read-write-lock-%E8%AF%BB%E5%86%99%E9%94%81"><span class="nav-number">1.14.2.</span> <span class="nav-text">read-write lock 读写锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spinlock-%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-number">1.14.3.</span> <span class="nav-text">spinlock 自旋锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6%EF%BC%88GC%EF%BC%89"><span class="nav-number">1.15.</span> <span class="nav-text">Java的垃圾回收机制（GC）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">1.15.1.</span> <span class="nav-text">垃圾的定义</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E6%B3%95"><span class="nav-number">1.15.1.1.</span> <span class="nav-text">引用计数法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B9%E6%90%9C%E7%B4%A2%E7%AE%97%E6%B3%95"><span class="nav-number">1.15.1.2.</span> <span class="nav-text">根搜索算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95"><span class="nav-number">1.15.2.</span> <span class="nav-text">回收算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0-%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95"><span class="nav-number">1.15.2.1.</span> <span class="nav-text">标记-清除算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0-%E6%95%B4%E7%90%86%E7%AE%97%E6%B3%95"><span class="nav-number">1.15.2.2.</span> <span class="nav-text">标记-整理算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E7%AE%97%E6%B3%95"><span class="nav-number">1.15.2.3.</span> <span class="nav-text">复制算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%82%E5%BA%94%E6%80%A7%E7%AE%97%E6%B3%95"><span class="nav-number">1.15.2.4.</span> <span class="nav-text">适应性算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E4%BB%A3%E5%9B%9E%E6%94%B6"><span class="nav-number">1.15.2.5.</span> <span class="nav-text">分代回收</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTPS%E7%9A%84%E5%8A%A0%E5%AF%86%E8%BF%9E%E6%8E%A5%E8%BF%87%E7%A8%8B"><span class="nav-number">1.16.</span> <span class="nav-text">HTTPS的加密连接过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E7%A8%8B"><span class="nav-number">1.17.</span> <span class="nav-text">协程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%82%E8%B5%B7-%E6%81%A2%E5%A4%8D"><span class="nav-number">1.17.1.</span> <span class="nav-text">挂起&#x2F;恢复</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%8F%E7%A8%8B%E5%88%86%E7%B1%BB"><span class="nav-number">1.17.2.</span> <span class="nav-text">协程分类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%89%E6%A0%88%E5%8D%8F%E7%A8%8B"><span class="nav-number">1.17.2.1.</span> <span class="nav-text">有栈协程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A0%E6%A0%88%E5%8D%8F%E7%A8%8B"><span class="nav-number">1.17.2.2.</span> <span class="nav-text">无栈协程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%B3%E5%80%BC%E3%80%81%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%EF%BC%8Cstd-move"><span class="nav-number">1.18.</span> <span class="nav-text">右值、右值引用，std::move</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A6%E5%80%BC%E3%80%81%E5%8F%B3%E5%80%BC"><span class="nav-number">1.18.1.</span> <span class="nav-text">左值、右值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A6%E5%80%BC%E5%BC%95%E7%94%A8"><span class="nav-number">1.18.2.</span> <span class="nav-text">左值引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8"><span class="nav-number">1.18.3.</span> <span class="nav-text">右值引用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E4%B8%8Estd-move%E7%9A%84%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.18.4.</span> <span class="nav-text">右值引用与std::move的应用场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RAII"><span class="nav-number">1.19.</span> <span class="nav-text">RAII</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8"><span class="nav-number">1.20.</span> <span class="nav-text">IO多路复用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFIO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8"><span class="nav-number">1.20.1.</span> <span class="nav-text">什么是IO多路复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8-1"><span class="nav-number">1.20.2.</span> <span class="nav-text">IO多路复用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E7%9A%84%E4%B8%89%E7%A7%8D%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.20.3.</span> <span class="nav-text">IO多路复用的三种实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#select"><span class="nav-number">1.20.4.</span> <span class="nav-text">select</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#poll"><span class="nav-number">1.20.5.</span> <span class="nav-text">poll</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#epoll"><span class="nav-number">1.20.6.</span> <span class="nav-text">epoll</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#select-poll-epoll%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.20.7.</span> <span class="nav-text">select&#x2F;poll&#x2F;epoll之间的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%BC%96%E8%AF%91%E3%80%81%E9%93%BE%E6%8E%A5%E3%80%81%E8%A3%85%E8%BD%BD%E4%B8%8E%E8%BF%90%E8%A1%8C"><span class="nav-number">1.21.</span> <span class="nav-text">程序的编译、链接、装载与运行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E7%BC%96%E8%AF%91%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">1.21.1.</span> <span class="nav-text">程序编译的过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-number">1.21.2.</span> <span class="nav-text">目标文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E6%8E%A5"><span class="nav-number">1.21.3.</span> <span class="nav-text">链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8"><span class="nav-number">1.21.4.</span> <span class="nav-text">重定位表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%A6%E5%8F%B7%E8%A1%A8"><span class="nav-number">1.21.5.</span> <span class="nav-text">符号表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A3%85%E8%BD%BD"><span class="nav-number">1.21.6.</span> <span class="nav-text">装载</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#std-shared-ptr%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="nav-number">1.22.</span> <span class="nav-text">std::shared_ptr实现细节</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Qt-deleteLater%E4%B8%8Edelete%E5%AF%B9%E6%AF%94"><span class="nav-number">1.23.</span> <span class="nav-text">Qt deleteLater与delete对比</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Qt%E4%BF%A1%E5%8F%B7%E6%A7%BD"><span class="nav-number">1.24.</span> <span class="nav-text">Qt信号槽</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Qt-MOC%E6%9C%BA%E5%88%B6"><span class="nav-number">1.25.</span> <span class="nav-text">Qt MOC机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#static-const-QMetaObject-staticMetaObject"><span class="nav-number">1.25.1.</span> <span class="nav-text">static const QMetaObject staticMetaObject</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E4%BF%A1%E6%81%AF"><span class="nav-number">1.25.2.</span> <span class="nav-text">类信息</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Qt%E5%8F%8D%E5%B0%84%E6%9C%BA%E5%88%B6"><span class="nav-number">1.26.</span> <span class="nav-text">Qt反射机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TCP%E8%BF%9E%E6%8E%A5%E7%9A%84%E6%96%AD%E5%BC%80"><span class="nav-number">1.27.</span> <span class="nav-text">TCP连接的断开</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">1.28.</span> <span class="nav-text">C++函数调用过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E5%A0%86%E4%B8%8A%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98%E5%BF%AB%E8%BF%98%E6%98%AF%E6%A0%88%E4%B8%8A%E5%88%86%E9%85%8D%E5%86%85%E5%AD%98%E6%9B%B4%E5%BF%AB%EF%BC%9F"><span class="nav-number">1.29.</span> <span class="nav-text">在堆上分配内存快还是栈上分配内存更快？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%A2%8E%E7%89%87"><span class="nav-number">1.30.</span> <span class="nav-text">内存碎片</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5%E4%B8%8E%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5"><span class="nav-number">1.31.</span> <span class="nav-text">静态链接与动态链接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5"><span class="nav-number">1.31.1.</span> <span class="nav-text">静态链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5"><span class="nav-number">1.31.2.</span> <span class="nav-text">动态链接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#STL%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%8E%9F%E7%90%86"><span class="nav-number">1.32.</span> <span class="nav-text">STL的内存分配原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Qt-connect%E7%9A%84%E7%AC%AC%E4%BA%94%E4%B8%AA%E5%8F%82%E6%95%B0%EF%BC%88%E4%BF%A1%E5%8F%B7%E6%A7%BD%E8%BF%9E%E6%8E%A5%E6%96%B9%E5%BC%8F%EF%BC%89"><span class="nav-number">1.33.</span> <span class="nav-text">Qt connect的第五个参数（信号槽连接方式）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">1.34.</span> <span class="nav-text">HTTP的方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E7%B1%BB%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83%EF%BC%88%E5%86%85%E5%AD%98%E5%AF%B9%E9%BD%90%EF%BC%89"><span class="nav-number">1.35.</span> <span class="nav-text">C++类对象的内存分布（内存对齐）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E7%B1%BB"><span class="nav-number">1.35.1.</span> <span class="nav-text">空类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AA%E5%90%AB%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%EF%BC%8C%E4%B8%8D%E5%90%AB%E5%87%BD%E6%95%B0"><span class="nav-number">1.35.2.</span> <span class="nav-text">只含基本数据，不含函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%A6%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0%E7%9A%84%E7%B1%BB"><span class="nav-number">1.35.3.</span> <span class="nav-text">带成员函数的类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%A6%E8%99%9A%E5%87%BD%E6%95%B0%E7%9A%84%E7%B1%BB"><span class="nav-number">1.35.4.</span> <span class="nav-text">带虚函数的类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.36.</span> <span class="nav-text">C++数据类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E5%92%8C%E5%BC%95%E7%94%A8%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.37.</span> <span class="nav-text">指针和引用的区别是什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E7%A8%8B%E5%BA%8F%E8%BF%90%E8%A1%8C%E6%97%B6%E8%BF%9B%E7%A8%8B%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E5%B8%83%E6%83%85%E5%86%B5"><span class="nav-number">1.38.</span> <span class="nav-text">C++程序运行时进程的内存分布情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E5%8F%98%E9%87%8F%E7%9A%84%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D"><span class="nav-number">1.39.</span> <span class="nav-text">C++变量的内存分配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E7%9A%84%E5%A4%9A%E6%80%81"><span class="nav-number">1.40.</span> <span class="nav-text">C++的多态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E6%AC%A1%E5%AE%8C%E6%95%B4%E7%9A%84HTTP%E8%AF%B7%E6%B1%82"><span class="nav-number">1.41.</span> <span class="nav-text">一次完整的HTTP请求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%85%B3%E9%97%ADTCP%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.41.1.</span> <span class="nav-text">服务器关闭TCP连接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QCoreApplication%EF%BC%8CQGuiApplication%EF%BC%8CQApplication%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.42.</span> <span class="nav-text">QCoreApplication，QGuiApplication，QApplication之间的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Qt%E7%9A%84D%E6%8C%87%E9%92%88%EF%BC%88d-ptr%EF%BC%89%E4%B8%8EQ%E6%8C%87%E9%92%88%EF%BC%88q-ptr%EF%BC%89"><span class="nav-number">1.43.</span> <span class="nav-text">Qt的D指针（d_ptr）与Q指针（q_ptr）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#D%E6%8C%87%E9%92%88"><span class="nav-number">1.43.1.</span> <span class="nav-text">D指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Q%E6%8C%87%E9%92%88"><span class="nav-number">1.43.2.</span> <span class="nav-text">Q指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.43.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Qt%E7%9A%84%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88"><span class="nav-number">1.44.</span> <span class="nav-text">Qt的智能指针</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#QSharedPointer"><span class="nav-number">1.44.1.</span> <span class="nav-text">QSharedPointer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QWeakPointer"><span class="nav-number">1.44.2.</span> <span class="nav-text">QWeakPointer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QScopedPointer"><span class="nav-number">1.44.3.</span> <span class="nav-text">QScopedPointer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QScopedArrayPointer"><span class="nav-number">1.44.4.</span> <span class="nav-text">QScopedArrayPointer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QPointer"><span class="nav-number">1.44.5.</span> <span class="nav-text">QPointer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QSharedPointer-1"><span class="nav-number">1.44.6.</span> <span class="nav-text">QSharedPointer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#std-string%E7%9A%84%E5%86%99%E6%97%B6%E6%8B%B7%E8%B4%9D%E4%B8%8E%E5%86%85%E5%AD%98%E5%85%B1%E4%BA%AB"><span class="nav-number">1.45.</span> <span class="nav-text">std::string的写时拷贝与内存共享</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Skykey"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Skykey</p>
+  <div class="site-description" itemprop="description">总有些惊奇的际遇，比方说当我遇见你。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/skykeyjoker" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zcxzxlc@163.com" title="E-Mail → mailto:zcxzxlc@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://twitter.com/skykeyjoker" title="Twitter → https:&#x2F;&#x2F;twitter.com&#x2F;skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-twitter fa-fw"></i>Twitter</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://t.me/Skykeyjoker" title="Telegram → https:&#x2F;&#x2F;t.me&#x2F;Skykeyjoker" rel="noopener" target="_blank"><i class="fab fa-telegram fa-fw"></i>Telegram</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Skykey</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">174k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:39</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : '4RA0u9zgOezRXWIwxd4uXwHI-gzGzoHsz',
+      appKey     : 'BzFXxI5BoDejh1427SpPWReR',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+<div class="moon-menu">
+  <div class="moon-menu-items">
+    
+    <div id="moon-menu-item-back2bottom" class="moon-menu-item">
+      <i class='fas fa-chevron-down'></i>    </div>
+    
+    <div id="moon-menu-item-back2top" class="moon-menu-item">
+      <i class='fas fa-chevron-up'></i>    </div>
+    
+  </div>
+  <div class="moon-menu-button">
+    <svg class="moon-menu-bg">
+      <circle class="moon-menu-cricle" cx="50%" cy="50%" r="44%"></circle>
+      <circle class="moon-menu-border" cx="50%" cy="50%" r="48%"></circle>
+    </svg>
+    <div class="moon-menu-content">
+      <div class="moon-menu-icon"><i class='fas fa-ellipsis-v'></i></div>
+      <div class="moon-menu-text"></div>
+    </div>
+  </div>
+</div><script src="/js/injector.js"></script>
+</body>
+</html>
