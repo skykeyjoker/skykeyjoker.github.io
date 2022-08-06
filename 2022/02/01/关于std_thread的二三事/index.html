@@ -17,13 +17,13 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"skykeyjoker.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+    var CONFIG = {"hostname":"skykeyjoker.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":false,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
   <meta name="description" content="关于std::thread的二三事写在前面很早之前写过一篇关于线程池文章，《基于C++11实现线程池》，一直被网友翻出来，对里面的一些细节实现提了许多问题。其实更推荐大家去阅读后来写的另外一篇关于线程池的文章，《当我谈线程池时我谈些什么——线程池学习笔记》。原因很简单，写第一篇线程池文章的时候，自己属实是菜的不行（现在依旧是菜的不行），花了很长时间去学习一些里面用到的C++11的新语法，文章里面讲">
 <meta property="og:type" content="article">
 <meta property="og:title" content="关于std::thread的二三事">
-<meta property="og:url" content="https://skykeyjoker.com/2022/02/01/%E5%85%B3%E4%BA%8Estd_thread%E7%9A%84%E4%BA%8C%E4%B8%89%E4%BA%8B/index.html">
+<meta property="og:url" content="https://skykeyjoker.github.io/2022/02/01/%E5%85%B3%E4%BA%8Estd_thread%E7%9A%84%E4%BA%8C%E4%B8%89%E4%BA%8B/index.html">
 <meta property="og:site_name" content="Skykey&#39;s Home">
 <meta property="og:description" content="关于std::thread的二三事写在前面很早之前写过一篇关于线程池文章，《基于C++11实现线程池》，一直被网友翻出来，对里面的一些细节实现提了许多问题。其实更推荐大家去阅读后来写的另外一篇关于线程池的文章，《当我谈线程池时我谈些什么——线程池学习笔记》。原因很简单，写第一篇线程池文章的时候，自己属实是菜的不行（现在依旧是菜的不行），花了很长时间去学习一些里面用到的C++11的新语法，文章里面讲">
 <meta property="og:locale" content="zh_CN">
@@ -32,13 +32,13 @@
 <meta property="article:author" content="Skykey">
 <meta property="article:tag" content="C++">
 <meta property="article:tag" content="C++11">
-<meta property="article:tag" content="C++14">
 <meta property="article:tag" content="C++17">
-<meta property="article:tag" content="C++并发">
 <meta property="article:tag" content="学习心得">
+<meta property="article:tag" content="C++14">
+<meta property="article:tag" content="C++并发">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://skykeyjoker.com/2022/02/01/%E5%85%B3%E4%BA%8Estd_thread%E7%9A%84%E4%BA%8C%E4%B8%89%E4%BA%8B/">
+<link rel="canonical" href="https://skykeyjoker.github.io/2022/02/01/%E5%85%B3%E4%BA%8Estd_thread%E7%9A%84%E4%BA%8C%E4%B8%89%E4%BA%8B/">
 
 
 <script id="page-configurations">
@@ -203,7 +203,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://skykeyjoker.com/2022/02/01/%E5%85%B3%E4%BA%8Estd_thread%E7%9A%84%E4%BA%8C%E4%B8%89%E4%BA%8B/">
+    <link itemprop="mainEntityOfPage" href="https://skykeyjoker.github.io/2022/02/01/%E5%85%B3%E4%BA%8Estd_thread%E7%9A%84%E4%BA%8C%E4%B8%89%E4%BA%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -327,7 +327,7 @@
 <hr>
 <p>暂时就总结了这些，后续若有内容再更新。</p>
 <h2 id="更多"><a href="#更多" class="headerlink" title="更多"></a>更多</h2><p><a target="_blank" rel="noopener" href="https://zh.cppreference.com/w/cpp/thread/thread">std::thread-cppreference.com</a></p>
-<p><a href="https://skykeyjoker.com/2021/04/22/C%2B%2B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">C++并发编程</a></p>
+<p><a target="_blank" rel="noopener" href="https://skykeyjoker.com/2021/04/22/C%2B%2B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">C++并发编程</a></p>
 <p><a target="_blank" rel="noopener" href="https://paul.pub/cpp-memory-model/">C++内存模型</a></p>
 
     </div>
@@ -360,10 +360,10 @@
           <div class="post-tags">
               <a href="/tags/C/" rel="tag"># C++</a>
               <a href="/tags/C-11/" rel="tag"># C++11</a>
-              <a href="/tags/C-14/" rel="tag"># C++14</a>
               <a href="/tags/C-17/" rel="tag"># C++17</a>
-              <a href="/tags/C-%E5%B9%B6%E5%8F%91/" rel="tag"># C++并发</a>
               <a href="/tags/%E5%AD%A6%E4%B9%A0%E5%BF%83%E5%BE%97/" rel="tag"># 学习心得</a>
+              <a href="/tags/C-14/" rel="tag"># C++14</a>
+              <a href="/tags/C-%E5%B9%B6%E5%8F%91/" rel="tag"># C++并发</a>
           </div>
 
         
